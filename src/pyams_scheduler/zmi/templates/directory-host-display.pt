@@ -1,0 +1,21 @@
+<div class="d-flex flex-row"
+	 tal:define="(protocol, hostname) view.display_value"
+	 i18n:domain="pyams_scheduler">
+	<div class="input-group">
+		<div class="input-group-prepend bg-secondary rounded">
+			<select class="select2" readonly="readonly">
+				<option value=""
+						i18n:translate="">--</option>
+				<option tal:repeat="proto view.protocols"
+						value="${proto}"
+						selected="${'selected' if protocol==proto else None}">
+					${proto}
+				</option>
+			</select>
+		</div>
+		<input type="text"
+			   class="form-control"
+			   value="${url}"
+			   readonly="readonly" />
+	</div>
+</div>
