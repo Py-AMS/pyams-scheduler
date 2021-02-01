@@ -34,6 +34,7 @@ from zope.component import queryUtility
 from zope.component.interfaces import ISite
 from zope.container.contained import Contained
 from zope.container.folder import Folder
+from zope.copy.interfaces import ICopyHook, ResumeCopy
 from zope.interface import alsoProvides, implementer, noLongerProvides
 from zope.interface.interfaces import ComponentLookupError
 from zope.intid import IIntIds
@@ -42,10 +43,9 @@ from zope.location import locate
 from zope.schema.fieldproperty import FieldProperty
 
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
-    ITaskHistory, ITaskHistoryContainer, ITaskInfo, ITaskSchedulingMode, MANAGE_TASKS_PERMISSION, \
-    SCHEDULER_AUTH_KEY, \
-    SCHEDULER_HANDLER_KEY, SCHEDULER_NAME, TASK_STATUS_EMPTY, TASK_STATUS_ERROR, \
-    TASK_STATUS_NONE, TASK_STATUS_OK, TASK_STATUS_WARNING
+    ITaskHistory, ITaskHistoryContainer, ITaskInfo, ITaskSchedulingMode, \
+    MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, SCHEDULER_NAME, \
+    TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_NONE, TASK_STATUS_OK, TASK_STATUS_WARNING
 from pyams_security.interfaces import IViewContextPermissionChecker
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.adapter import ContextAdapter, adapter_config
@@ -429,6 +429,25 @@ def handle_removed_task(event):
             socket = zmq_socket(handler, auth=request.registry.settings.get(SCHEDULER_AUTH_KEY))
             socket.send_json(['remove_task', zmq_settings])
             zmq_response(socket)
+
+
+@adapter_config(required=ITask,
+                provides=ICopyHook)
+class TaskCopyHook(ContextAdapter):
+    """Task copy hook"""
+
+    def __call__(self, toplevel, register):
+        register(self._copy_history)
+        raise ResumeCopy
+
+    def _copy_history(self, translate):
+        task = translate(self.context)
+        # create empty history
+        history = task.history = TaskHistoryContainer()
+        locate(history, task, '++history++')
+        # disable task
+        scheduling_mode = task.get_scheduling_info()
+        scheduling_mode.active = False
 
 
 @adapter_config(required=ITask,
