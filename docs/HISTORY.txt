@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.0
+-----
+ - added task copy hook
+ - added action to duplicate an existing task
+
 1.0.1
 -----
  - updated Gitlab-CI configuration
