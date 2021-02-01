@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2021-01-23 19:28+0100\n"
+"POT-Creation-Date: 2021-02-01 09:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -861,28 +861,33 @@ msgstr ""
 msgid "Add directory synchronization..."
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/task/__init__.py:49
+#: ./src/pyams_scheduler/zmi/task/__init__.py:54
 msgid "Add new task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/task/__init__.py:50
+#: ./src/pyams_scheduler/zmi/task/__init__.py:55
 msgid "New task properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/task/__init__.py:65
-#: ./src/pyams_scheduler/zmi/task/__init__.py:112
+#: ./src/pyams_scheduler/zmi/task/__init__.py:70
+#: ./src/pyams_scheduler/zmi/task/__init__.py:117
 msgid "Task reports"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/task/__init__.py:95
+#: ./src/pyams_scheduler/zmi/task/__init__.py:100
 msgid "Task properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/task/__init__.py:128
+#: ./src/pyams_scheduler/zmi/task/__init__.py:133
 msgid ""
 "You can limit history conservation to a duration or to a number of "
 "iterations. If both are specified, the first encountered limit will take "
 "precedence."
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/task/__init__.py:165
+#: ./src/pyams_scheduler/zmi/task/__init__.py:183
+msgid "Clone task"
 msgstr ""
 
 #: ./src/pyams_scheduler/zmi/task/ssh.py:75

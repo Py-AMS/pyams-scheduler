@@ -15,23 +15,26 @@
 This module defines base tasks management forms.
 """
 
+from zope.copy import copy
 from zope.interface import Interface
 from zope.intid import IIntIds
 
-from pyams_form.browser.checkbox import SingleCheckBoxFieldWidget
+from pyams_form.ajax import ajax_form_config
 from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer, IInnerTabForm
 from pyams_form.subform import InnerAddForm, InnerEditForm
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskInfo
+from pyams_layer.interfaces import IPyAMSLayer
+from pyams_scheduler.interfaces import IScheduler, ITask, ITaskInfo, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.viewlet.help import AlertMessage
+from pyams_table.interfaces import IColumn
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
 from pyams_utils.registry import get_utility
 from pyams_zmi.form import AdminModalAddForm, AdminModalEditForm
 from pyams_zmi.helper.event import get_json_table_row_refresh_callback
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor, ITableElementName
-from pyams_zmi.table import TableElementEditor
+from pyams_zmi.table import ActionColumn, TableElementEditor
 
 
 __docformat__ = 'restructuredtext'
@@ -145,3 +148,43 @@ class TaskEditFormAJAXRenderer(ContextRequestViewAdapter):
                                                     SchedulerTasksTable, task)
             ]
         }
+
+
+#
+# Task clone form
+#
+
+@adapter_config(name='clone',
+                required=(IScheduler, IAdminLayer, SchedulerTasksTable),
+                provides=IColumn)
+class TaskCloneColumn(ActionColumn):
+    """Task clone column"""
+
+    hint = _("Clone task")
+    icon_class = 'far fa-clone'
+
+    href = 'clone-task.html'
+
+    weight = 100
+
+
+@ajax_form_config(name='clone-task.html', context=ITask,
+                  layer=IPyAMSLayer, permission=MANAGE_TASKS_PERMISSION)
+class TaskCloneForm(AdminModalAddForm):
+    """Task clone form"""
+
+    @property
+    def title(self):
+        """Title getter"""
+        return self.context.name
+
+    legend = _("Clone task")
+
+    fields = Fields(ITask).select('name')
+
+    def create(self, data):
+        return copy(self.context)
+
+    def add(self, obj):
+        intids = get_utility(IIntIds)
+        self.context.__parent__[hex(intids.register(obj))[2:]] = obj
