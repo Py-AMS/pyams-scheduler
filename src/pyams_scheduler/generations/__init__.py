@@ -32,7 +32,7 @@ REQUIRED_UTILITIES = ((IScheduler, '', Scheduler, SCHEDULER_NAME),)
 class SchedulerGenerationsChecker:
     """Scheduler generations checker"""
 
-    order = 50
+    order = 60
     generation = 1
 
     def evolve(self, site, current=None):  # pylint: disable=unused-argument,no-self-use
