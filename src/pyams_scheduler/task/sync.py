@@ -255,7 +255,8 @@ class DirectorySyncTask(Task):
                             continue
 
         try:
-            report.write('Synchronized directories:\n'
+            report.write('Directories synchronization output\n'
+                         '==================================\n'
                          ' - source: {!r}\n'
                          ' - target: {!r}\n'
                          ' - copied files:\n'.format(self.source, self.target))

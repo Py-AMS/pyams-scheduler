@@ -21,6 +21,7 @@ import subprocess
 import sys
 import traceback
 from contextlib import contextmanager
+from socket import gethostname
 
 from paramiko import AutoAddPolicy, SSHClient, SSHException
 from persistent import Persistent
@@ -59,6 +60,11 @@ class SSHConnectionInfo(Persistent):
 
     def __bool__(self):
         return bool(self.hostname)
+
+    def __repr__(self):
+        if self.hostname:
+            return '{}@{}:{}'.format(self.username, self.hostname, self.port)
+        return gethostname()
 
     @property
     def password(self):
@@ -121,6 +127,9 @@ class SSHCallerTask(Task):
         return map(int, self.ok_status.split(','))
 
     def run(self, report, **kwargs):  # pylint: disable=unused-argument
+        report.write('Shell command output\n'
+                     '====================\n'
+                     'Shell command: \n    {!r}: {}\n\n'.format(self.connection, self.cmdline))
         if self.connection:
             return self._run_remote(report, **kwargs)
         return self._run_local(report, **kwargs)

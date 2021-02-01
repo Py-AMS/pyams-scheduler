@@ -99,6 +99,10 @@ class RESTCallerTask(Task):
         # get remote service URL
         method, service = self.service
         rest_service = '{}{}'.format(self.base_url, service)
+        report.write('HTTP service output\n'
+                     '===================\n'
+                     'HTTP service: \n    {} {}\n\n'.format(
+            method, rest_service))
         # check proxy configuration
         proxies = {}
         if self.use_proxy:
