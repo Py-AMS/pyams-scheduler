@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.1.1
+-----
+ - updated scheduler generations updater order
+
 1.1.0
 -----
  - added task copy hook
