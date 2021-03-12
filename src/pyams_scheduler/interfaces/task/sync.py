@@ -20,9 +20,9 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Attribute, Interface, Invalid, implementer, invariant
 from zope.schema import Bool, Int, Object, Password, TextLine, Tuple
 from zope.schema.interfaces import ITuple
+from pyams_scheduler.interfaces import ITask
 
 from pyams_scheduler import _
-from pyams_scheduler.interfaces import ITask
 
 
 class IDirectoryHandlerHostField(ITuple):
@@ -206,3 +206,15 @@ class IDirectorySyncTaskInfo(Interface):
 
 class IDirectorySyncTask(ITask, IDirectorySyncTaskInfo):
     """Directory synchronization task interface"""
+
+
+class DirectorySyncError(Exception):
+    """Base directory synchronization error"""
+
+
+class DirectoryReadError(DirectorySyncError):
+    """Directory read error"""
+
+
+class DirectoryWriteError(DirectorySyncError):
+    """Directory write error"""

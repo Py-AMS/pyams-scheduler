@@ -33,7 +33,8 @@ from pyams_form.interfaces.form import IForm
 from pyams_form.interfaces.widget import IObjectWidget
 from pyams_layer.interfaces import IFormLayer
 from pyams_scheduler.interfaces import TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_OK
-from pyams_scheduler.interfaces.task.sync import IDirectoryHandler, IDirectoryInfo, \
+from pyams_scheduler.interfaces.task.sync import DirectorySyncError, IDirectoryHandler, \
+    IDirectoryInfo, \
     IDirectorySyncTask
 from pyams_scheduler.task import Task
 from pyams_utils.adapter import adapter_config
@@ -172,7 +173,7 @@ class DirectorySyncTask(Task):
             for name in src.listdir():
                 try:
                     src_stat = src.stat(name)
-                except (PermissionError, FileNotFoundError):
+                except (DirectorySyncError, PermissionError, FileNotFoundError):
                     report.write('   ** {}: {} (SRC STAT ERROR)\n'.format(src.directory,
                                                                           name))
                     if not self.ignore_read_errors:
@@ -187,7 +188,7 @@ class DirectorySyncTask(Task):
                 is_src_dir = stat.S_ISDIR(src_stat.st_mode)
                 try:
                     dst_stat = dst.stat(name)
-                except PermissionError:
+                except (DirectorySyncError, PermissionError):
                     report.write('   ** {}: {} (DST STAT ERROR)\n'.format(src.directory,
                                                                           name))
                     if not self.ignore_write_errors:
@@ -197,7 +198,7 @@ class DirectorySyncTask(Task):
                     if is_src_dir and self.recursive:
                         try:
                             dst.mkdir(name, src_stat.st_mode)
-                        except PermissionError:
+                        except (DirectorySyncError, PermissionError):
                             report.write('   ** {}: {} (CREATE ERROR)\n'.format(src.directory,
                                                                                 name))
                             if not self.ignore_write_errors:
@@ -212,13 +213,13 @@ class DirectorySyncTask(Task):
                                 try:
                                     with dst.chdir(name):
                                         synchronize_files(src, dst)
-                                except PermissionError:
+                                except (DirectorySyncError, PermissionError):
                                     report.write('   ** {}: {} (SYNC ERROR)\n'.format(
                                         src.directory, name))
                                     if not self.ignore_write_errors:
                                         raise
                                     continue
-                        except PermissionError:
+                        except (DirectorySyncError, PermissionError):
                             report.write('   ** {}: {} (READ ERROR)\n'.format(src.directory,
                                                                               name))
                             if not self.ignore_read_errors:
@@ -235,7 +236,7 @@ class DirectorySyncTask(Task):
                             (src_stat.st_size != dst_stat.st_size):
                         try:
                             copy_file(src, dst, name, src_stat)
-                        except PermissionError:
+                        except (DirectorySyncError, PermissionError):
                             report.write('   ** {}: {} (WRITE ERROR)\n'.format(src.directory,
                                                                                name))
                             if not self.ignore_write_errors:
@@ -247,7 +248,7 @@ class DirectorySyncTask(Task):
                     if self.delete_source:
                         try:
                             src.unlink(name)
-                        except PermissionError:
+                        except (DirectorySyncError, PermissionError):
                             report.write('   ** {}: {} (DELETE ERROR)\n'.format(src.directory,
                                                                                 name))
                             if not self.ignore_delete_errors:
