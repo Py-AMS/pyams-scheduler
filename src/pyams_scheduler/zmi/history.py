@@ -237,10 +237,10 @@ class JobHistoryView(AdminModalDisplayForm):
         return get_parent(self.context, ITask).name
 
     legend = _("Task run history")
-    modal_class = 'modal-xl'
+    modal_class = 'modal-max'
 
-    label_css_class = 'col-sm-3'
-    input_css_class = 'col-sm-9'
+    label_css_class = 'col-sm-3 col-md-2'
+    input_css_class = 'col-sm-9 col-md-8'
 
     fields = Fields(ITaskHistory).omit('__parent__', '__name__')
 
