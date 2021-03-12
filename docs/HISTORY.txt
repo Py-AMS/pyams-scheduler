@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.2.0
+-----
+ - removed support for Python < 3.7
+ - updated synchronizer exceptions
+ - updated FTP synchronizer handler
+
 1.1.1
 -----
  - updated scheduler generations updater order

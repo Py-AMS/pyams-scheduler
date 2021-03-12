@@ -30,7 +30,7 @@ from pyams_scheduler.interfaces import MANAGE_SCHEDULER_PERMISSION, MANAGE_TASKS
     SCHEDULER_NAME, SCHEDULER_STARTER_KEY, TASKS_MANAGER_ROLE
 from pyams_scheduler.process import SchedulerMessageHandler, SchedulerProcess
 from pyams_security.interfaces import ADMIN_USER_ID, SYSTEM_ADMIN_ROLE
-from pyams_security.interfaces.base import MANAGE_ROLES_PERMISSION
+from pyams_security.interfaces.base import MANAGE_ROLES_PERMISSION, ROLE_ID
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.protocol.tcp import is_port_in_use
 from pyams_utils.registry import get_pyramid_registry, set_local_registry
@@ -63,12 +63,11 @@ def include_package(config):
     })
 
     # upgrade system manager roles
-    config.upgrade_role(SYSTEM_ADMIN_ROLE, {
-        'permissions': {
-            MANAGE_SCHEDULER_PERMISSION,
-            MANAGE_TASKS_PERMISSION
-        }
-    })
+    config.upgrade_role(SYSTEM_ADMIN_ROLE,
+                        permissions={
+                            MANAGE_SCHEDULER_PERMISSION,
+                            MANAGE_TASKS_PERMISSION
+                        })
 
     # register new roles
     config.register_role({
@@ -80,7 +79,8 @@ def include_package(config):
             MANAGE_TASKS_PERMISSION
         },
         'managers': {
-            ADMIN_USER_ID
+            ADMIN_USER_ID,
+            ROLE_ID.format(SYSTEM_ADMIN_ROLE)
         }
     })
     config.register_role({
@@ -91,7 +91,8 @@ def include_package(config):
         },
         'managers': {
             ADMIN_USER_ID,
-            'role:{}'.format(SCHEDULER_MANAGER_ROLE)
+            ROLE_ID.format(SYSTEM_ADMIN_ROLE),
+            ROLE_ID.format(SCHEDULER_MANAGER_ROLE)
         }
     })
 
