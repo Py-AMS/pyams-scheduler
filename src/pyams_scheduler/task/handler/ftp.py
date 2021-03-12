@@ -19,11 +19,13 @@ import os
 import stat
 import time
 from contextlib import contextmanager
-from ftplib import FTP
+from ftplib import Error, FTP
 from tempfile import SpooledTemporaryFile
 from time import mktime
 
-from pyams_scheduler.interfaces.task.sync import IDirectoryHandler, IDirectoryInfo
+from pyams_scheduler.interfaces.task.sync import DirectoryReadError, DirectoryWriteError, \
+    IDirectoryHandler, \
+    IDirectoryInfo
 from pyams_scheduler.task.handler import BaseDirectoryHandler
 from pyams_utils.adapter import adapter_config
 
@@ -50,8 +52,11 @@ class FTPReader(FTPHelper):
 
     def __init__(self, ftp, name, mode):
         super().__init__(ftp, name, mode)
-        self.ftp.ftp_client.retrbinary('RETR {}'.format(self.ftp.get_path(self.name)),
-                                       self.file.write)
+        try:
+            self.ftp.ftp_client.retrbinary('RETR {}'.format(self.ftp.get_path(self.name)),
+                                           self.file.write)
+        except Error as exc:
+            raise DirectoryReadError from exc
         self.file.seek(0)
 
     def read(self, bufsize):
@@ -68,8 +73,11 @@ class FTPWriter(FTPHelper):
 
     def close(self):
         self.file.seek(0)
-        self.ftp.ftp_client.storbinary('STOR {}'.format(self.ftp.get_path(self.name)),
-                                       self.file)
+        try:
+            self.ftp.ftp_client.storbinary('STOR {}'.format(self.ftp.get_path(self.name)),
+                                           self.file)
+        except Error as exc:
+            raise DirectoryWriteError from exc
         self.file.close()
 
 
@@ -130,7 +138,7 @@ class FTPDirectoryHandler(BaseDirectoryHandler):
         try:
             self.ftp_client.retrlines('LIST {}'.format(self.get_path(name)),
                                       entries.append)
-        except Exception as ex:
+        except Error as ex:
             raise FileNotFoundError(name) from ex
         if len(entries) == 1:
             mode, ignore, user, group, size, month, day, year, name = entries[0].split()  # pylint: disable=unused-variable
