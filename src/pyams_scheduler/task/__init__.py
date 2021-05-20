@@ -82,10 +82,10 @@ class TaskHistoryContainer(Folder):
 
     def check_history(self, duration, length):
         """Check history container contents"""
-        now = tztime(datetime.utcnow())
         if duration:
+            now = tztime(datetime.utcnow())
             for key in list(self.keys()):
-                if (now - self[key].date).days > duration:
+                if (now - tztime(self[key].date)).days > duration:
                     del self[key]
         if length and (len(self) > length):
             keys = sorted(self.keys(), reverse=True)[:length]
