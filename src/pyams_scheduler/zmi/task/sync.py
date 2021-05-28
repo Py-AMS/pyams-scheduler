@@ -17,28 +17,29 @@ synchronization tasks.
 """
 
 from zope.component import getAdapters
-from zope.interface import implementer, implementer_only
+from zope.interface import Interface, implementer, implementer_only
 
 from pyams_form.ajax import ajax_form_config
 from pyams_form.browser.widget import HTMLFormElement
 from pyams_form.converter import BaseDataConverter
 from pyams_form.field import Fields
 from pyams_form.group import GroupManager
-from pyams_form.interfaces import IDataConverter
+from pyams_form.interfaces import IDataConverter, IObjectFactory
 from pyams_form.interfaces.form import IForm, IInnerTabForm
-from pyams_form.interfaces.widget import IFieldWidget
+from pyams_form.interfaces.widget import IFieldWidget, IObjectWidget
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_form.widget import FieldWidget, Widget
 from pyams_layer.interfaces import IFormLayer, IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.sync import IDirectoryHandler, IDirectoryHandlerHostField, \
-    IDirectorySyncTask, IDirectorySyncTaskInfo
+    IDirectoryInfo, IDirectorySyncTask, IDirectorySyncTaskInfo
 from pyams_scheduler.task.sync import DirectoryInfo
 from pyams_scheduler.zmi import SchedulerTasksView
 from pyams_scheduler.zmi.interfaces import IDirectoryHandlerHostWidget
 from pyams_scheduler.zmi.task import BaseTaskAddForm, BaseTaskEditForm
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_utils.adapter import adapter_config
+from pyams_utils.factory import get_interface_name
 from pyams_utils.interfaces.form import NO_VALUE
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.interfaces import IAdminLayer
@@ -48,6 +49,14 @@ from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
 __docformat__ = 'restructuredtext'
 
 from pyams_scheduler import _  # pylint: disable=ungrouped-imports
+
+
+@adapter_config(name=get_interface_name(IDirectoryInfo),
+                required=(Interface, IFormLayer, IForm, IObjectWidget),
+                provides=IObjectFactory)
+def directory_info_factory(*args):  # pylint: disable=unused-argument
+    """Directory info object factory"""
+    return DirectoryInfo
 
 
 #

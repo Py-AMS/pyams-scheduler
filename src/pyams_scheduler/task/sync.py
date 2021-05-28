@@ -25,20 +25,13 @@ from contextlib import contextmanager
 
 from persistent import Persistent
 from zope.component import queryAdapter
-from zope.interface import Interface
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_form.interfaces import IObjectFactory
-from pyams_form.interfaces.form import IForm
-from pyams_form.interfaces.widget import IObjectWidget
-from pyams_layer.interfaces import IFormLayer
 from pyams_scheduler.interfaces import TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.sync import DirectorySyncError, IDirectoryHandler, \
-    IDirectoryInfo, \
-    IDirectorySyncTask
+    IDirectoryInfo, IDirectorySyncTask
 from pyams_scheduler.task import Task
-from pyams_utils.adapter import adapter_config
-from pyams_utils.factory import factory_config, get_interface_name
+from pyams_utils.factory import factory_config
 from pyams_utils.size import get_human_size
 
 
@@ -102,14 +95,6 @@ class DirectoryInfo(Persistent):
                 if handler is not None:
                     handler.close()
         return None
-
-
-@adapter_config(name=get_interface_name(IDirectoryInfo),
-                required=(Interface, IFormLayer, IForm, IObjectWidget),
-                provides=IObjectFactory)
-def directory_info_factory(*args):  # pylint: disable=unused-argument
-    """Directory info object factory"""
-    return DirectoryInfo
 
 
 @factory_config(IDirectorySyncTask)
