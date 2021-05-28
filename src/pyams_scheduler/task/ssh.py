@@ -25,18 +25,12 @@ from socket import gethostname
 
 from paramiko import AutoAddPolicy, SSHClient, SSHException
 from persistent import Persistent
-from zope.interface import Interface
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_form.interfaces import IObjectFactory
-from pyams_form.interfaces.form import IForm
-from pyams_form.interfaces.widget import IObjectWidget
-from pyams_layer.interfaces import IFormLayer
 from pyams_scheduler.interfaces import TASK_STATUS_ERROR, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.ssh import ISSHCallerTask, ISSHConnectionInfo
 from pyams_scheduler.task import Task
-from pyams_utils.adapter import adapter_config
-from pyams_utils.factory import factory_config, get_interface_name
+from pyams_utils.factory import factory_config
 
 
 __docformat__ = 'restructuredtext'
@@ -100,14 +94,6 @@ class SSHConnectionInfo(Persistent):
                 yield ssh_client.open_sftp()
             finally:
                 ssh_client.close()
-
-
-@adapter_config(name=get_interface_name(ISSHConnectionInfo),
-                required=(Interface, IFormLayer, IForm, IObjectWidget),
-                provides=IObjectFactory)
-def ssh_connection_factory(*args, **kwargs):  # pylint: disable=unused-argument
-    """SSH connection object factory"""
-    return SSHConnectionInfo
 
 
 @factory_config(ISSHCallerTask)
