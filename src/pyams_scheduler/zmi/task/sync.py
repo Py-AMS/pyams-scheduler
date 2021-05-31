@@ -34,7 +34,7 @@ from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.sync import IDirectoryHandler, IDirectoryHandlerHostField, \
     IDirectoryInfo, IDirectorySyncTask, IDirectorySyncTaskInfo
 from pyams_scheduler.task.sync import DirectoryInfo
-from pyams_scheduler.zmi import SchedulerTasksView
+from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_scheduler.zmi.interfaces import IDirectoryHandlerHostWidget
 from pyams_scheduler.zmi.task import BaseTaskAddForm, BaseTaskEditForm
 from pyams_skin.viewlet.menu import MenuItem
@@ -129,7 +129,7 @@ class DirectorySyncTaskFormInfo(GroupManager):
 #
 
 @viewlet_config(name='add-sync-task.menu',
-                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksView,
+                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
                 manager=IContextAddingsViewletManager, weight=40,
                 permission=MANAGE_TASKS_PERMISSION)
 class DirectorySyncTaskAddMenu(MenuItem):

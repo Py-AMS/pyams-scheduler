@@ -27,7 +27,7 @@ from persistent import Persistent
 from zope.component import queryAdapter
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces import TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task import TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.sync import DirectorySyncError, IDirectoryHandler, \
     IDirectoryInfo, IDirectorySyncTask
 from pyams_scheduler.task import Task

@@ -29,7 +29,7 @@ from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask, IRESTCallerTaskInfo
-from pyams_scheduler.zmi import SchedulerTasksView
+from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_scheduler.zmi.task import BaseTaskAddForm, BaseTaskEditForm
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.viewlet.help import AlertMessage
@@ -191,7 +191,7 @@ def extract_rest_jwt_info(event):
 #
 
 @viewlet_config(name='add-rest-task.menu',
-                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksView,
+                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
                 manager=IContextAddingsViewletManager, weight=20,
                 permission=MANAGE_TASKS_PERMISSION)
 class RESTTaskAddMenu(MenuItem):

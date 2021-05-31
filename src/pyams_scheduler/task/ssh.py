@@ -27,7 +27,7 @@ from paramiko import AutoAddPolicy, SSHClient, SSHException
 from persistent import Persistent
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces import TASK_STATUS_ERROR, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.ssh import ISSHCallerTask, ISSHConnectionInfo
 from pyams_scheduler.task import Task
 from pyams_utils.factory import factory_config

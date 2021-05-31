@@ -24,7 +24,7 @@ import chardet
 import requests
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces import TASK_STATUS_ERROR, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask
 from pyams_scheduler.task import Task
 from pyams_utils.dict import format_dict

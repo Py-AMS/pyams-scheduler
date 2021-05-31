@@ -25,10 +25,10 @@ from persistent import Persistent
 from zope.componentvocabulary.vocabulary import UtilityVocabulary
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces import ICronTask, ICronTaskScheduling, IDateTask, \
+from pyams_scheduler.interfaces import TASK_SCHEDULING_MODES_VOCABULARY
+from pyams_scheduler.interfaces.task import ICronTask, ICronTaskScheduling, IDateTask, \
     IDateTaskScheduling, ILoopTask, ILoopTaskScheduling, ITaskSchedulingMode, \
-    SCHEDULER_TASK_CRON_INFO, SCHEDULER_TASK_DATE_INFO, SCHEDULER_TASK_LOOP_INFO, \
-    TASK_SCHEDULING_MODES_VOCABULARY
+    SCHEDULER_TASK_CRON_INFO, SCHEDULER_TASK_DATE_INFO, SCHEDULER_TASK_LOOP_INFO
 from pyams_utils.adapter import adapter_config, get_annotation_adapter
 from pyams_utils.date import date_to_datetime
 from pyams_utils.factory import factory_config

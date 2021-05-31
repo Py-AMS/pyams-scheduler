@@ -25,6 +25,22 @@ from pyams_utils.registry import utility_config
 __docformat__ = 'restructuredtext'
 
 
+RENAMED_CLASSES = {
+    'pyams_scheduler.interfaces ICronTask':
+        'pyams_scheduler.interfaces.task ICronTask',
+    'pyams_scheduler.interfaces ICronTaskScheduling':
+        'pyams_scheduler.interfaces.task ICronTaskScheduling',
+    'pyams_scheduler.interfaces IDateTask':
+        'pyams_scheduler.interfaces.task IDateTask',
+    'pyams_scheduler.interfaces IDateTaskScheduling':
+        'pyams_scheduler.interfaces.task IDateTaskScheduling',
+    'pyams_scheduler.interfaces ILoopTask':
+        'pyams_scheduler.interfaces.task ILoopTask',
+    'pyams_scheduler.interfaces ILoopTaskScheduling':
+        'pyams_scheduler.interfaces.task ILoopTaskScheduling'
+}
+
+
 REQUIRED_UTILITIES = ((IScheduler, '', Scheduler, SCHEDULER_NAME),)
 
 

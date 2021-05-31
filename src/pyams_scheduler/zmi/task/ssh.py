@@ -31,7 +31,7 @@ from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.ssh import ISSHCallTaskInfo, ISSHCallerTask, \
     ISSHConnectionInfo
 from pyams_scheduler.task.ssh import SSHConnectionInfo
-from pyams_scheduler.zmi import SchedulerTasksView
+from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_scheduler.zmi.task import BaseTaskAddForm, BaseTaskEditForm
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_utils.adapter import adapter_config
@@ -95,7 +95,7 @@ class SSHTaskFormInfo(GroupManager):
 #
 
 @viewlet_config(name='add-ssh-task.menu',
-                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksView,
+                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
                 manager=IContextAddingsViewletManager, weight=10,
                 permission=MANAGE_TASKS_PERMISSION)
 class SSHTaskAddMenu(MenuItem):
