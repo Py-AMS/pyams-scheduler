@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2021-02-01 09:02+0100\n"
+"POT-Creation-Date: 2021-05-31 02:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,15 +15,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Lingua 3.10.dev0\n"
 
-#: src/pyams_scheduler/trigger.py:105
+#: src/pyams_scheduler/trigger.py:106
 msgid "Task is not configured for cron-style scheduling!"
 msgstr "Cette tâche n'est pas paramétrée en mode \"cron\" !"
 
-#: src/pyams_scheduler/trigger.py:150
+#: src/pyams_scheduler/trigger.py:151
 msgid "Task is not configured for date-style scheduling!"
 msgstr "Cette tâche n'est pas configurée en mode \"date\" !"
 
-#: src/pyams_scheduler/trigger.py:192
+#: src/pyams_scheduler/trigger.py:193
 msgid "Task is not configured for loop-style scheduling!"
 msgstr "Cette tâche n'est pas configurée en mode \"boucle\" !"
 
@@ -35,7 +35,7 @@ msgstr "Gérer le planificateur de tâches"
 msgid "Manage scheduler tasks"
 msgstr "Gérer les tâches planifiées"
 
-#: src/pyams_scheduler/include.py:76
+#: src/pyams_scheduler/include.py:75
 msgid "Scheduler manager (role)"
 msgstr "Gestionnaire du planificateur (rôle)"
 
@@ -43,315 +43,54 @@ msgstr "Gestionnaire du planificateur (rôle)"
 msgid "Tasks manager (role)"
 msgstr "Gestionnaire de tâches (role)"
 
-#: src/pyams_scheduler/interfaces/__init__.py:107
-msgid "Execution status"
-msgstr "Statut"
-
-#: src/pyams_scheduler/interfaces/__init__.py:109
-msgid "Execution start date"
-msgstr "Date d'exécution"
-
-#: src/pyams_scheduler/interfaces/__init__.py:112
-msgid "Execution duration"
-msgstr "Durée d'exécution"
-
-#: src/pyams_scheduler/interfaces/__init__.py:115
-msgid "Execution report"
-msgstr "Rapport"
-
-#: src/pyams_scheduler/interfaces/__init__.py:161
-msgid "Activate task?"
-msgstr "Activer cette tâche ?"
-
-#: src/pyams_scheduler/interfaces/__init__.py:162
-msgid "You can disable a task by selecting 'No'"
-msgstr "Vous pouvez désactiver cette tâche en n'activant pas cette option"
-
-#: src/pyams_scheduler/interfaces/__init__.py:166
-msgid "First execution date"
-msgstr "Date de première exécution"
-
-#: src/pyams_scheduler/interfaces/__init__.py:167
-msgid "Date and time from which scheduling should start"
-msgstr "Date et heure de début de planification de cette tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:183
-#: src/pyams_scheduler/interfaces/__init__.py:258
-msgid "Last execution date"
-msgstr "Date de dernière exécution"
-
-#: src/pyams_scheduler/interfaces/__init__.py:184
-#: src/pyams_scheduler/interfaces/__init__.py:259
-msgid "Date and time past which scheduling should end"
-msgstr "Date et heure de fin de planification de cette tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:187
-msgid "Years"
-msgstr "Années"
-
-#: src/pyams_scheduler/interfaces/__init__.py:188
-msgid "Years for which to schedule the job"
-msgstr "Années de planification de la tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:192
-msgid "Months"
-msgstr "Mois"
-
-#: src/pyams_scheduler/interfaces/__init__.py:193
-msgid "Months (1-12) for which to schedule the job"
-msgstr "Mois (de 1 à 12) de planification de la tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:197
-msgid "Month days"
-msgstr "Jours du mois"
-
-#: src/pyams_scheduler/interfaces/__init__.py:198
-msgid "Days (1-31) for which to schedule the job"
-msgstr "Jours du mois (de 1 à 31) de planification de la tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:202
-msgid "Weeks"
-msgstr "Semaines"
-
-#: src/pyams_scheduler/interfaces/__init__.py:203
-msgid "Year weeks (1-53) for which to schedule the job"
-msgstr "Numéros de semaines (de 1 à 53) de planification de la tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:207
-msgid "Week days"
-msgstr "Jours de la semaine"
-
-#: src/pyams_scheduler/interfaces/__init__.py:208
-msgid "Week days (0-6, with 0 as monday) for which to schedule the job"
-msgstr ""
-"Jours de la semaine (de 0 à 6, 0 étant le dimanche) de planification de la "
-"tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:213
-msgid "Hours"
-msgstr "Heures"
-
-#: src/pyams_scheduler/interfaces/__init__.py:214
-msgid "Hours (0-23) for which to schedule the job"
-msgstr ""
-"Heures de la journée (de 0 à 23) de planification de la tâche. ATTENTION : "
-"ces heures doivent être indiquées en GMT !!!"
-
-#: src/pyams_scheduler/interfaces/__init__.py:218
-msgid "Minutes"
-msgstr "Minutes"
-
-#: src/pyams_scheduler/interfaces/__init__.py:219
-msgid "Minutes (0-59) for which to schedule the job"
-msgstr "Minutes (de 0 à 59) de planification de la tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:223
-msgid "Seconds"
-msgstr "Secondes"
-
-#: src/pyams_scheduler/interfaces/__init__.py:224
-msgid "Seconds (0-59) for which to schedule the job"
-msgstr "Secondes (de 0 à 59) de planification de la tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:241
-msgid "Execution date"
-msgstr "Date d'exécution"
-
-#: src/pyams_scheduler/interfaces/__init__.py:242
-msgid "Date and time on which execution should start"
-msgstr "Date et heure à laquelle la tâche doit être exécutée"
-
-#: src/pyams_scheduler/interfaces/__init__.py:262
-msgid "Weeks interval"
-msgstr "Fréquence en semaines"
-
-#: src/pyams_scheduler/interfaces/__init__.py:263
-msgid "Number of weeks between executions"
-msgstr "Nombre de semaines entre deux exécutions"
-
-#: src/pyams_scheduler/interfaces/__init__.py:267
-msgid "Days interval"
-msgstr "Fréquence en jours"
-
-#: src/pyams_scheduler/interfaces/__init__.py:268
-msgid "Number of days between executions"
-msgstr "Nombre de jours entre deux exécutions"
-
-#: src/pyams_scheduler/interfaces/__init__.py:272
-msgid "Hours interval"
-msgstr "Fréquence en heures"
-
-#: src/pyams_scheduler/interfaces/__init__.py:273
-msgid "Number of hours between executions"
-msgstr "Nombre d'heures entre deux exécutions"
-
-#: src/pyams_scheduler/interfaces/__init__.py:277
-msgid "Minutes interval"
-msgstr "Fréquence en minutes"
-
-#: src/pyams_scheduler/interfaces/__init__.py:278
-msgid "Number of minutes between executions"
-msgstr "Nombre de minutes entre deux exécutions"
-
-#: src/pyams_scheduler/interfaces/__init__.py:282
-msgid "Seconds interval"
-msgstr "Fréquence en secondes"
-
-#: src/pyams_scheduler/interfaces/__init__.py:283
-msgid "Number of seconds between executions"
-msgstr "Nombre de secondes entre deux exécutions"
-
-#: src/pyams_scheduler/interfaces/__init__.py:293
-#: src/pyams_scheduler/zmi/history.py:99
-msgid "Task name"
-msgstr "Nom de la tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:294
-msgid "Descriptive name given to this task"
-msgstr "Nom descriptif donné à cette tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:297
-msgid "Scheduling mode"
-msgstr "Mode de planification"
-
-#: src/pyams_scheduler/interfaces/__init__.py:298
-msgid "Scheduling mode defines how task will be scheduled"
-msgstr ""
-"Le mode de planification détermine les options qui seront proposées pour "
-"planifier une tâche"
-
-#: src/pyams_scheduler/interfaces/__init__.py:302
-msgid "Reports target(s)"
-msgstr "Destinataire(s)"
-
-#: src/pyams_scheduler/interfaces/__init__.py:303
-msgid ""
-"Mail address(es) to which execution reports will be sent; you can enter "
-"several addresses separated by semicolons"
-msgstr ""
-"Adresse(s) de messagerie des destinataires des rapports d'exécution; vous "
-"pouvez indiquer plusieurs adresses en les séparant par des points-virgules"
-
-#: src/pyams_scheduler/interfaces/__init__.py:308
-msgid "Errors reports target(s)"
-msgstr "Rapports d'erreurs"
-
-#: src/pyams_scheduler/interfaces/__init__.py:309
-msgid ""
-"Mail address(es) to which error reports will be sent; you can enter several "
-"addresses separated by semicolons; keep empty to use normal reports target"
-msgstr ""
-"Adresse(s) de messagerie des personnes qui seront uniquement destinataires "
-"des rapports d'erreurs; vous pouvez indiquer plusieurs adresses en les "
-"séparant par des points-virgules. En laissant cette zone vide, les "
-"destinataires des rapports d'erreurs seront les mêmes que les destinataires "
-"des rapports d'exécution \"normaux\"."
-
-#: src/pyams_scheduler/interfaces/__init__.py:314
-msgid "Only report errors?"
-msgstr "N'envoyer que les rapports d'erreurs ?"
-
-#: src/pyams_scheduler/interfaces/__init__.py:315
-msgid "If 'Yes', only error reports will be sent to given errors target"
-msgstr ""
-"Si cette option est sélectionnée, seuls les rapports d'erreurs seront "
-"envoyés aux destinataires sélectionnés ci-dessus"
-
-#: src/pyams_scheduler/interfaces/__init__.py:320
-msgid "Send empty reports?"
-msgstr "Envoyer des rapports vides ?"
-
-#: src/pyams_scheduler/interfaces/__init__.py:321
-msgid "If 'No', empty reports will not be sent by mail"
-msgstr ""
-"Si cette option est sélectionnée, les rapports d'exécution vides seront "
-"également envoyés aux destinataires sélectionnés"
-
-#: src/pyams_scheduler/interfaces/__init__.py:325
-msgid "Keep empty reports history?"
-msgstr "Conserver les rapports vides dans l'historique ?"
-
-#: src/pyams_scheduler/interfaces/__init__.py:326
-msgid "If 'Yes', empty reports will be kept in task history"
-msgstr ""
-"Si cette option est sélectionnée, les rapports d'exécution vides seront "
-"conservés dans l'historique ; dans le cas contraire, ces rapports ainsi que "
-"les traces d'exécution seront perdus"
-
-#: src/pyams_scheduler/interfaces/__init__.py:331
-msgid "History duration"
-msgstr "Durée d'historisation"
-
-#: src/pyams_scheduler/interfaces/__init__.py:332
-msgid ""
-"Number of days during which execution reports are kept in history; enter 0 "
-"to remove limit"
-msgstr ""
-"Durée de conservation dans l'historique, en jours, des rapports d'exécution; "
-"une valeur vide permet de les conserver sans limite de durée"
-
-#: src/pyams_scheduler/interfaces/__init__.py:336
-msgid "History max length"
-msgstr "Longueur de l'historique"
-
-#: src/pyams_scheduler/interfaces/__init__.py:337
-msgid "Number of execution reports to keep in history; enter 0 to remove limit"
-msgstr ""
-"Nombre de rapports d'exécution conservés dans l'historique ; une valeur vide "
-"permet de les conserver sans limite de nombre d'itérations"
-
-#: src/pyams_scheduler/interfaces/__init__.py:349
-msgid "Settings view name"
-msgstr "Nom de la vue de paramétrage"
-
-#: src/pyams_scheduler/interfaces/__init__.py:353
-#: src/pyams_scheduler/interfaces/__init__.py:440
-msgid "History"
-msgstr "Historique"
-
-#: src/pyams_scheduler/interfaces/__init__.py:354
-#: src/pyams_scheduler/interfaces/__init__.py:441
-msgid "Task history"
-msgstr "Historique"
-
-#: src/pyams_scheduler/interfaces/__init__.py:409
+#: src/pyams_scheduler/interfaces/__init__.py:105
 msgid "ZODB connection name"
 msgstr "Nom de la connexion ZODB"
 
-#: src/pyams_scheduler/interfaces/__init__.py:410
+#: src/pyams_scheduler/interfaces/__init__.py:106
 msgid "Name of ZODB defining scheduler connection"
 msgstr "Nom de la ZODB contenant la définition des tâches"
 
-#: src/pyams_scheduler/interfaces/__init__.py:415
+#: src/pyams_scheduler/interfaces/__init__.py:111
 msgid "Reports mailer"
 msgstr "Service de messagerie"
 
-#: src/pyams_scheduler/interfaces/__init__.py:416
+#: src/pyams_scheduler/interfaces/__init__.py:112
 msgid "Mail delivery utility used to send mails"
 msgstr "Service SMTP utilisé pour délivrer les messages"
 
-#: src/pyams_scheduler/interfaces/__init__.py:420
+#: src/pyams_scheduler/interfaces/__init__.py:116
 msgid "Reports source"
 msgstr "Source des rapports"
 
-#: src/pyams_scheduler/interfaces/__init__.py:421
+#: src/pyams_scheduler/interfaces/__init__.py:117
 msgid "Mail address from which reports will be sent"
 msgstr "Adresse de messagerie indiquée comme émettrice des rapports envoyés"
 
-#: src/pyams_scheduler/interfaces/__init__.py:435
+#: src/pyams_scheduler/interfaces/__init__.py:131
 #: src/pyams_scheduler/zmi/__init__.py:168
 msgid "Scheduler tasks"
 msgstr "Planificateur de tâches"
 
-#: src/pyams_scheduler/interfaces/__init__.py:436
+#: src/pyams_scheduler/interfaces/__init__.py:132
 msgid "List of tasks assigned to this scheduler"
 msgstr "Liste des tâches associées au planificateur"
 
-#: src/pyams_scheduler/interfaces/__init__.py:449
+#: src/pyams_scheduler/interfaces/__init__.py:136
+#: src/pyams_scheduler/interfaces/task/__init__.py:293
+msgid "History"
+msgstr "Historique"
+
+#: src/pyams_scheduler/interfaces/__init__.py:137
+#: src/pyams_scheduler/interfaces/task/__init__.py:294
+msgid "Task history"
+msgstr "Historique"
+
+#: src/pyams_scheduler/interfaces/__init__.py:145
 msgid "Scheduler managers"
 msgstr "Administrateurs"
 
-#: src/pyams_scheduler/interfaces/__init__.py:453
+#: src/pyams_scheduler/interfaces/__init__.py:149
 msgid "Tasks manager"
 msgstr "Gestionnaires de tâches"
 
@@ -584,6 +323,17 @@ msgstr "Nom du répertoire"
 msgid "Enter absolute directory name"
 msgstr "Chemin d'accès absolu du répertoire"
 
+#. pylint: disable=unsubscriptable-object
+#.
+#: src/pyams_scheduler/interfaces/task/sync.py:136
+#: src/pyams_scheduler/interfaces/task/ssh.py:65
+msgid ""
+"You must provide a private key filename OR a password when defining remote "
+"tasks"
+msgstr ""
+"Vous devez fournir une clé privée ou un mot de passe pour vous connecter sur "
+"une machine distante"
+
 #: src/pyams_scheduler/interfaces/task/sync.py:146
 msgid "Source directory"
 msgstr "Répertoire source"
@@ -691,14 +441,261 @@ msgstr ""
 "écrits seront simplement ignorés ; dans le cas contraire, la synchronisation "
 "sera interrompue"
 
-#: src/pyams_scheduler/interfaces/task/sync.py:136
-#: src/pyams_scheduler/interfaces/task/ssh.py:65
-msgid ""
-"You must provide a private key filename OR a password when defining remote "
-"tasks"
+#: src/pyams_scheduler/interfaces/task/__init__.py:60
+msgid "Execution status"
+msgstr "Statut"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:62
+msgid "Execution start date"
+msgstr "Date d'exécution"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:65
+msgid "Execution duration"
+msgstr "Durée d'exécution"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:68
+msgid "Execution report"
+msgstr "Rapport"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:114
+msgid "Activate task?"
+msgstr "Activer cette tâche ?"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:115
+msgid "You can disable a task by selecting 'No'"
+msgstr "Vous pouvez désactiver cette tâche en n'activant pas cette option"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:119
+msgid "First execution date"
+msgstr "Date de première exécution"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:120
+msgid "Date and time from which scheduling should start"
+msgstr "Date et heure de début de planification de cette tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:138
+#: src/pyams_scheduler/interfaces/task/__init__.py:217
+msgid "Last execution date"
+msgstr "Date de dernière exécution"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:139
+#: src/pyams_scheduler/interfaces/task/__init__.py:218
+msgid "Date and time past which scheduling should end"
+msgstr "Date et heure de fin de planification de cette tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:142
+msgid "Years"
+msgstr "Années"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:143
+msgid "Years for which to schedule the job"
+msgstr "Années de planification de la tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:147
+msgid "Months"
+msgstr "Mois"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:148
+msgid "Months (1-12) for which to schedule the job"
+msgstr "Mois (de 1 à 12) de planification de la tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:152
+msgid "Month days"
+msgstr "Jours du mois"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:153
+msgid "Days (1-31) for which to schedule the job"
+msgstr "Jours du mois (de 1 à 31) de planification de la tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:157
+msgid "Weeks"
+msgstr "Semaines"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:158
+msgid "Year weeks (1-53) for which to schedule the job"
+msgstr "Numéros de semaines (de 1 à 53) de planification de la tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:162
+msgid "Week days"
+msgstr "Jours de la semaine"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:163
+msgid "Week days (0-6, with 0 as monday) for which to schedule the job"
 msgstr ""
-"Vous devez fournir une clé privée ou un mot de passe pour vous connecter sur "
-"une machine distante"
+"Jours de la semaine (de 0 à 6, 0 étant le dimanche) de planification de la "
+"tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:168
+msgid "Hours"
+msgstr "Heures"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:169
+msgid "Hours (0-23) for which to schedule the job"
+msgstr ""
+"Heures de la journée (de 0 à 23) de planification de la tâche. ATTENTION : "
+"ces heures doivent être indiquées en GMT !!!"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:173
+msgid "Minutes"
+msgstr "Minutes"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:174
+msgid "Minutes (0-59) for which to schedule the job"
+msgstr "Minutes (de 0 à 59) de planification de la tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:178
+msgid "Seconds"
+msgstr "Secondes"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:179
+msgid "Seconds (0-59) for which to schedule the job"
+msgstr "Secondes (de 0 à 59) de planification de la tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:198
+msgid "Execution date"
+msgstr "Date d'exécution"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:199
+msgid "Date and time on which execution should start"
+msgstr "Date et heure à laquelle la tâche doit être exécutée"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:221
+msgid "Weeks interval"
+msgstr "Fréquence en semaines"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:222
+msgid "Number of weeks between executions"
+msgstr "Nombre de semaines entre deux exécutions"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:226
+msgid "Days interval"
+msgstr "Fréquence en jours"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:227
+msgid "Number of days between executions"
+msgstr "Nombre de jours entre deux exécutions"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:231
+msgid "Hours interval"
+msgstr "Fréquence en heures"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:232
+msgid "Number of hours between executions"
+msgstr "Nombre d'heures entre deux exécutions"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:236
+msgid "Minutes interval"
+msgstr "Fréquence en minutes"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:237
+msgid "Number of minutes between executions"
+msgstr "Nombre de minutes entre deux exécutions"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:241
+msgid "Seconds interval"
+msgstr "Fréquence en secondes"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:242
+msgid "Number of seconds between executions"
+msgstr "Nombre de secondes entre deux exécutions"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:256
+#: src/pyams_scheduler/zmi/history.py:99
+msgid "Task name"
+msgstr "Nom de la tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:257
+msgid "Descriptive name given to this task"
+msgstr "Nom descriptif donné à cette tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:260
+msgid "Scheduling mode"
+msgstr "Mode de planification"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:261
+msgid "Scheduling mode defines how task will be scheduled"
+msgstr ""
+"Le mode de planification détermine les options qui seront proposées pour "
+"planifier une tâche"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:265
+msgid "Keep empty reports history?"
+msgstr "Conserver les rapports vides dans l'historique ?"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:266
+msgid "If 'Yes', empty reports will be kept in task history"
+msgstr ""
+"Si cette option est sélectionnée, les rapports d'exécution vides seront "
+"conservés dans l'historique ; dans le cas contraire, ces rapports ainsi que "
+"les traces d'exécution seront perdus"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:271
+msgid "History duration"
+msgstr "Durée d'historisation"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:272
+msgid ""
+"Number of days during which execution reports are kept in history; enter 0 "
+"to remove limit"
+msgstr ""
+"Durée de conservation dans l'historique, en jours, des rapports d'exécution; "
+"une valeur vide permet de les conserver sans limite de durée"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:276
+msgid "History max length"
+msgstr "Longueur de l'historique"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:277
+msgid "Number of execution reports to keep in history; enter 0 to remove limit"
+msgstr ""
+"Nombre de rapports d'exécution conservés dans l'historique ; une valeur vide "
+"permet de les conserver sans limite de nombre d'itérations"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:289
+msgid "Settings view name"
+msgstr "Nom de la vue de paramétrage"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:340
+msgid "Enabled?"
+msgstr "Activée ?"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:341
+msgid "Recipient will not be notified if notification is disabled"
+msgstr ""
+"Les destinataires ne seront pas notifiés si une notification est désactivée"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:345
+msgid "Only report errors?"
+msgstr "N'envoyer que les rapports d'erreurs ?"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:346
+msgid "If 'Yes', only error reports will be sent to given errors target"
+msgstr ""
+"Si cette option est sélectionnée, seuls les rapports d'erreurs seront "
+"envoyés aux destinataires sélectionnés ci-dessus"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:351
+msgid "Send empty reports?"
+msgstr "Envoyer des rapports vides ?"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:352
+msgid "If 'No', empty reports will not be sent by mail"
+msgstr ""
+"Si cette option est sélectionnée, les rapports d'exécution vides seront "
+"également envoyés aux destinataires sélectionnés"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:378
+msgid "Target's email"
+msgstr "Destinataires"
+
+#: src/pyams_scheduler/interfaces/task/__init__.py:379
+msgid ""
+"Email address of report's recipient; you can enter email address in a simple "
+"form or in in a complete \"Name <adresse@domain.com>\" form"
+msgstr ""
+"Adresse de messagerie des destinataires ; vous pouvez indiquer des adresses "
+"simples, ou sous la forme \"Nom Prénom <mail@domain.com>\", à raison d'une "
+"adresse par ligne"
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:32
 msgid "Hostname or IP address"
@@ -724,7 +721,7 @@ msgid "SSH connection"
 msgstr "Connexion SSH"
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:82
-#: src/pyams_scheduler/task/ssh.py:111
+#: src/pyams_scheduler/task/ssh.py:103
 msgid "Command line"
 msgstr "Ligne de commande"
 
@@ -800,37 +797,52 @@ msgstr "Durée d'exécution"
 msgid "Status"
 msgstr "Statut"
 
-#: src/pyams_scheduler/zmi/history.py:156
+#: src/pyams_scheduler/zmi/history.py:157
 msgid "Tasks execution history"
 msgstr "Historique des tâches exécutées"
 
-#: src/pyams_scheduler/zmi/history.py:158
+#: src/pyams_scheduler/zmi/history.py:159
 msgid "List of executed tasks"
 msgstr "Liste des tâches exécutées"
 
-#: src/pyams_scheduler/zmi/history.py:173
-#: src/pyams_scheduler/zmi/history.py:239
+#: src/pyams_scheduler/zmi/history.py:174
+#: src/pyams_scheduler/zmi/history.py:241
 msgid "Task run history"
 msgstr "Historique"
 
-#: src/pyams_scheduler/zmi/history.py:185
-#: src/pyams_scheduler/zmi/history.py:197
+#: src/pyams_scheduler/zmi/history.py:199
 msgid "Task execution history"
 msgstr "Historique de la tâche"
 
-#: src/pyams_scheduler/zmi/history.py:199
+#: src/pyams_scheduler/zmi/history.py:201
 msgid "List of executed jobs"
 msgstr "Historique de la tâche"
 
-#: src/pyams_scheduler/zmi/trigger.py:61 src/pyams_scheduler/zmi/trigger.py:75
+#: src/pyams_scheduler/zmi/trigger.py:62 src/pyams_scheduler/zmi/trigger.py:76
 msgid "Run task"
 msgstr "Exécuter la tâche"
 
-#: src/pyams_scheduler/zmi/trigger.py:88
+#: src/pyams_scheduler/zmi/trigger.py:73
+msgid "Run in debug mode"
+msgstr "Lancer en mode debug"
+
+#: src/pyams_scheduler/zmi/trigger.py:89
 msgid "Task execution"
 msgstr "Exécuter la tâche"
 
-#: src/pyams_scheduler/zmi/trigger.py:166
+#: src/pyams_scheduler/zmi/trigger.py:133
+msgid "Task has been executed!"
+msgstr "La tâche a été exécutée !"
+
+#: src/pyams_scheduler/zmi/trigger.py:154
+msgid ""
+"The task has been planned for immediate execution...<br />Check task history "
+"to get execution report."
+msgstr ""
+"La tâche a été planifiée pour exécution immédiate...<br />Veuillez consulter "
+"l'historique pour voir son rapport d'exécution."
+
+#: src/pyams_scheduler/zmi/trigger.py:167
 msgid ""
 "You can run the task in normal mode or in debug mode.\n"
 "In debug mode, the task is started in current application thread, and you "
@@ -850,15 +862,15 @@ msgstr ""
 "ATTENTION : dans les deux cas, la tâche est exécutée quel que soit son mode "
 "de planification, y compris si elle est désactivée."
 
-#: src/pyams_scheduler/zmi/trigger.py:199
+#: src/pyams_scheduler/zmi/trigger.py:200
 msgid "Schedule task"
 msgstr "Planifier la tâche"
 
-#: src/pyams_scheduler/zmi/trigger.py:216
+#: src/pyams_scheduler/zmi/trigger.py:217
 msgid "Task schedule properties"
 msgstr "Paramètres de planification"
 
-#: src/pyams_scheduler/zmi/trigger.py:259
+#: src/pyams_scheduler/zmi/trigger.py:260
 msgid ""
 "You can enter values like in a \"classical\" crontab: you can set individual "
 "values, ranges (using a dash as separator), steps (using */x), or multiple "
@@ -885,32 +897,8 @@ msgstr ""
 "(par exemple, tous les jours de la semaine ou toutes les heures) ; ATTENTION "
 "si vous appliquez cette valeur dans la zone des secondes !!"
 
-#: src/pyams_scheduler/zmi/trigger.py:72
-msgid "Run in debug mode"
-msgstr "Lancer en mode debug"
-
-#: src/pyams_scheduler/zmi/trigger.py:132
-msgid "Task has been executed!"
-msgstr "La tâche a été exécutée !"
-
-#: src/pyams_scheduler/zmi/trigger.py:153
-msgid ""
-"The task has been planned for immediate execution...<br />Check task history "
-"to get execution report."
-msgstr ""
-"La tâche a été planifiée pour exécution immédiate...<br />Veuillez consulter "
-"l'historique pour voir son rapport d'exécution."
-
 #: src/pyams_scheduler/zmi/__init__.py:72
 msgid "Tasks definition"
-msgstr "Définition des tâches"
-
-#: src/pyams_scheduler/zmi/__init__.py:149
-msgid "Task ID"
-msgstr "ID de la tâche"
-
-#: src/pyams_scheduler/zmi/__init__.py:170
-msgid "List of scheduler tasks"
 msgstr "Définition des tâches"
 
 #: src/pyams_scheduler/zmi/__init__.py:110
@@ -921,6 +909,14 @@ msgstr "Tâche activée"
 msgid "Disabled task"
 msgstr "Tâche désactivée"
 
+#: src/pyams_scheduler/zmi/__init__.py:149
+msgid "Task ID"
+msgstr "ID de la tâche"
+
+#: src/pyams_scheduler/zmi/__init__.py:170
+msgid "List of scheduler tasks"
+msgstr "Définition des tâches"
+
 #: src/pyams_scheduler/zmi/templates/directory-host-input.pt:10
 #: src/pyams_scheduler/zmi/templates/directory-host-display.pt:8
 msgid "--"
@@ -930,13 +926,29 @@ msgstr "--"
 msgid "HTTP/REST API settings"
 msgstr "Service HTTP"
 
+#: src/pyams_scheduler/zmi/task/rest.py:85
+msgid "Missing base target URI!"
+msgstr "URI de base du service REST non définie !"
+
 #: src/pyams_scheduler/zmi/task/rest.py:97
 msgid "Authentication"
 msgstr "Authentification"
 
+#: src/pyams_scheduler/zmi/task/rest.py:115
+msgid "Username and password are required to use authentication!"
+msgstr ""
+"Le code utilisateur et le mot de passe sont obligatoires pour "
+"s'authentifier !"
+
 #: src/pyams_scheduler/zmi/task/rest.py:128
 msgid "Proxy settings"
 msgstr "Paramètres du proxy"
+
+#: src/pyams_scheduler/zmi/task/rest.py:147
+msgid "Proxy access defined without proxy server!"
+msgstr ""
+"L'utilisation d'un proxy a été activée, mais aucun nom de serveur n'a été "
+"spécifié !"
 
 #: src/pyams_scheduler/zmi/task/rest.py:175
 msgid ""
@@ -947,58 +959,25 @@ msgstr ""
 "paramètres de l'autorité d'authentification qui sera utilisée pour obtenir "
 "de nouveaux jetons d'accès."
 
-#: src/pyams_scheduler/zmi/task/rest.py:200
-msgid "Add HTTP/REST API caller task..."
-msgstr "Appel de service HTTP"
-
-#: src/pyams_scheduler/zmi/task/rest.py:115
-msgid "Username and password are required to use authentication!"
-msgstr ""
-"Le code utilisateur et le mot de passe sont obligatoires pour "
-"s'authentifier !"
-
-#: src/pyams_scheduler/zmi/task/rest.py:147
-msgid "Proxy access defined without proxy server!"
-msgstr ""
-"L'utilisation d'un proxy a été activée, mais aucun nom de serveur n'a été "
-"spécifié !"
-
 #: src/pyams_scheduler/zmi/task/rest.py:185
 msgid "JWT authority location is required to enable JWT authentication!"
 msgstr ""
 "La localisation de l'autorité JWT doit être spécifiée pour pouvoir activer "
 "ce mode d'authentification"
 
-#: src/pyams_scheduler/zmi/task/rest.py:85
-msgid "Missing base target URI!"
-msgstr "URI de base du service REST non définie !"
+#: src/pyams_scheduler/zmi/task/rest.py:200
+msgid "Add HTTP/REST API caller task..."
+msgstr "Appel de service HTTP"
 
-#: src/pyams_scheduler/zmi/task/sync.py:113
+#: src/pyams_scheduler/zmi/task/sync.py:122
 msgid "Synchronization settings"
 msgstr "Paramètres de synchronisation"
 
-#: src/pyams_scheduler/zmi/task/sync.py:129
+#: src/pyams_scheduler/zmi/task/sync.py:138
 msgid "Add directory synchronization..."
 msgstr "Synchronisation de répertoires"
 
 #: src/pyams_scheduler/zmi/task/__init__.py:54
-msgid "Add new task"
-msgstr "Nouvelle tâche"
-
-#: src/pyams_scheduler/zmi/task/__init__.py:55
-msgid "New task properties"
-msgstr "Propriétés de la tâche"
-
-#: src/pyams_scheduler/zmi/task/__init__.py:70
-#: src/pyams_scheduler/zmi/task/__init__.py:117
-msgid "Task reports"
-msgstr "Rapports d'exécution"
-
-#: src/pyams_scheduler/zmi/task/__init__.py:100
-msgid "Task properties"
-msgstr "Propriétés de la tâche"
-
-#: src/pyams_scheduler/zmi/task/__init__.py:133
 msgid ""
 "You can limit history conservation to a duration or to a number of "
 "iterations. If both are specified, the first encountered limit will take "
@@ -1009,26 +988,122 @@ msgstr ""
 "Si les deux paramètres sont spécifiés, c'est le paramètre le plus limitant "
 "qui sera appliqué."
 
-#: src/pyams_scheduler/zmi/task/__init__.py:165
-#: src/pyams_scheduler/zmi/task/__init__.py:183
+#: src/pyams_scheduler/zmi/task/__init__.py:65
+msgid "Add new task"
+msgstr "Nouvelle tâche"
+
+#: src/pyams_scheduler/zmi/task/__init__.py:66
+msgid "New task properties"
+msgstr "Propriétés de la tâche"
+
+#: src/pyams_scheduler/zmi/task/__init__.py:81
+#: src/pyams_scheduler/zmi/task/__init__.py:136
+msgid "Task reports"
+msgstr "Rapports d'exécution"
+
+#: src/pyams_scheduler/zmi/task/__init__.py:119
+msgid "Task properties"
+msgstr "Propriétés de la tâche"
+
+#: src/pyams_scheduler/zmi/task/__init__.py:178
+#: src/pyams_scheduler/zmi/task/__init__.py:196
 msgid "Clone task"
 msgstr "Dupliquer la tâche"
 
-#: src/pyams_scheduler/zmi/task/ssh.py:75
+#: src/pyams_scheduler/zmi/task/ssh.py:88
 msgid "Command settings"
 msgstr "Ligne de commande"
 
-#: src/pyams_scheduler/zmi/task/ssh.py:91
+#: src/pyams_scheduler/zmi/task/ssh.py:104
 msgid "Add local/remote command launcher..."
 msgstr "Commande locale ou distante"
+
+#: src/pyams_scheduler/zmi/task/notification.py:62
+#: src/pyams_scheduler/zmi/task/notification.py:219
+msgid "Task notifications"
+msgstr "Notifications"
+
+#: src/pyams_scheduler/zmi/task/notification.py:103
+msgid "Click icon to enable or disable notification"
+msgstr "Activer ou désactiver la notification"
+
+#: src/pyams_scheduler/zmi/task/notification.py:137
+msgid "Target"
+msgstr "Destinataire"
+
+#: src/pyams_scheduler/zmi/task/notification.py:147
+msgid "Send errors reports only"
+msgstr "Rapports d'erreurs uniquement"
+
+#: src/pyams_scheduler/zmi/task/notification.py:159
+msgid "Send all reports"
+msgstr "Tous les rapports d'exécution"
+
+#: src/pyams_scheduler/zmi/task/notification.py:170
+msgid "Send empty reports"
+msgstr "Envoyer des rapports vides"
+
+#: src/pyams_scheduler/zmi/task/notification.py:182
+msgid "Don't send empty reports"
+msgstr "Pas de rapports vides"
+
+#: src/pyams_scheduler/zmi/task/notification.py:221
+msgid "List of defined task notifications"
+msgstr "Liste des notifications"
+
+#: src/pyams_scheduler/zmi/task/notification.py:231
+msgid "New notification properties"
+msgstr "Propriétés de la nouvelle notification"
+
+#: src/pyams_scheduler/zmi/task/notification.py:264
+msgid "Notification properties"
+msgstr "Propriétés de la notification"
+
+#: src/pyams_scheduler/zmi/task/notification.py:305
+msgid "Add mail notification..."
+msgstr "Notification par mail"
+
+#: src/pyams_scheduler/zmi/task/notification.py:320
+msgid "Add new mail notification"
+msgstr "Ajout d'une notification par mail"
 
 #: src/pyams_scheduler/task/rest.py:44
 msgid "HTTP service"
 msgstr "Service HTTP"
 
-#: src/pyams_scheduler/task/sync.py:118
+#: src/pyams_scheduler/task/sync.py:104
 msgid "Directory synchronization"
 msgstr "Synchronisation de répertoires"
+
+#~ msgid "Email address of report's recipient"
+#~ msgstr ""
+#~ "Adresse de messagerie des destinataires ; vous pouvez indiquer des "
+#~ "adresses simples, ou sous la forme \"Nom <mail@domain.com>\", en séparent "
+#~ "différentes adresses avec un point-virgule"
+
+#~ msgid "Reports target(s)"
+#~ msgstr "Destinataire(s)"
+
+#~ msgid ""
+#~ "Mail address(es) to which execution reports will be sent; you can enter "
+#~ "several addresses separated by semicolons"
+#~ msgstr ""
+#~ "Adresse(s) de messagerie des destinataires des rapports d'exécution; vous "
+#~ "pouvez indiquer plusieurs adresses en les séparant par des points-virgules"
+
+#~ msgid "Errors reports target(s)"
+#~ msgstr "Rapports d'erreurs"
+
+#~ msgid ""
+#~ "Mail address(es) to which error reports will be sent; you can enter "
+#~ "several addresses separated by semicolons; keep empty to use normal "
+#~ "reports target"
+#~ msgstr ""
+#~ "Adresse(s) de messagerie des personnes qui seront uniquement "
+#~ "destinataires des rapports d'erreurs; vous pouvez indiquer plusieurs "
+#~ "adresses en les séparant par des points-virgules. En laissant cette zone "
+#~ "vide, les destinataires des rapports d'erreurs seront les mêmes que les "
+#~ "destinataires des rapports d'exécution \"normaux\"."
 
 #~ msgid "Enter absolute file name"
 #~ msgstr "Chemin d'accès absolu du fichier"
@@ -1041,17 +1116,11 @@ msgstr "Synchronisation de répertoires"
 #~ "Si cette option est activée, le fichier source sera supprimé si la copie "
 #~ "s'effectue sans erreur"
 
-#~ msgid "Target file"
-#~ msgstr "Fichier de destination"
-
 #~ msgid "Copy settings"
 #~ msgstr "Copie de fichier"
 
 #~ msgid "Add SFTP file copy..."
 #~ msgstr "Copie de fichier (SFTP)"
-
-#~ msgid "Add SFTP synchronization..."
-#~ msgstr "Synchronisation de répertoires (SFTP)"
 
 #~ msgid "SFTP file copy"
 #~ msgstr "Copie SFTP"

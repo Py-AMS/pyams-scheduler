@@ -24,9 +24,10 @@ from pyams_form.button import Buttons, handler
 from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer, IGroup
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import ICronTask, ICronTaskScheduling, IDateTask, \
-    IDateTaskScheduling, ILoopTask, ILoopTaskScheduling, IScheduler, ITask, \
+from pyams_scheduler.interfaces import IScheduler, ITask, \
     MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.task import ICronTask, ICronTaskScheduling, IDateTask, \
+    IDateTaskScheduling, ILoopTask, ILoopTaskScheduling
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.schema.button import SubmitButton

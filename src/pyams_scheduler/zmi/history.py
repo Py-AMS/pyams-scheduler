@@ -23,8 +23,8 @@ from zope.traversing.interfaces import ITraversable
 from pyams_form.field import Fields
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskHistory, MANAGE_TASKS_PERMISSION, \
-    TASK_STATUS_STYLES
+from pyams_scheduler.interfaces import IScheduler, ITask, ITaskHistory, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.task import TASK_STATUS_STYLES
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_table.column import GetAttrColumn
@@ -148,7 +148,8 @@ class SchedulerHistoryStatusColumn(I18nColumnMixin, GetAttrColumn):
     weight = 40
 
 
-@pagelet_config(name='jobs-history.html', context=IScheduler, layer=IPyAMSLayer,
+@pagelet_config(name='jobs-history.html',
+                context=IScheduler, layer=IPyAMSLayer,
                 permission=MANAGE_TASKS_PERMISSION)
 class SchedulerHistoryView(TableAdminView):
     """Scheduler history view"""
@@ -182,10 +183,11 @@ class SchedulerTaskHistoryColumn(ActionColumn):
 class TaskHistoryView(AdminModalDisplayForm):
     """Task history view"""
 
-    title = _("Task execution history")
-    modal_class = 'modal-xl'
+    @property
+    def title(self):
+        return self.context.name
 
-    fields = Fields(Interface)
+    modal_class = 'modal-xl'
 
 
 @viewlet_config(name='jobs-history-table',

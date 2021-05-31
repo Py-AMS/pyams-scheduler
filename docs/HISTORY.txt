@@ -1,6 +1,18 @@
 Changelog
 =========
 
+1.3.0
+-----
+ - updated tasks notifications management, to be able to add new notifications modes
+   easily
+ - moved all task related interfaces to pyams_scheduler.interfaces.task module
+
+1.2.1
+-----
+ - corrected timezone error in task history check
+ - added missing "context" argument to permission check
+ - small updates in tasks management forms
+
 1.2.0
 -----
  - removed support for Python < 3.7
