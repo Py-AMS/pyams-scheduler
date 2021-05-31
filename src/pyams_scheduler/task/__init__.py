@@ -27,8 +27,6 @@ from persistent import Persistent
 from pyramid.config import Configurator
 from pyramid.events import subscriber
 from pyramid.threadlocal import RequestContext, manager
-from pyramid_mailer import IMailer
-from pyramid_mailer.message import Message
 from transaction.interfaces import ITransactionManager
 from zope.component import queryUtility
 from zope.component.interfaces import ISite
@@ -36,16 +34,17 @@ from zope.container.contained import Contained
 from zope.container.folder import Folder
 from zope.copy.interfaces import ICopyHook, ResumeCopy
 from zope.interface import alsoProvides, implementer, noLongerProvides
-from zope.interface.interfaces import ComponentLookupError
 from zope.intid import IIntIds
 from zope.lifecycleevent import IObjectAddedEvent, IObjectModifiedEvent, IObjectRemovedEvent
 from zope.location import locate
 from zope.schema.fieldproperty import FieldProperty
 
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
-    ITaskHistory, ITaskHistoryContainer, ITaskInfo, ITaskSchedulingMode, \
-    MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, SCHEDULER_NAME, \
-    TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_NONE, TASK_STATUS_OK, TASK_STATUS_WARNING
+    ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
+    SCHEDULER_NAME
+from pyams_scheduler.interfaces.task import ITaskHistoryContainer, ITaskInfo, \
+    ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_EMPTY, \
+    TASK_STATUS_ERROR, TASK_STATUS_NONE, TASK_STATUS_OK
 from pyams_security.interfaces import IViewContextPermissionChecker
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.adapter import ContextAdapter, adapter_config
@@ -103,10 +102,6 @@ class Task(Persistent, Contained):
 
     name = FieldProperty(ITask['name'])
     _schedule_mode = FieldProperty(ITask['schedule_mode'])
-    report_target = FieldProperty(ITask['report_target'])
-    errors_target = FieldProperty(ITask['errors_target'])
-    report_errors_only = FieldProperty(ITask['report_errors_only'])
-    send_empty_reports = FieldProperty(ITask['send_empty_reports'])
     keep_empty_reports = FieldProperty(ITask['keep_empty_reports'])
     _history_duration = FieldProperty(ITask['history_duration'])
     _history_length = FieldProperty(ITask['history_length'])
@@ -364,34 +359,17 @@ class Task(Persistent, Contained):
 
     def send_report(self, report, status, registry):
         """Execution report messaging"""
-        try:
-            mailer_name = self.__parent__.report_mailer
-        except (TypeError, AttributeError, ComponentLookupError):
-            return
-        if ((status in (TASK_STATUS_NONE, TASK_STATUS_EMPTY)) and
-            not self.send_empty_reports) or \
-           ((status == TASK_STATUS_OK) and self.report_errors_only):
-            return
-        message_target = self.report_target
-        if status not in (TASK_STATUS_NONE, TASK_STATUS_EMPTY, TASK_STATUS_OK):
-            message_target = self.errors_target or message_target
-        if not message_target:
-            return
-        mailer = registry.queryUtility(IMailer, mailer_name)
-        if mailer is not None:
-            report_source = self.__parent__.report_source
-            if status == TASK_STATUS_ERROR:
-                subject = "[SCHEDULER ERROR] {0}".format(self.name)
-            elif status == TASK_STATUS_WARNING:
-                subject = "[SCHEDULER WARNING] {0}".format(self.name)
-            else:
-                subject = "[scheduler] {0}".format(self.name)
-            for target in message_target.split(';'):
-                message = Message(subject=subject,
-                                  sender=report_source,
-                                  recipients=(target,),
-                                  body=report.getvalue())
-                mailer.send(message)
+        notifications = ITaskNotificationContainer(self)
+        for target in notifications.get_enabled_items():
+            handler = target.get_handler()
+            if handler is None:
+                continue
+            if ((status in (TASK_STATUS_NONE, TASK_STATUS_EMPTY)) and
+                not target.send_empty_reports) or \
+                    ((status == TASK_STATUS_OK) and target.report_errors_only):
+                return
+
+            handler.send_report(self, report, status, target, registry)
 
 
 @subscriber(IObjectAddedEvent, context_selector=ITask)

@@ -21,11 +21,11 @@ from zope.intid import IIntIds
 
 from pyams_form.ajax import ajax_form_config
 from pyams_form.field import Fields
-from pyams_form.group import GroupManager
-from pyams_form.interfaces.form import IAJAXFormRenderer, IInnerSubForm, IInnerTabForm
+from pyams_form.interfaces.form import IAJAXFormRenderer, IInnerTabForm
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskInfo, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.task import ITaskInfo
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_table.interfaces import IColumn
@@ -55,23 +55,6 @@ class TaskHistoryHelpMessage(AlertMessage):
                  "If both are specified, the first encountered limit will take precedence.")
 
 
-class BaseTaskFormHistoryMixin(GroupManager):
-    """Base task form history information mixin"""
-
-    legend = _("Task history")
-
-    fields = Fields(ITaskInfo).select('keep_empty_reports', 'history_duration',
-                                      'history_length')
-    weight = 100
-
-    def update_widgets(self, prefix=None):
-        """Widgets update"""
-        super().update_widgets(prefix)
-        widget = self.widgets.get('history_duration')
-        if widget is not None:
-            widget.prefix = TaskHistoryHelpMessage(self.context, self.request, self, None)
-
-
 #
 # Base task add form
 #
@@ -97,16 +80,16 @@ class BaseTaskAddFormInfo(InnerAddForm):
 
     title = _("Task reports")
 
-    fields = Fields(ITaskInfo).select('report_target', 'errors_target', 'report_errors_only',
-                                      'send_empty_reports')
+    fields = Fields(ITaskInfo).select('keep_empty_reports', 'history_duration',
+                                      'history_length')
     weight = 100
 
-
-@adapter_config(name='base-task-history',
-                required=(IScheduler, IAdminLayer, BaseTaskAddFormInfo),
-                provides=IInnerSubForm)
-class BaseTaskAddFormHistory(BaseTaskFormHistoryMixin, InnerAddForm):
-    """Base task add form history information group"""
+    def update_widgets(self, prefix=None):
+        """Widgets update"""
+        super().update_widgets(prefix)
+        widget = self.widgets.get('history_duration')
+        if widget is not None:
+            widget.prefix = TaskHistoryHelpMessage(self.context, self.request, self, None)
 
 
 #
@@ -152,17 +135,16 @@ class BaseTaskEditFormInfo(InnerEditForm):
 
     title = _("Task reports")
 
-    # fields = Fields(ITaskInfo).omit('__parent__', '__name__', 'name', 'schedule_mode')
-    fields = Fields(ITaskInfo).select('report_target', 'errors_target', 'report_errors_only',
-                                      'send_empty_reports')
+    fields = Fields(ITaskInfo).select('keep_empty_reports', 'history_duration',
+                                      'history_length')
     weight = 100
 
-
-@adapter_config(name='base-task-history',
-                required=(ITask, IAdminLayer, BaseTaskEditFormInfo),
-                provides=IInnerSubForm)
-class BaseTaskEditFormHistory(BaseTaskFormHistoryMixin, InnerEditForm):
-    """Base task edit form history information group"""
+    def update_widgets(self, prefix=None):
+        """Widgets update"""
+        super().update_widgets(prefix)
+        widget = self.widgets.get('history_duration')
+        if widget is not None:
+            widget.prefix = TaskHistoryHelpMessage(self.context, self.request, self, None)
 
 
 @adapter_config(required=(ITask, IAdminLayer, BaseTaskEditForm),
