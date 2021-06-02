@@ -251,11 +251,12 @@ class TaskNotificationAddFormRenderer(ContextRequestViewAdapter):
 
     def render(self, changes):
         """AJAX result renderer"""
-        task = self.view.context
+        if not changes:
+            return None
         return {
             'callbacks': [
-                get_json_table_row_add_callback(task, self.request, TaskNotificationsTable,
-                                                changes)
+                get_json_table_row_add_callback(self.context, self.request,
+                                                TaskNotificationsTable, changes)
             ]
         }
 
@@ -286,8 +287,8 @@ class TaskNotificationEditFormRenderer(ContextRequestViewAdapter):
             'status': 'success',
             'message': self.request.localizer.translate(self.view.success_message),
             'callbacks': [
-                get_json_table_row_refresh_callback(task, self.request, TaskNotificationsTable,
-                                                    self.context)
+                get_json_table_row_refresh_callback(task, self.request,
+                                                    TaskNotificationsTable, self.context)
             ]
         }
 

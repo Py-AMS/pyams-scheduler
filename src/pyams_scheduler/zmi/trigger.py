@@ -34,6 +34,7 @@ from pyams_skin.schema.button import SubmitButton
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_table.interfaces import IColumn
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
+from pyams_utils.traversing import get_parent
 from pyams_viewlet.viewlet import EmptyViewlet, viewlet_config
 from pyams_zmi.form import AdminModalEditForm, FormGroupChecker
 from pyams_zmi.helper.event import get_json_table_row_refresh_callback
@@ -233,11 +234,11 @@ class TaskEditFormAJAXRenderer(ContextRequestViewAdapter):
         """AJAX result renderer"""
         if not changes:
             return None
-        task = self.view.context
+        scheduler = get_parent(self.context, IScheduler)
         return {
             'callbacks': [
-                get_json_table_row_refresh_callback(task.__parent__, self.request,
-                                                    SchedulerTasksTable, task)
+                get_json_table_row_refresh_callback(scheduler, self.request,
+                                                    SchedulerTasksTable, self.context)
             ]
         }
 

@@ -77,6 +77,8 @@ class SchedulerTasksListMenu(NavigationMenuItem):
 class SchedulerTasksTable(Table):
     """Scheduler tasks table"""
 
+    display_if_empty = True
+
     @property
     def data_attributes(self):
         attributes = super().data_attributes

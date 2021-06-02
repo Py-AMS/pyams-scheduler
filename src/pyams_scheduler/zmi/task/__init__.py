@@ -31,8 +31,10 @@ from pyams_skin.viewlet.help import AlertMessage
 from pyams_table.interfaces import IColumn
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
 from pyams_utils.registry import get_utility
+from pyams_utils.traversing import get_parent
 from pyams_zmi.form import AdminModalAddForm, AdminModalEditForm
-from pyams_zmi.helper.event import get_json_table_row_refresh_callback
+from pyams_zmi.helper.event import get_json_table_row_add_callback, \
+    get_json_table_row_refresh_callback
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor, ITableElementName
 from pyams_zmi.table import ActionColumn, TableElementEditor
@@ -90,6 +92,23 @@ class BaseTaskAddFormInfo(InnerAddForm):
         widget = self.widgets.get('history_duration')
         if widget is not None:
             widget.prefix = TaskHistoryHelpMessage(self.context, self.request, self, None)
+
+
+@adapter_config(required=(IScheduler, IAdminLayer, BaseTaskAddForm),
+                provides=IAJAXFormRenderer)
+class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
+    """Base task add form AJAX renderer"""
+
+    def render(self, changes):
+        """AJAX result renderer"""
+        if not changes:
+            return None
+        return {
+            'callbacks': [
+                get_json_table_row_add_callback(self.context, self.request,
+                                                SchedulerTasksTable, changes)
+            ]
+        }
 
 
 #
@@ -156,11 +175,11 @@ class TaskEditFormAJAXRenderer(ContextRequestViewAdapter):
         """AJAX result renderer"""
         if not changes:
             return None
-        task = self.view.context
+        scheduler = get_parent(self.context, IScheduler)
         return {
             'callbacks': [
-                get_json_table_row_refresh_callback(task.__parent__, self.request,
-                                                    SchedulerTasksTable, task)
+                get_json_table_row_refresh_callback(scheduler, self.request,
+                                                    SchedulerTasksTable, self.context)
             ]
         }
 
@@ -203,3 +222,21 @@ class TaskCloneForm(AdminModalAddForm):
     def add(self, obj):
         intids = get_utility(IIntIds)
         self.context.__parent__[hex(intids.register(obj))[2:]] = obj
+
+
+@adapter_config(required=(ITask, IAdminLayer, TaskCloneForm),
+                provides=IAJAXFormRenderer)
+class TaskCloneFormAJAXRenderer(ContextRequestViewAdapter):
+    """Task clone form AJAX renderer"""
+
+    def render(self, changes):
+        """AJAX result renderer"""
+        if not changes:
+            return None
+        scheduler = get_parent(self.context, IScheduler)
+        return {
+            'callbacks': [
+                get_json_table_row_add_callback(scheduler, self.request,
+                                                SchedulerTasksTable, changes)
+            ]
+        }
