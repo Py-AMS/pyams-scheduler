@@ -44,13 +44,12 @@ from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor, ITableElementName
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
 from pyams_zmi.table import ActionColumn, IconColumn, InnerTableAdminView, JsActionColumn, \
-    NameColumn, Table, \
-    TableElementEditor, TrashColumn
+    NameColumn, Table, TableElementEditor, TrashColumn
 
 
 __docformat__ = 'restructuredtext'
 
-from pyams_scheduler import _
+from pyams_scheduler import _  # pylint: disable=ungrouped-imports
 
 
 @adapter_config(name='notifications',
@@ -75,6 +74,7 @@ class TaskNotificationsView(AdminModalDisplayForm):
 
     @property
     def title(self):
+        """Title getter"""
         return self.context.name
 
 

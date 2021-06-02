@@ -330,7 +330,7 @@ TASK_NOTIFICATION_MODES_VOCABULARY = 'PyAMS_scheduler.notifications.modes'
 class ITaskNotificationMode(Interface):
     """Task notification mode utility interface"""
 
-    def send_report(self, task, report, status, target, registry=None):
+    def send_report(self, task, report, status, target, registry=None):  # pylint: disable=too-many-arguments
         """Send report to given target"""
 
 

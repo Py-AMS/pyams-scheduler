@@ -69,7 +69,7 @@ def task_notifications_container_factory(context):
 class TaskNotificationsTraverser(ContextAdapter):
     """Task notifications traverser"""
 
-    def traverse(self, name, furtherpath=None):
+    def traverse(self, name, furtherpath=None):  # pylint: disable=unused-argument
         """Traverser to task notifications"""
         container = ITaskNotificationContainer(self.context)
         if name:
@@ -125,6 +125,7 @@ class MailNotificationMode:
 
     @staticmethod
     def send_report(task, report, status, target, registry=None):
+        # pylint: disable=unused-argument
         """Send mail report to given target"""
         if not IMailNotification.providedBy(target):
             return
@@ -142,9 +143,9 @@ class MailNotificationMode:
                 subject = "[SCHEDULER WARNING] {}".format(task.name)
             else:
                 subject = "[scheduler] {}".format(task.name)
-            for target in target.target_email or ():
+            for email in target.target_email or ():
                 message = Message(subject=subject,
                                   sender=report_source,
-                                  recipients=(target,),
+                                  recipients=(email,),
                                   body=report.getvalue())
                 mailer.send(message)

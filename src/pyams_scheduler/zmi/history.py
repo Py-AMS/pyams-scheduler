@@ -185,6 +185,7 @@ class TaskHistoryView(AdminModalDisplayForm):
 
     @property
     def title(self):
+        """Title getter"""
         return self.context.name
 
     modal_class = 'modal-xl'
