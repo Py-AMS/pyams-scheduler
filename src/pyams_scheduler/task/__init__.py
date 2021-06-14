@@ -393,7 +393,7 @@ def handle_modified_task(event):
 def handle_removed_task(event):
     """Handle removed task"""
     request = check_request()
-    if request.registry:
+    if request.registry is not None:
         handler = request.registry.settings.get(SCHEDULER_HANDLER_KEY, False)
         if handler:
             task = event.object
