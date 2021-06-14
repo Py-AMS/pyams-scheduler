@@ -420,6 +420,7 @@ class TaskCopyHook(ContextAdapter):
 
     def _copy_history(self, translate):
         task = translate(self.context)
+        task._internal_id = None
         # create empty history
         history = task.history = TaskHistoryContainer()
         locate(history, task, '++history++')
