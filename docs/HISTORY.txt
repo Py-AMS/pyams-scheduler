@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.2
+-----
+ - reset task internal ID after cloning
+ - corrected check on request registry when removing task
+
 1.3.1
 -----
  - added and updated task add and edit forms AJAX renderer
