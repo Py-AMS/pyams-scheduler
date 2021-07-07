@@ -46,7 +46,7 @@ class SchedulerBreadcrumbItem(AdminLayerBreadcrumbItem):
 
 @viewlet_config(name='configuration.menu',
                 context=IScheduler, layer=IAdminLayer,
-                manager=ISiteManagementMenu, weight=1,
+                manager=ISiteManagementMenu, weight=20,
                 permission=MANAGE_SCHEDULER_PERMISSION)
 class SchedulerConfigurationMenu(NavigationMenuItem):
     """Scheduler configuration menu"""
