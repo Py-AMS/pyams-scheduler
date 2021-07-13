@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.3
+-----
+ - updated menus order in management interface
+ - replace ITableElementName interface with IObjectLabel
+
 1.3.2
 -----
  - reset task internal ID after cloning
