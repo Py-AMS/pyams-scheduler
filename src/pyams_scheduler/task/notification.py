@@ -34,6 +34,8 @@ from pyams_security.interfaces import IViewContextPermissionChecker
 from pyams_utils.adapter import ContextAdapter, adapter_config, get_annotation_adapter
 from pyams_utils.factory import factory_config
 from pyams_utils.registry import utility_config
+from pyams_utils.traversing import get_parent
+from pyams_zmi.interfaces import IObjectLabel
 
 
 __docformat__ = 'restructuredtext'
@@ -42,8 +44,6 @@ __docformat__ = 'restructuredtext'
 #
 # Task notifications container
 #
-from pyams_utils.traversing import get_parent
-
 
 @factory_config(ITaskNotificationContainer)
 class TaskNotificationContainer(Folder):
@@ -116,6 +116,13 @@ class MailNotification(TaskNotification):
     mode = MAIL_NOTIFICATION_MODE
 
     target_email = FieldProperty(IMailNotification['target_email'])
+
+
+@adapter_config(required=IMailNotification,
+                provides=IObjectLabel)
+def mail_notification_label(context):
+    """Mail notification name adapter"""
+    return ', '.join(context.target_email or ())
 
 
 @utility_config(name=MAIL_NOTIFICATION_MODE,

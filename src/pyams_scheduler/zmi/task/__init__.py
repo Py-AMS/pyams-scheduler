@@ -35,8 +35,8 @@ from pyams_utils.traversing import get_parent
 from pyams_zmi.form import AdminModalAddForm, AdminModalEditForm
 from pyams_zmi.helper.event import get_json_table_row_add_callback, \
     get_json_table_row_refresh_callback
-from pyams_zmi.interfaces import IAdminLayer
-from pyams_zmi.interfaces.table import ITableElementEditor, ITableElementName
+from pyams_zmi.interfaces import IAdminLayer, IObjectLabel
+from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.table import ActionColumn, TableElementEditor
 
 
@@ -115,8 +115,8 @@ class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
 # Base task edit form
 #
 
-@adapter_config(required=ITask, provides=ITableElementName)
-def task_element_name_factory(context):
+@adapter_config(required=ITask, provides=IObjectLabel)
+def task_label(context):
     """Task table element name factory"""
     return context.name
 

@@ -14,6 +14,7 @@
 
 This module provides components used to manage tasks notifications.
 """
+
 from pyramid.view import view_config
 from zope.interface import Interface
 from zope.intid import IIntIds
@@ -41,7 +42,7 @@ from pyams_zmi.helper.container import delete_container_element, switch_element_
 from pyams_zmi.helper.event import get_json_table_row_add_callback, \
     get_json_table_row_refresh_callback
 from pyams_zmi.interfaces import IAdminLayer
-from pyams_zmi.interfaces.table import ITableElementEditor, ITableElementName
+from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
 from pyams_zmi.table import ActionColumn, IconColumn, InnerTableAdminView, JsActionColumn, \
     NameColumn, Table, TableElementEditor, TrashColumn
@@ -296,13 +297,6 @@ class TaskNotificationEditFormRenderer(ContextRequestViewAdapter):
 #
 # Mail notifications views
 #
-
-@adapter_config(required=IMailNotification,
-                provides=ITableElementName)
-def mail_notification_name_adapter(context):
-    """Mail notification name adapter"""
-    return ', '.join(context.target_email or ())
-
 
 @viewlet_config(name='add-mail-notification.menu',
                 context=ITask, layer=IAdminLayer, view=TaskNotificationsTable,
