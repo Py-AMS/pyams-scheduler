@@ -30,7 +30,7 @@ from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_table.interfaces import IColumn
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
-from pyams_utils.registry import get_utility
+from pyams_utils.registry import get_utility, query_utility
 from pyams_utils.traversing import get_parent
 from pyams_zmi.form import AdminModalAddForm, AdminModalEditForm
 from pyams_zmi.helper.event import get_json_table_row_add_callback, \
@@ -38,6 +38,7 @@ from pyams_zmi.helper.event import get_json_table_row_add_callback, \
 from pyams_zmi.interfaces import IAdminLayer, IObjectLabel
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.table import ActionColumn, TableElementEditor
+from pyams_zmi.utils import get_object_label
 
 
 __docformat__ = 'restructuredtext'
@@ -64,8 +65,15 @@ class TaskHistoryHelpMessage(AlertMessage):
 class BaseTaskAddForm(AdminModalAddForm):  # pylint: disable=abstract-method
     """Base task add form"""
 
-    title = _("Add new task")
+    @property
+    def title(self):
+        translate = self.request.localizer.translate
+        return '<small>{}</small><br />{}'.format(
+            get_object_label(self.context, self.request, self),
+            translate(_("New task: {}")).format(translate(self.content_label)))
+
     legend = _("New task properties")
+    content_label = '--'
 
     fields = Fields(ITaskInfo).select('name', 'schedule_mode')
 
@@ -115,8 +123,9 @@ class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
 # Base task edit form
 #
 
-@adapter_config(required=ITask, provides=IObjectLabel)
-def task_label(context):
+@adapter_config(required=(ITask, IPyAMSLayer, Interface),
+                provides=IObjectLabel)
+def task_label(context, request, view):
     """Task table element name factory"""
     return context.name
 
@@ -127,13 +136,21 @@ class TaskTableElementEditor(TableElementEditor):
     """Task table element editor"""
 
 
-class BaseTaskEditForm(AdminModalEditForm):
-    """Base task edit form"""
+class TaskBaseFormMixin:
+    """Task base edit form mixin"""
 
     @property
     def title(self):
-        """Title getter"""
-        return self.context.name
+        translate = self.request.localizer.translate
+        scheduler = query_utility(IScheduler)
+        task = get_parent(self.context, ITask)
+        return '<small>{}</small><br />{}'.format(
+            get_object_label(scheduler, self.request, self),
+            translate(_("Task: {}")).format(task.name))
+
+
+class BaseTaskEditForm(TaskBaseFormMixin, AdminModalEditForm):
+    """Base task edit form"""
 
     legend = _("Task properties")
 
@@ -204,13 +221,8 @@ class TaskCloneColumn(ActionColumn):
 
 @ajax_form_config(name='clone-task.html', context=ITask,
                   layer=IPyAMSLayer, permission=MANAGE_TASKS_PERMISSION)
-class TaskCloneForm(AdminModalAddForm):
+class TaskCloneForm(TaskBaseFormMixin, AdminModalAddForm):
     """Task clone form"""
-
-    @property
-    def title(self):
-        """Title getter"""
-        return self.context.name
 
     legend = _("Clone task")
 

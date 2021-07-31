@@ -33,10 +33,10 @@ from pyams_layer.interfaces import IFormLayer, IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.sync import IDirectoryHandler, IDirectoryHandlerHostField, \
     IDirectoryInfo, IDirectorySyncTask, IDirectorySyncTaskInfo
-from pyams_scheduler.task.sync import DirectoryInfo
+from pyams_scheduler.task.sync import DirectoryInfo, DirectorySyncTask
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_scheduler.zmi.interfaces import IDirectoryHandlerHostWidget
-from pyams_scheduler.zmi.task import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_utils.adapter import adapter_config
 from pyams_utils.factory import get_interface_name
@@ -146,6 +146,7 @@ class DirectorySyncTaskAddForm(BaseTaskAddForm):
     """Directory synchronization task add form"""
 
     content_factory = IDirectorySyncTask
+    content_label = DirectorySyncTask.label
 
 
 @adapter_config(name='sync-task-info.form',

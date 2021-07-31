@@ -27,6 +27,7 @@ from pyams_pagelet.pagelet import pagelet_config
 from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import IMailNotification, ITaskNotification, \
     ITaskNotificationContainer
+from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_skin.viewlet.menu import MenuItem
@@ -70,13 +71,8 @@ class TaskNotificationsColumn(ActionColumn):
 @pagelet_config(name='notifications.html',
                 context=ITask, layer=IPyAMSLayer,
                 permission=MANAGE_TASKS_PERMISSION)
-class TaskNotificationsView(AdminModalDisplayForm):
+class TaskNotificationsView(TaskBaseFormMixin, AdminModalDisplayForm):
     """Task notifications view"""
-
-    @property
-    def title(self):
-        """Title getter"""
-        return self.context.name
 
 
 #
@@ -234,7 +230,7 @@ class TaskNotificationsTableView(InnerTableAdminView):
 # Base notifications add and edit forms
 #
 
-class TaskNotificationAddForm(AdminModalAddForm):
+class TaskNotificationAddForm(TaskBaseFormMixin, AdminModalAddForm):
     """Base task notification add form"""
 
     legend = _("New notification properties")
@@ -268,7 +264,7 @@ class TaskNotificationEditor(TableElementEditor):
     """Task notification editor adapter"""
 
 
-class TaskNotificationEditForm(AdminModalEditForm):
+class TaskNotificationEditForm(TaskBaseFormMixin, AdminModalEditForm):
     """Base task notification edit form"""
 
     legend = _("Notification properties")
@@ -319,8 +315,6 @@ class MailNotificationAddMenu(MenuItem):
                   permission=MANAGE_TASKS_PERMISSION)
 class MailNotificationAddForm(TaskNotificationAddForm):
     """Mail notification add form"""
-
-    title = _("Add new mail notification")
 
     fields = Fields(IMailNotification).omit('__name__', '__parent__', 'enabled')
     content_factory = IMailNotification

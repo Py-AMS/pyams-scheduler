@@ -24,10 +24,10 @@ from pyams_form.button import Buttons, handler
 from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer, IGroup
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, ITask, \
-    MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import ICronTask, ICronTaskScheduling, IDateTask, \
     IDateTaskScheduling, ILoopTask, ILoopTaskScheduling
+from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.schema.button import SubmitButton
@@ -79,16 +79,12 @@ class ITaskRunButtons(IModalEditFormButtons):
 
 @ajax_form_config(name='run.html', context=ITask, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
-class TaskRunEditForm(AdminModalEditForm):
+class TaskRunEditForm(TaskBaseFormMixin, AdminModalEditForm):
     """Task run edit form"""
-
-    @property
-    def title(self):
-        """Title getter"""
-        return self.context.name
 
     legend = _("Task execution")
     modal_class = 'modal-xl'
+    has_border = True
 
     fields = Fields(Interface)
     buttons = Buttons(ITaskRunButtons).select('debug', 'run', 'close')
@@ -207,13 +203,8 @@ class SchedulerTaskScheduleColumn(ActionColumn):
 
 @ajax_form_config(name='schedule.html', context=ITask, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
-class TaskScheduleEditForm(AdminModalEditForm):
+class TaskScheduleEditForm(TaskBaseFormMixin, AdminModalEditForm):
     """Task schedule edit form"""
-
-    @property
-    def title(self):
-        """Title getter"""
-        return self.context.name
 
     legend = _("Task schedule properties")
     fields = Fields(Interface)
@@ -255,7 +246,7 @@ class CronTaskScheduleEditFormGroup(FormGroupChecker):
 @viewlet_config(name='cron-task-schedule.help',
                 context=ICronTask, layer=IAdminLayer, view=CronTaskScheduleEditFormGroup,
                 manager=IHelpViewletManager, weight=1)
-class CronTaskScheduleEdirFormHelp(AlertMessage):
+class CronTaskScheduleEditFormHelp(AlertMessage):
     """Cron-style task schedule edit form help"""
 
     _message = _("You can enter values like in a \"classical\" crontab: you can set individual "

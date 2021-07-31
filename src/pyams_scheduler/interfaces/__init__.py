@@ -97,6 +97,9 @@ class ISchedulerHandler(Interface):
     """Scheduler manager marker interface"""
 
 
+TASKS_SCHEDULER_LABEL = _("Tasks scheduler")
+
+
 class IScheduler(IAttributeAnnotatable):
     """Scheduler interface"""
 

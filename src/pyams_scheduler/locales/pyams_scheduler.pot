@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2021-05-31 02:09+0200\n"
+"POT-Creation-Date: 2021-07-16 23:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,31 +16,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Lingua 4.14\n"
 
-#: ./src/pyams_scheduler/trigger.py:106
+#: ./src/pyams_scheduler/trigger.py:105
 msgid "Task is not configured for cron-style scheduling!"
 msgstr ""
 
-#: ./src/pyams_scheduler/trigger.py:151
+#: ./src/pyams_scheduler/trigger.py:150
 msgid "Task is not configured for date-style scheduling!"
 msgstr ""
 
-#: ./src/pyams_scheduler/trigger.py:193
+#: ./src/pyams_scheduler/trigger.py:192
 msgid "Task is not configured for loop-style scheduling!"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:58
+#: ./src/pyams_scheduler/include.py:59
 msgid "Manage scheduler properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:62
+#: ./src/pyams_scheduler/include.py:63
 msgid "Manage scheduler tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:75
+#: ./src/pyams_scheduler/include.py:76
 msgid "Scheduler manager (role)"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:88
+#: ./src/pyams_scheduler/include.py:89
 msgid "Tasks manager (role)"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgid "Mail address from which reports will be sent"
 msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/__init__.py:131
-#: ./src/pyams_scheduler/zmi/__init__.py:168
+#: ./src/pyams_scheduler/zmi/__init__.py:171
 msgid "Scheduler tasks"
 msgstr ""
 
@@ -93,6 +93,10 @@ msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/__init__.py:149
 msgid "Tasks manager"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/__init__.py:154
+msgid "Tasks scheduler"
 msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/task/rest.py:33
@@ -551,7 +555,7 @@ msgid "Number of seconds between executions"
 msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/task/__init__.py:256
-#: ./src/pyams_scheduler/zmi/history.py:99
+#: ./src/pyams_scheduler/zmi/history.py:100
 msgid "Task name"
 msgstr ""
 
@@ -621,11 +625,11 @@ msgstr ""
 msgid "If 'No', empty reports will not be sent by mail"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/task/__init__.py:378
+#: ./src/pyams_scheduler/interfaces/task/__init__.py:381
 msgid "Target's email"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/task/__init__.py:379
+#: ./src/pyams_scheduler/interfaces/task/__init__.py:382
 msgid ""
 "Email address of report's recipient; you can enter email address in a simple "
 "form or in in a complete \"Name <adresse@domain.com>\" form"
@@ -664,17 +668,11 @@ msgid ""
 "success"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/scheduler.py:44
-#: ./src/pyams_scheduler/zmi/scheduler.py:64
-#: ./src/pyams_scheduler/zmi/__init__.py:47
-msgid "Tasks scheduler"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/scheduler.py:54
+#: ./src/pyams_scheduler/zmi/scheduler.py:62
 msgid "Configuration"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/scheduler.py:65
+#: ./src/pyams_scheduler/zmi/scheduler.py:73
 msgid "Scheduler configuration"
 msgstr ""
 
@@ -706,67 +704,63 @@ msgstr ""
 msgid "List of scheduler jobs"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:58
+#: ./src/pyams_scheduler/zmi/history.py:59
 msgid "Jobs history"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:114
+#: ./src/pyams_scheduler/zmi/history.py:115
 msgid "Run date"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:127
+#: ./src/pyams_scheduler/zmi/history.py:128
 msgid "Duration"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:145
+#: ./src/pyams_scheduler/zmi/history.py:146
 msgid "Status"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:157
+#: ./src/pyams_scheduler/zmi/history.py:158
 msgid "Tasks execution history"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:159
+#: ./src/pyams_scheduler/zmi/history.py:160
 msgid "List of executed tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:174
-#: ./src/pyams_scheduler/zmi/history.py:241
+#: ./src/pyams_scheduler/zmi/history.py:175
+#: ./src/pyams_scheduler/zmi/history.py:237
 msgid "Task run history"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:199
-msgid "Task execution history"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:201
+#: ./src/pyams_scheduler/zmi/history.py:197
 msgid "List of executed jobs"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:62
-#: ./src/pyams_scheduler/zmi/trigger.py:76
+#: ./src/pyams_scheduler/zmi/trigger.py:63
+#: ./src/pyams_scheduler/zmi/trigger.py:77
 msgid "Run task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:73
+#: ./src/pyams_scheduler/zmi/trigger.py:74
 msgid "Run in debug mode"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:89
+#: ./src/pyams_scheduler/zmi/trigger.py:85
 msgid "Task execution"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:133
+#: ./src/pyams_scheduler/zmi/trigger.py:130
 msgid "Task has been executed!"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:154
+#: ./src/pyams_scheduler/zmi/trigger.py:151
 msgid ""
 "The task has been planned for immediate execution...<br />Check task history "
 "to get execution report."
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:167
+#: ./src/pyams_scheduler/zmi/trigger.py:164
 msgid ""
 "You can run the task in normal mode or in debug mode.\n"
 "In debug mode, the task is started in current application thread, and you will get the output directly in this form.\n"
@@ -774,38 +768,38 @@ msgid ""
 "Please note that in both modes, the scheduling mode is not taken into account, including when the task is disabled!"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:200
+#: ./src/pyams_scheduler/zmi/trigger.py:197
 msgid "Schedule task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:217
+#: ./src/pyams_scheduler/zmi/trigger.py:209
 msgid "Task schedule properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/trigger.py:260
+#: ./src/pyams_scheduler/zmi/trigger.py:252
 msgid ""
 "You can enter values like in a \"classical\" crontab: you can set individual values, ranges (using a dash as separator), steps (using */x), or multiple values (using a comma as separator); steps are used to start a task, for example, every five minutes, in the form \"*/5\".\n"
 "For example: a value of \"3-6,8,10,12,14,16-19\" in the \"hours\" field would mean that the task is to be run each hour from 3 to 6, then at 8, 10, 12 and 14, and finally each hour from 16 to 19; by setting \"*/2\" in the month days field, the task would only run one day out of two.\n"
 "An asterisk means that all possible values are selected (warning when setting this value on seconds!!)"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:72
+#: ./src/pyams_scheduler/zmi/__init__.py:73
 msgid "Tasks definition"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:110
+#: ./src/pyams_scheduler/zmi/__init__.py:113
 msgid "Enabled task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:111
+#: ./src/pyams_scheduler/zmi/__init__.py:114
 msgid "Disabled task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:149
+#: ./src/pyams_scheduler/zmi/__init__.py:152
 msgid "Task ID"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:170
+#: ./src/pyams_scheduler/zmi/__init__.py:173
 msgid "List of scheduler tasks"
 msgstr ""
 
@@ -814,142 +808,144 @@ msgstr ""
 msgid "--"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/task/rest.py:58
-msgid "HTTP/REST API settings"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:85
-msgid "Missing base target URI!"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:97
-msgid "Authentication"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:115
-msgid "Username and password are required to use authentication!"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:128
-msgid "Proxy settings"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:147
-msgid "Proxy access defined without proxy server!"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:175
-msgid ""
-"If this service require a JWT token, you can define the authentication "
-"authority which will be used to get new access tokens."
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:185
-msgid "JWT authority location is required to enable JWT authentication!"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/rest.py:200
-msgid "Add HTTP/REST API caller task..."
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/sync.py:122
-msgid "Synchronization settings"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/sync.py:138
-msgid "Add directory synchronization..."
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/__init__.py:54
-msgid ""
-"You can limit history conservation to a duration or to a number of "
-"iterations. If both are specified, the first encountered limit will take "
-"precedence."
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/__init__.py:65
-msgid "Add new task"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/__init__.py:66
-msgid "New task properties"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/__init__.py:81
-#: ./src/pyams_scheduler/zmi/task/__init__.py:136
-msgid "Task reports"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/__init__.py:119
-msgid "Task properties"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/__init__.py:178
-#: ./src/pyams_scheduler/zmi/task/__init__.py:196
-msgid "Clone task"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/ssh.py:88
-msgid "Command settings"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/ssh.py:104
-msgid "Add local/remote command launcher..."
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:62
-#: ./src/pyams_scheduler/zmi/task/notification.py:219
-msgid "Task notifications"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:103
-msgid "Click icon to enable or disable notification"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:137
-msgid "Target"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:147
-msgid "Send errors reports only"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:159
-msgid "Send all reports"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:170
-msgid "Send empty reports"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:182
-msgid "Don't send empty reports"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:221
-msgid "List of defined task notifications"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:231
-msgid "New notification properties"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:264
-msgid "Notification properties"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:305
-msgid "Add mail notification..."
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/task/notification.py:320
-msgid "Add new mail notification"
-msgstr ""
-
 #: ./src/pyams_scheduler/task/rest.py:44
 msgid "HTTP service"
 msgstr ""
 
 #: ./src/pyams_scheduler/task/sync.py:104
 msgid "Directory synchronization"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:59
+msgid "HTTP/REST API settings"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:86
+msgid "Missing base target URI!"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:98
+msgid "Authentication"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:116
+msgid "Username and password are required to use authentication!"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:129
+msgid "Proxy settings"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:148
+msgid "Proxy access defined without proxy server!"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:176
+msgid ""
+"If this service require a JWT token, you can define the authentication "
+"authority which will be used to get new access tokens."
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:186
+msgid "JWT authority location is required to enable JWT authentication!"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/rest.py:201
+msgid "Add HTTP/REST API caller task..."
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/sync.py:122
+msgid "Synchronization settings"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/sync.py:138
+msgid "Add directory synchronization..."
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/__init__.py:57
+msgid ""
+"You can limit history conservation to a duration or to a number of "
+"iterations. If both are specified, the first encountered limit will take "
+"precedence."
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/__init__.py:73
+#, python-format
+msgid "New task: {}"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/__init__.py:75
+msgid "New task properties"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/__init__.py:91
+#: ./src/pyams_scheduler/task/zmi/__init__.py:172
+msgid "Task reports"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/__init__.py:149
+#, python-format
+msgid "Task: {}"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/__init__.py:155
+msgid "Task properties"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/__init__.py:214
+#: ./src/pyams_scheduler/task/zmi/__init__.py:227
+msgid "Clone task"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/ssh.py:88
+msgid "Command settings"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/ssh.py:104
+msgid "Add local/remote command launcher..."
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:63
+#: ./src/pyams_scheduler/task/zmi/notification.py:224
+msgid "Task notifications"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:115
+msgid "Click icon to enable or disable notification"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:149
+msgid "Target"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:159
+msgid "Send errors reports only"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:171
+msgid "Send all reports"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:182
+msgid "Send empty reports"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:194
+msgid "Don't send empty reports"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:226
+msgid "List of defined task notifications"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:236
+msgid "New notification properties"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:270
+msgid "Notification properties"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:304
+msgid "Add mail notification..."
 msgstr ""

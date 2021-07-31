@@ -20,12 +20,13 @@ from zope.interface import Interface
 from pyams_form.ajax import ajax_form_config
 from pyams_form.field import Fields
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, MANAGE_SCHEDULER_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, MANAGE_SCHEDULER_PERMISSION, \
+    TASKS_SCHEDULER_LABEL
 from pyams_skin.interfaces.viewlet import IBreadcrumbItem
 from pyams_utils.adapter import adapter_config
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.form import AdminEditForm
-from pyams_zmi.interfaces import IAdminLayer
+from pyams_zmi.interfaces import IAdminLayer, IObjectLabel
 from pyams_zmi.interfaces.viewlet import ISiteManagementMenu
 from pyams_zmi.zmi.viewlet.breadcrumb import AdminLayerBreadcrumbItem
 from pyams_zmi.zmi.viewlet.menu import NavigationMenuItem
@@ -36,12 +37,19 @@ __docformat__ = 'restructuredtext'
 from pyams_scheduler import _  # pylint: disable=ungrouped-imports
 
 
+@adapter_config(required=(IScheduler, IPyAMSLayer, Interface),
+                provides=IObjectLabel)
+def scheduler_label(context, request, view):
+    """Scheduler label"""
+    return request.localizer.translate(TASKS_SCHEDULER_LABEL)
+
+
 @adapter_config(required=(IScheduler, IAdminLayer, Interface),
                 provides=IBreadcrumbItem)
 class SchedulerBreadcrumbItem(AdminLayerBreadcrumbItem):
     """Scheduler breadcrumb item"""
 
-    label = _("Tasks scheduler")
+    label = TASKS_SCHEDULER_LABEL
 
 
 @viewlet_config(name='configuration.menu',
@@ -61,7 +69,7 @@ class SchedulerConfigurationMenu(NavigationMenuItem):
 class SchedulerConfigurationEditForm(AdminEditForm):
     """Scheduler configuration edit form"""
 
-    title = _("Tasks scheduler")
+    title = TASKS_SCHEDULER_LABEL
     legend = _("Scheduler configuration")
 
     fields = Fields(IScheduler).select('zodb_name', 'report_mailer', 'report_source')

@@ -20,7 +20,8 @@ from zope.interface import Interface
 
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import IBaseTaskScheduling, IScheduler, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import IBaseTaskScheduling, IScheduler, MANAGE_TASKS_PERMISSION, \
+    TASKS_SCHEDULER_LABEL
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
@@ -44,7 +45,7 @@ from pyams_scheduler import _  # pylint: disable=ungrouped-imports
                 provides=IMenuHeader)
 def scheduler_menu_header(context, request, view, manager):  # pylint: disable=unused-argument
     """Scheduler menu header"""
-    return _("Tasks scheduler")
+    return TASKS_SCHEDULER_LABEL
 
 
 @adapter_config(required=(IScheduler, IAdminLayer, Interface),

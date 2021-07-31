@@ -29,8 +29,9 @@ from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask, IRESTCallerTaskInfo
+from pyams_scheduler.task.rest import RESTCallerTask
 from pyams_scheduler.zmi import SchedulerTasksTable
-from pyams_scheduler.zmi.task import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_skin.viewlet.menu import MenuItem
@@ -208,6 +209,7 @@ class RESTTaskAddForm(BaseTaskAddForm):
     """REST task add form"""
 
     content_factory = IRESTCallerTask
+    content_label = RESTCallerTask.label
 
 
 @adapter_config(name='rest-task-info.form',

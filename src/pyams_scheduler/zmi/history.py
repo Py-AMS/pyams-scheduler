@@ -25,6 +25,7 @@ from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
 from pyams_scheduler.interfaces import IScheduler, ITask, ITaskHistory, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import TASK_STATUS_STYLES
+from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_table.column import GetAttrColumn
@@ -180,13 +181,8 @@ class SchedulerTaskHistoryColumn(ActionColumn):
 
 @pagelet_config(name='jobs-history.html', context=ITask, layer=IPyAMSLayer,
                 permission=MANAGE_TASKS_PERMISSION)
-class TaskHistoryView(AdminModalDisplayForm):
+class TaskHistoryView(TaskBaseFormMixin, AdminModalDisplayForm):
     """Task history view"""
-
-    @property
-    def title(self):
-        """Title getter"""
-        return self.context.name
 
     modal_class = 'modal-xl'
 
@@ -197,7 +193,6 @@ class TaskHistoryView(AdminModalDisplayForm):
 class TaskHistoryTableView(InnerTableAdminView):
     """Task history table view"""
 
-    title = _("Task execution history")
     table_class = SchedulerHistoryTable
     table_label = _("List of executed jobs")
 

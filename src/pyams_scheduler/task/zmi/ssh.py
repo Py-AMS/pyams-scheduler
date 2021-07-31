@@ -30,9 +30,9 @@ from pyams_layer.interfaces import IFormLayer, IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.ssh import ISSHCallTaskInfo, ISSHCallerTask, \
     ISSHConnectionInfo
-from pyams_scheduler.task.ssh import SSHConnectionInfo
+from pyams_scheduler.task.ssh import SSHCallerTask, SSHConnectionInfo
 from pyams_scheduler.zmi import SchedulerTasksTable
-from pyams_scheduler.zmi.task import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_utils.adapter import adapter_config
 from pyams_utils.factory import get_interface_name
@@ -112,6 +112,7 @@ class SSHTaskAddForm(BaseTaskAddForm):
     """SSH task add form"""
 
     content_factory = ISSHCallerTask
+    content_label = SSHCallerTask.label
 
 
 @adapter_config(name='ssh-task-info.form',
