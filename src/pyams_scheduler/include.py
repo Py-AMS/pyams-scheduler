@@ -18,6 +18,7 @@ This module is used for Pyramid integration.
 import atexit
 import logging
 import os.path
+import re
 import sys
 
 from pyramid.events import subscriber
@@ -99,7 +100,7 @@ def include_package(config):
     try:
         import pyams_zmi  # pylint: disable=import-outside-toplevel,unused-import
     except ImportError:
-        config.scan(ignore='pyams_scheduler.zmi')
+        config.scan(ignore=[re.compile(r'pyams_scheduler\..*\.zmi\.?.*').search])
     else:
         config.scan()
 
