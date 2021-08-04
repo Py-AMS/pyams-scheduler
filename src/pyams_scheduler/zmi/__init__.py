@@ -25,14 +25,14 @@ from pyams_scheduler.interfaces import IBaseTaskScheduling, IScheduler, MANAGE_T
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
+from pyams_utils.url import absolute_url
 from pyams_viewlet.manager import viewletmanager_config
 from pyams_zmi.helper.container import delete_container_element
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.interfaces.viewlet import IMenuHeader, IPropertiesMenu, ISiteManagementMenu
 from pyams_zmi.table import I18nColumnMixin, IconColumn, NameColumn, Table, TableAdminView, \
-    TableElementEditor, \
-    TrashColumn
+    TableElementEditor, TrashColumn
 from pyams_zmi.zmi.viewlet.menu import NavigationMenuItem
 
 
@@ -171,6 +171,13 @@ class SchedulerTasksView(TableAdminView):
     title = _("Scheduler tasks")
     table_class = SchedulerTasksTable
     table_label = _("List of scheduler tasks")
+
+    @property
+    def back_url(self):
+        """Form back URL getter"""
+        return absolute_url(self.request.root, self.request, 'admin#utilities.html')
+
+    back_url_target = None
 
 
 @view_config(name='delete-element.json', context=IScheduler, request_type=IPyAMSLayer,
