@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.4.2
+-----
+ - version mismatch
+
 1.4.1
 -----
  - added return link to site utilities view from scheduler tasks view
