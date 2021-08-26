@@ -238,7 +238,7 @@ class JobHistoryView(AdminModalDisplayForm):
     modal_class = 'modal-max'
 
     label_css_class = 'col-sm-3 col-md-2'
-    input_css_class = 'col-sm-9 col-md-8'
+    input_css_class = 'col-sm-9 col-md-10'
 
     fields = Fields(ITaskHistory).omit('__parent__', '__name__')
 
