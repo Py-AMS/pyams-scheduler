@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.5.0
+-----
+ - replaced after-commit hooks with new PyAMS_utils transaction manager
+ - added option to display scheduler access menu in site home
+
 1.4.3
 -----
  - updated history item view form CSS class
