@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2021-07-16 23:55+0200\n"
+"POT-Creation-Date: 2021-09-29 13:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,59 +44,69 @@ msgstr ""
 msgid "Tasks manager (role)"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:105
+#: ./src/pyams_scheduler/interfaces/__init__.py:100
+msgid "Tasks scheduler"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/__init__.py:108
 msgid "ZODB connection name"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:106
+#: ./src/pyams_scheduler/interfaces/__init__.py:109
 msgid "Name of ZODB defining scheduler connection"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:111
+#: ./src/pyams_scheduler/interfaces/__init__.py:114
 msgid "Reports mailer"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:112
+#: ./src/pyams_scheduler/interfaces/__init__.py:115
 msgid "Mail delivery utility used to send mails"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:116
+#: ./src/pyams_scheduler/interfaces/__init__.py:119
 msgid "Reports source"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:117
+#: ./src/pyams_scheduler/interfaces/__init__.py:120
 msgid "Mail address from which reports will be sent"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:131
+#: ./src/pyams_scheduler/interfaces/__init__.py:123
+msgid "Access menu from home"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/__init__.py:124
+msgid ""
+"If 'yes', a menu will be displayed to get access to tasks scheduler from site"
+" admin home page"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/__init__.py:140
 #: ./src/pyams_scheduler/zmi/__init__.py:171
 msgid "Scheduler tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:132
+#: ./src/pyams_scheduler/interfaces/__init__.py:141
 msgid "List of tasks assigned to this scheduler"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:136
+#: ./src/pyams_scheduler/interfaces/__init__.py:145
 #: ./src/pyams_scheduler/interfaces/task/__init__.py:293
 msgid "History"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:137
+#: ./src/pyams_scheduler/interfaces/__init__.py:146
 #: ./src/pyams_scheduler/interfaces/task/__init__.py:294
 msgid "Task history"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:145
+#: ./src/pyams_scheduler/interfaces/__init__.py:154
 msgid "Scheduler managers"
 msgstr ""
 
-#: ./src/pyams_scheduler/interfaces/__init__.py:149
+#: ./src/pyams_scheduler/interfaces/__init__.py:158
 msgid "Tasks manager"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/__init__.py:154
-msgid "Tasks scheduler"
 msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/task/rest.py:33
@@ -668,11 +678,11 @@ msgid ""
 "success"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/scheduler.py:62
+#: ./src/pyams_scheduler/zmi/scheduler.py:87
 msgid "Configuration"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/scheduler.py:73
+#: ./src/pyams_scheduler/zmi/scheduler.py:98
 msgid "Scheduler configuration"
 msgstr ""
 
@@ -869,31 +879,31 @@ msgid ""
 "precedence."
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:73
+#: ./src/pyams_scheduler/task/zmi/__init__.py:74
 #, python-format
 msgid "New task: {}"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:75
+#: ./src/pyams_scheduler/task/zmi/__init__.py:76
 msgid "New task properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:91
-#: ./src/pyams_scheduler/task/zmi/__init__.py:172
+#: ./src/pyams_scheduler/task/zmi/__init__.py:92
+#: ./src/pyams_scheduler/task/zmi/__init__.py:174
 msgid "Task reports"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:149
+#: ./src/pyams_scheduler/task/zmi/__init__.py:151
 #, python-format
 msgid "Task: {}"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:155
+#: ./src/pyams_scheduler/task/zmi/__init__.py:157
 msgid "Task properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:214
-#: ./src/pyams_scheduler/task/zmi/__init__.py:227
+#: ./src/pyams_scheduler/task/zmi/__init__.py:216
+#: ./src/pyams_scheduler/task/zmi/__init__.py:229
 msgid "Clone task"
 msgstr ""
 

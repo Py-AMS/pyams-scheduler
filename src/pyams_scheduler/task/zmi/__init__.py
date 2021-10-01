@@ -67,6 +67,7 @@ class BaseTaskAddForm(AdminModalAddForm):  # pylint: disable=abstract-method
 
     @property
     def title(self):
+        """Title getter"""
         translate = self.request.localizer.translate
         return '<small>{}</small><br />{}'.format(
             get_object_label(self.context, self.request, self),
@@ -125,7 +126,7 @@ class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
 
 @adapter_config(required=(ITask, IPyAMSLayer, Interface),
                 provides=IObjectLabel)
-def task_label(context, request, view):
+def task_label(context, request, view):  # pylint: disable=unused-argument
     """Task table element name factory"""
     return context.name
 
@@ -141,6 +142,7 @@ class TaskBaseFormMixin:
 
     @property
     def title(self):
+        """Title getter"""
         translate = self.request.localizer.translate
         scheduler = query_utility(IScheduler)
         task = get_parent(self.context, ITask)

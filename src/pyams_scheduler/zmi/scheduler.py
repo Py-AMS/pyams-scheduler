@@ -22,12 +22,15 @@ from pyams_form.field import Fields
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_SCHEDULER_PERMISSION, \
     TASKS_SCHEDULER_LABEL
+from pyams_site.interfaces import ISiteRoot
 from pyams_skin.interfaces.viewlet import IBreadcrumbItem
 from pyams_utils.adapter import adapter_config
+from pyams_utils.registry import get_utility, query_utility
+from pyams_utils.url import absolute_url
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.form import AdminEditForm
 from pyams_zmi.interfaces import IAdminLayer, IObjectLabel
-from pyams_zmi.interfaces.viewlet import ISiteManagementMenu
+from pyams_zmi.interfaces.viewlet import IControlPanelMenu, ISiteManagementMenu
 from pyams_zmi.zmi.viewlet.breadcrumb import AdminLayerBreadcrumbItem
 from pyams_zmi.zmi.viewlet.menu import NavigationMenuItem
 
@@ -39,7 +42,7 @@ from pyams_scheduler import _  # pylint: disable=ungrouped-imports
 
 @adapter_config(required=(IScheduler, IPyAMSLayer, Interface),
                 provides=IObjectLabel)
-def scheduler_label(context, request, view):
+def scheduler_label(context, request, view):  # pylint: disable=unused-argument
     """Scheduler label"""
     return request.localizer.translate(TASKS_SCHEDULER_LABEL)
 
@@ -50,6 +53,28 @@ class SchedulerBreadcrumbItem(AdminLayerBreadcrumbItem):
     """Scheduler breadcrumb item"""
 
     label = TASKS_SCHEDULER_LABEL
+
+
+@viewlet_config(name='scheduler.menu',
+                context=ISiteRoot, layer=IAdminLayer,
+                manager=IControlPanelMenu, weight=25,
+                permission=MANAGE_SCHEDULER_PERMISSION)
+class SchedulerMenu(NavigationMenuItem):
+    """Scheduler root menu"""
+
+    label = TASKS_SCHEDULER_LABEL
+    icon_class = 'fa fa-clock'
+
+    def __new__(cls, context, request, view, manager):  # pylint: disable=unused-argument
+        scheduler = query_utility(IScheduler)
+        if (scheduler is None) or not scheduler.show_home_menu:
+            return None
+        return NavigationMenuItem.__new__(cls)
+
+    def get_href(self):
+        """Menu URL getter"""
+        scheduler = get_utility(IScheduler)
+        return absolute_url(scheduler, self.request, 'admin')
 
 
 @viewlet_config(name='configuration.menu',
@@ -72,4 +97,5 @@ class SchedulerConfigurationEditForm(AdminEditForm):
     title = TASKS_SCHEDULER_LABEL
     legend = _("Scheduler configuration")
 
-    fields = Fields(IScheduler).select('zodb_name', 'report_mailer', 'report_source')
+    fields = Fields(IScheduler).select('zodb_name', 'report_mailer', 'report_source',
+                                       'show_home_menu')

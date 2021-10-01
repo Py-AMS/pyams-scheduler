@@ -175,7 +175,7 @@ class SchedulerTasksView(TableAdminView):
     @property
     def back_url(self):
         """Form back URL getter"""
-        return absolute_url(self.request.root, self.request, 'admin#utilities.html')
+        return absolute_url(self.request.root, self.request, 'admin#utilities.html')  # pylint: disable=no-member
 
     back_url_target = None
 
