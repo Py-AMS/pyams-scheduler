@@ -22,7 +22,6 @@ import traceback
 from datetime import datetime
 from io import StringIO
 
-import transaction
 from persistent import Persistent
 from pyramid.config import Configurator
 from pyramid.events import subscriber
@@ -49,10 +48,12 @@ from pyams_security.interfaces import IViewContextPermissionChecker
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.date import get_duration
+from pyams_utils.interfaces.transaction import ITransactionClient
 from pyams_utils.registry import get_pyramid_registry, get_utility, query_utility, \
     set_local_registry
 from pyams_utils.request import check_request
 from pyams_utils.timezone import tztime
+from pyams_utils.transaction import TransactionClient, transactional
 from pyams_utils.traversing import get_parent
 from pyams_utils.zodb import ZODBConnection
 from pyams_zmq.socket import zmq_response, zmq_socket
@@ -93,7 +94,29 @@ class TaskHistoryContainer(Folder):
                     del self[key]
 
 
-@implementer(ITask)
+class TaskHandler(TransactionClient):
+    """Generic task handler"""
+
+    @transactional
+    def execute(self, task, action, job_id, registry=None):
+        """Execute scheduler action"""
+        scheduler = query_utility(IScheduler)
+        if scheduler is not None:
+            registry = registry if registry is not None else get_pyramid_registry()
+            handler = registry.settings.get(SCHEDULER_HANDLER_KEY, False)
+            if handler:
+                zmq_settings = {
+                    'zodb_name': scheduler.zodb_name,
+                    'task_name': task.__name__,
+                    'job_id': job_id
+                }
+                LOGGER.debug(f"Starting '{action}' on task {task.name} with {zmq_settings!r}")
+                socket = zmq_socket(handler, auth=registry.settings.get(SCHEDULER_AUTH_KEY))
+                socket.send_json([action, zmq_settings])
+                zmq_response(socket)
+
+
+@implementer(ITask, ITransactionClient)
 class Task(Persistent, Contained):
     """Task definition persistent class"""
 
@@ -186,65 +209,13 @@ class Task(Persistent, Contained):
 
     def reset(self):
         """Task reset launcher"""
-        scheduler_util = query_utility(IScheduler)
-        if scheduler_util is not None:
-            # get task internal ID before transaction ends!!!
-            transaction.get().addAfterCommitHook(self._reset_action, kws={
-                'scheduler': scheduler_util,
-                'registry': get_pyramid_registry(),
-                'job_id': self.internal_id
-            })
-
-    def _reset_action(self, status, *args, **kwargs):  # pylint: disable=unused-argument
-        """Task reset action, called in an after-commit hook"""
-        if not status:
-            return
-        scheduler_util = kwargs.get('scheduler')
-        if scheduler_util is None:
-            return
-        registry = kwargs.get('registry') or get_pyramid_registry()
-        handler = registry.settings.get(SCHEDULER_HANDLER_KEY, False)
-        if handler:
-            zmq_settings = {
-                'zodb_name': scheduler_util.zodb_name,
-                'task_name': self.__name__,
-                'job_id': kwargs.get('job_id')
-            }
-            LOGGER.debug("Resetting task {0.name} with {1!r}".format(self, zmq_settings))
-            socket = zmq_socket(handler, auth=registry.settings.get(SCHEDULER_AUTH_KEY))
-            socket.send_json(['reset_task', zmq_settings])
-            zmq_response(socket)
+        handler = TaskHandler()
+        handler.execute(self, 'reset_task', self.internal_id)
 
     def launch(self):
         """Task immediate launcher"""
-        scheduler_util = query_utility(IScheduler)
-        if scheduler_util is not None:
-            # get task internal ID before transaction ends!!!
-            transaction.get().addAfterCommitHook(self._launch_action, kws={
-                'scheduler': scheduler_util,
-                'registry': get_pyramid_registry(),
-                'job_id': self.internal_id
-            })
-
-    def _launch_action(self, status, *args, **kwargs):  # pylint: disable=unused-argument
-        """Task immediate launch action"""
-        if not status:
-            return
-        scheduler_util = kwargs.get('scheduler')
-        if scheduler_util is None:
-            return
-        registry = kwargs.get('registry') or get_pyramid_registry()
-        handler = registry.settings.get(SCHEDULER_HANDLER_KEY, False)
-        if handler:
-            zmq_settings = {
-                'zodb_name': scheduler_util.zodb_name,
-                'task_name': self.__name__,
-                'job_id': kwargs.get('job_id')
-            }
-            LOGGER.debug("Running task {0.name} with {1!r}".format(self, zmq_settings))
-            socket = zmq_socket(handler, auth=registry.settings.get(SCHEDULER_AUTH_KEY))
-            socket.send_json(['run_task', zmq_settings])
-            zmq_response(socket)
+        handler = TaskHandler()
+        handler.execute(self, 'run_task', self.internal_id)
 
     def __call__(self, *args, **kwargs):
         report = StringIO()
@@ -420,7 +391,7 @@ class TaskCopyHook(ContextAdapter):
 
     def _copy_history(self, translate):
         task = translate(self.context)
-        task._internal_id = None
+        task._internal_id = None  # pylint: disable=protected-access
         # create empty history
         history = task.history = TaskHistoryContainer()
         locate(history, task, '++history++')
