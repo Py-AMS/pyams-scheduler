@@ -19,7 +19,7 @@ from zope.annotation import IAttributeAnnotatable
 from zope.container.constraints import contains
 from zope.interface import Attribute, Interface, implementer
 from zope.interface.interfaces import IObjectEvent, ObjectEvent
-from zope.schema import Choice, List, Object, TextLine
+from zope.schema import Bool, Choice, List, Object, TextLine
 
 from pyams_mail.interfaces import MAILERS_VOCABULARY_NAME
 from pyams_scheduler.interfaces.task import IBaseTaskScheduling, ITask, ITaskHistory, \
@@ -119,6 +119,12 @@ class IScheduler(IAttributeAnnotatable):
     report_source = TextLine(title=_("Reports source"),
                              description=_("Mail address from which reports will be sent"),
                              required=False)
+
+    show_home_menu = Bool(title=_("Access menu from home"),
+                          description=_("If 'yes', a menu will be displayed to get access to "
+                                        "tasks scheduler from site admin home page"),
+                          required=True,
+                          default=False)
 
     internal_id = Attribute("Internal ID")
 
