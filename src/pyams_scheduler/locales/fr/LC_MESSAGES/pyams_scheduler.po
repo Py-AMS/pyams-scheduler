@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2021-09-29 13:49+0200\n"
+"POT-Creation-Date: 2021-10-16 12:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,41 +72,54 @@ msgid "Mail address from which reports will be sent"
 msgstr "Adresse de messagerie indiquée comme émettrice des rapports envoyés"
 
 #: src/pyams_scheduler/interfaces/__init__.py:123
+msgid "Notified host"
+msgstr "Envoi des notifications"
+
+#: src/pyams_scheduler/interfaces/__init__.py:124
+msgid ""
+"If websockets notifications are enabled, this is the host (including "
+"protocol) which will be notified"
+msgstr ""
+"Si le support des notifications via les websockets est activé, vous devez indiquer "
+"ici le nom de l'hôte (en intégrant le protocole) sur lequel les notifications "
+"seront visibles"
+
+#: src/pyams_scheduler/interfaces/__init__.py:129
 msgid "Access menu from home"
 msgstr "Ajouter un accès depuis l'accueil"
 
-#: src/pyams_scheduler/interfaces/__init__.py:124
+#: src/pyams_scheduler/interfaces/__init__.py:130
 msgid ""
 "If 'yes', a menu will be displayed to get access to tasks scheduler from "
 "site admin home page"
 msgstr ""
-"Si 'oui', un menu d'accès aux tâches planifiées sera ajouté depuis la "
-"page d'accueil de l'interface d'administration du site"
+"Si 'oui', un menu d'accès aux tâches planifiées sera ajouté depuis la page "
+"d'accueil de l'interface d'administration du site"
 
-#: src/pyams_scheduler/interfaces/__init__.py:140
+#: src/pyams_scheduler/interfaces/__init__.py:146
 #: src/pyams_scheduler/zmi/__init__.py:171
 msgid "Scheduler tasks"
 msgstr "Tâches planifiées"
 
-#: src/pyams_scheduler/interfaces/__init__.py:141
+#: src/pyams_scheduler/interfaces/__init__.py:147
 msgid "List of tasks assigned to this scheduler"
 msgstr "Liste des tâches associées au planificateur"
 
-#: src/pyams_scheduler/interfaces/__init__.py:145
+#: src/pyams_scheduler/interfaces/__init__.py:151
 #: src/pyams_scheduler/interfaces/task/__init__.py:293
 msgid "History"
 msgstr "Historique"
 
-#: src/pyams_scheduler/interfaces/__init__.py:146
+#: src/pyams_scheduler/interfaces/__init__.py:152
 #: src/pyams_scheduler/interfaces/task/__init__.py:294
 msgid "Task history"
 msgstr "Historique"
 
-#: src/pyams_scheduler/interfaces/__init__.py:154
+#: src/pyams_scheduler/interfaces/__init__.py:160
 msgid "Scheduler managers"
 msgstr "Administrateurs"
 
-#: src/pyams_scheduler/interfaces/__init__.py:158
+#: src/pyams_scheduler/interfaces/__init__.py:164
 msgid "Tasks manager"
 msgstr "Gestionnaires de tâches"
 
@@ -833,8 +846,10 @@ msgid "Run in debug mode"
 msgstr "Lancer en mode debug"
 
 #: src/pyams_scheduler/zmi/trigger.py:85
+#: src/pyams_scheduler/task/__init__.py:293
+#: src/pyams_scheduler/task/__init__.py:314
 msgid "Task execution"
-msgstr "Exécuter la tâche"
+msgstr "Tâche planifiée"
 
 #: src/pyams_scheduler/zmi/trigger.py:130
 msgid "Task has been executed!"
@@ -935,6 +950,16 @@ msgstr "Service HTTP"
 #: src/pyams_scheduler/task/sync.py:104
 msgid "Directory synchronization"
 msgstr "Synchronisation de répertoires"
+
+#: src/pyams_scheduler/task/__init__.py:294
+#, python-format
+msgid "Task '{}' was executed without error"
+msgstr "La tâche '{}' a été exécutée sans erreur."
+
+#: src/pyams_scheduler/task/__init__.py:315
+#, python-format
+msgid "An error occurred during execution of task '{}'"
+msgstr "Une erreur est intervenue pendant l'exécution de la tâche '{}'."
 
 #: src/pyams_scheduler/task/zmi/rest.py:59
 msgid "HTTP/REST API settings"

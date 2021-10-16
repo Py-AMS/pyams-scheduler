@@ -120,6 +120,12 @@ class IScheduler(IAttributeAnnotatable):
                              description=_("Mail address from which reports will be sent"),
                              required=False)
 
+    notified_host = TextLine(title=_("Notified host"),
+                             description=_("If websockets notifications are enabled, this is "
+                                           "the host (including protocol) which will "
+                                           "be notified"),
+                             required=False)
+
     show_home_menu = Bool(title=_("Access menu from home"),
                           description=_("If 'yes', a menu will be displayed to get access to "
                                         "tasks scheduler from site admin home page"),

@@ -15,8 +15,6 @@
 This module defines base tasks classes.
 """
 
-__docformat__ = 'restructuredtext'
-
 import logging
 import traceback
 from datetime import datetime
@@ -38,13 +36,22 @@ from zope.lifecycleevent import IObjectAddedEvent, IObjectModifiedEvent, IObject
 from zope.location import locate
 from zope.schema.fieldproperty import FieldProperty
 
+from pyams_utils.url import absolute_url, relative_url
+
+
+try:
+    from pyams_chat.message import ChatMessage
+except ImportError:
+    ChatMessage = None
+
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
     ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
-    SCHEDULER_NAME
+    SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
 from pyams_scheduler.interfaces.task import ITaskHistoryContainer, ITaskInfo, \
-    ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_EMPTY, \
-    TASK_STATUS_ERROR, TASK_STATUS_NONE, TASK_STATUS_OK
-from pyams_security.interfaces import IViewContextPermissionChecker
+    ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_EMPTY, TASK_STATUS_ERROR, \
+    TASK_STATUS_NONE, TASK_STATUS_OK
+from pyams_security.interfaces import ADMIN_USER_ID, INTERNAL_USER_ID, \
+    IProtectedObject, IViewContextPermissionChecker, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.date import get_duration
@@ -57,6 +64,11 @@ from pyams_utils.transaction import TransactionClient, transactional
 from pyams_utils.traversing import get_parent
 from pyams_utils.zodb import ZODBConnection
 from pyams_zmq.socket import zmq_response, zmq_socket
+
+
+__docformat__ = 'restructuredtext'
+
+from pyams_scheduler import _
 
 
 LOGGER = logging.getLogger('PyAMS (scheduler)')
@@ -252,10 +264,12 @@ class Task(Persistent, Contained):
                 if task is not None:
                     set_local_registry(sm)
                     request = check_request(registry=registry, principal_id=self.principal_id)
+                    request.root = root
                     with RequestContext(request):
                         if not (kwargs.get('run_immediate') or task.is_runnable()):
                             LOGGER.debug("Skipping inactive task {0}".format(task.name))
                             return status, result
+                        translate = request.localizer.translate
                         tm = ITransactionManager(task)  # pylint: disable=invalid-name
                         for attempt in tm.attempts():
                             with attempt as t:  # pylint: disable=invalid-name
@@ -268,12 +282,43 @@ class Task(Persistent, Contained):
                                     duration = (end_date - start_date).total_seconds()
                                     report.write('\n\nTask duration: {0}'.format(
                                         get_duration(start_date, request=request)))
+                                    if ChatMessage is not None:
+                                        message = ChatMessage(
+                                            request=request,
+                                            host=scheduler_util.notified_host,
+                                            action='notify',
+                                            category='scheduler.run',
+                                            status='success',
+                                            source=INTERNAL_USER_ID,
+                                            title=translate(_("Task execution")),
+                                            message=translate(_("Task '{}' was executed without "
+                                                                "error")).format(task.name),
+                                            url='/'.join(('', '++etc++site',
+                                                          scheduler_util.__name__, 'admin'))
+                                        )
+                                        message.send()
                                 except:  # pylint: disable=bare-except
                                     status = TASK_STATUS_ERROR
                                     # pylint: disable=protected-access
                                     task._log_exception(report,
                                                         "An error occurred during execution of "
                                                         "task '{0}'".format(task.name))
+                                    if ChatMessage is not None:
+                                        message = ChatMessage(
+                                            request=request,
+                                            host=scheduler_util.notified_host,
+                                            action='notify',
+                                            category='scheduler.run',
+                                            status='danger',
+                                            source=INTERNAL_USER_ID,
+                                            title=translate(_("Task execution")),
+                                            message=translate(_("An error occurred during "
+                                                                "execution of task '{}'"
+                                                                "")).format(task.name),
+                                            url='/'.join(('', '++etc++site',
+                                                          scheduler_util.__name__, 'admin'))
+                                        )
+                                        message.send()
                                 registry.notify(AfterRunJobEvent(task, status, result))
                                 task.store_report(report, status, start_date, duration)
                                 task.send_report(report, status, registry)
@@ -406,3 +451,30 @@ class TaskPermissionChecker(ContextAdapter):
     """Task permission checker"""
 
     edit_permission = MANAGE_TASKS_PERMISSION
+
+
+if ChatMessage is not None:
+
+    from pyams_chat.interfaces import IChatMessage, IChatMessageHandler
+
+    @adapter_config(name='scheduler.run',
+                    required=IChatMessage,
+                    provides=IChatMessageHandler)
+    class SchedulerTaskRunMessageHandler(ContextAdapter):
+        """Scheduler task run message handler"""
+
+        def get_target(self):
+            """Chat message targets getter"""
+            principals = {ADMIN_USER_ID}
+            root = self.context.request.root
+            protection = IProtectedObject(root, None)
+            if protection is not None:
+                principals |= protection.get_principals(SYSTEM_ADMIN_ROLE)
+            scheduler = get_utility(IScheduler)
+            protection = IProtectedObject(scheduler, None)
+            if protection is not None:
+                principals |= protection.get_principals(SCHEDULER_MANAGER_ROLE)
+                principals |= protection.get_principals(TASKS_MANAGER_ROLE)
+            return {
+                'principals': tuple(principals)
+            }

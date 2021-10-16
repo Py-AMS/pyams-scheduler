@@ -48,6 +48,7 @@ class Scheduler(ProtectedObjectMixin, Folder):
     zodb_name = FieldProperty(IScheduler['zodb_name'])
     report_mailer = FieldProperty(IScheduler['report_mailer'])
     report_source = FieldProperty(IScheduler['report_source'])
+    notified_host = FieldProperty(IScheduler['notified_host'])
     show_home_menu = FieldProperty(IScheduler['show_home_menu'])
 
     @property

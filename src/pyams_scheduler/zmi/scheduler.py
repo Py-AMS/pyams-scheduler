@@ -98,4 +98,4 @@ class SchedulerConfigurationEditForm(AdminEditForm):
     legend = _("Scheduler configuration")
 
     fields = Fields(IScheduler).select('zodb_name', 'report_mailer', 'report_source',
-                                       'show_home_menu')
+                                       'notified_host', 'show_home_menu')
