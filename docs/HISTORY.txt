@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.6.0
+-----
+ - added support for *PyAMS_chat* package to send notifications after task execution
+
 1.5.0
 -----
  - replaced after-commit hooks with new PyAMS_utils transaction manager
