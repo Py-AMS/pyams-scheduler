@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.6.1
+-----
+ - added check for correct host configuration before sending notifications
+
 1.6.0
 -----
  - added support for *PyAMS_chat* package to send notifications after task execution
