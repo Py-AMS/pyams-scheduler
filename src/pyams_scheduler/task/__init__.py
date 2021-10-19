@@ -36,8 +36,6 @@ from zope.lifecycleevent import IObjectAddedEvent, IObjectModifiedEvent, IObject
 from zope.location import locate
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_utils.url import absolute_url, relative_url
-
 
 try:
     from pyams_chat.message import ChatMessage
@@ -50,8 +48,8 @@ from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, ISch
 from pyams_scheduler.interfaces.task import ITaskHistoryContainer, ITaskInfo, \
     ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_EMPTY, TASK_STATUS_ERROR, \
     TASK_STATUS_NONE, TASK_STATUS_OK
-from pyams_security.interfaces import ADMIN_USER_ID, INTERNAL_USER_ID, \
-    IProtectedObject, IViewContextPermissionChecker, SYSTEM_ADMIN_ROLE
+from pyams_security.interfaces import ADMIN_USER_ID, INTERNAL_USER_ID, IProtectedObject, \
+    IViewContextPermissionChecker, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.date import get_duration
@@ -282,7 +280,7 @@ class Task(Persistent, Contained):
                                     duration = (end_date - start_date).total_seconds()
                                     report.write('\n\nTask duration: {0}'.format(
                                         get_duration(start_date, request=request)))
-                                    if ChatMessage is not None:
+                                    if scheduler_util.notified_host and (ChatMessage is not None):
                                         message = ChatMessage(
                                             request=request,
                                             host=scheduler_util.notified_host,
@@ -303,7 +301,7 @@ class Task(Persistent, Contained):
                                     task._log_exception(report,
                                                         "An error occurred during execution of "
                                                         "task '{0}'".format(task.name))
-                                    if ChatMessage is not None:
+                                    if scheduler_util.notified_host and (ChatMessage is not None):
                                         message = ChatMessage(
                                             request=request,
                                             host=scheduler_util.notified_host,
