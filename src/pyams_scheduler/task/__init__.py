@@ -256,13 +256,15 @@ class Task(Persistent, Contained):
             try:
                 application_name = registry.settings.get(PYAMS_APPLICATION_SETTINGS_KEY,
                                                          PYAMS_APPLICATION_DEFAULT_NAME)
-                sm = root.get(application_name).getSiteManager()  # pylint: disable=invalid-name
+                application = root.get(application_name)
+                sm = application.getSiteManager()  # pylint: disable=invalid-name
                 scheduler_util = sm.get(SCHEDULER_NAME)
                 task = scheduler_util.get(self.__name__)
                 if task is not None:
                     set_local_registry(sm)
-                    request = check_request(registry=registry, principal_id=self.principal_id)
-                    request.root = root
+                    request = check_request(base_url=scheduler_util.notified_host,
+                                            registry=registry, principal_id=self.principal_id)
+                    request.root = application
                     with RequestContext(request):
                         if not (kwargs.get('run_immediate') or task.is_runnable()):
                             LOGGER.debug("Skipping inactive task {0}".format(task.name))
