@@ -723,7 +723,7 @@ msgid ""
 "form or in in a complete \"Name <adresse@domain.com>\" form"
 msgstr ""
 "Adresse de messagerie des destinataires ; vous pouvez indiquer des adresses "
-"simples, ou sous la forme \"Nom Prénom <mail@domain.com>\", à raison d'une "
+"simples, ou sous la forme \"Nom Prénom &lt;mail@domain.com&gt;\", à raison d'une "
 "adresse par ligne"
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:32
