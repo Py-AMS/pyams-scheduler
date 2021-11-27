@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.6.3
+-----
+ - translation update
+
 1.6.2
 -----
  - updated new request base URL when running a task to be able to generate correct
