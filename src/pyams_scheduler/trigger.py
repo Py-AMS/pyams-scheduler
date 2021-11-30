@@ -28,7 +28,8 @@ from zope.schema.fieldproperty import FieldProperty
 from pyams_scheduler.interfaces import TASK_SCHEDULING_MODES_VOCABULARY
 from pyams_scheduler.interfaces.task import ICronTask, ICronTaskScheduling, IDateTask, \
     IDateTaskScheduling, ILoopTask, ILoopTaskScheduling, ITaskSchedulingMode, \
-    SCHEDULER_TASK_CRON_INFO, SCHEDULER_TASK_DATE_INFO, SCHEDULER_TASK_LOOP_INFO
+    SCHEDULER_TASK_CRON_INFO, SCHEDULER_TASK_CRON_MODE, SCHEDULER_TASK_DATE_INFO, \
+    SCHEDULER_TASK_DATE_MODE, SCHEDULER_TASK_LOOP_INFO, SCHEDULER_TASK_LOOP_MODE
 from pyams_utils.adapter import adapter_config, get_annotation_adapter
 from pyams_utils.date import date_to_datetime
 from pyams_utils.factory import factory_config
@@ -92,7 +93,7 @@ def cron_task_scheduler_info_factory(context):
                                   notify=False, locate=False)
 
 
-@utility_config(name='Cron-style scheduling', provides=ITaskSchedulingMode)
+@utility_config(name=SCHEDULER_TASK_CRON_MODE, provides=ITaskSchedulingMode)
 class CronTaskScheduler:
     """Cron-style scheduler mode"""
 
@@ -137,7 +138,7 @@ def date_task_scheduler_info_factory(context):
                                   notify=False, locate=False)
 
 
-@utility_config(name='Date-style scheduling', provides=ITaskSchedulingMode)
+@utility_config(name=SCHEDULER_TASK_DATE_MODE, provides=ITaskSchedulingMode)
 class DateTaskScheduler:
     """Date-style scheduler mode"""
 
@@ -179,7 +180,7 @@ def loop_task_scheduler_info_factory(context):
                                   notify=False, locate=False)
 
 
-@utility_config(name='Loop-style scheduling', provides=ITaskSchedulingMode)
+@utility_config(name=SCHEDULER_TASK_LOOP_MODE, provides=ITaskSchedulingMode)
 class LoopTaskScheduler:
     """Loop-style scheduler mode"""
 

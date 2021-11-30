@@ -15,16 +15,17 @@
 This module defines scheduler tasks interfaces.
 """
 
-__docformat__ = 'restructuredtext'
-
 from zope.annotation import IAttributeAnnotatable
 from zope.container.constraints import containers, contains
 from zope.container.interfaces import IContainer
 from zope.interface import Attribute, Interface
 from zope.schema import Bool, Bytes, Choice, Datetime, Float, Int, List, Object, Text, TextLine
+from pyams_utils.schema import TextLineListField
+
+
+__docformat__ = 'restructuredtext'
 
 from pyams_scheduler import _
-from pyams_utils.schema import TextLineListField
 
 
 TASK_STATUS_NONE = None
@@ -125,6 +126,7 @@ class IBaseTaskScheduling(Interface):
 # Scheduler cron-style tasks interfaces
 #
 
+SCHEDULER_TASK_CRON_MODE = 'Cron-style scheduling'
 SCHEDULER_TASK_CRON_INFO = 'pyams_scheduler.trigger.cron'
 
 
@@ -185,6 +187,7 @@ class ICronTaskScheduling(IBaseTaskScheduling):
 # Scheduler date-style tasks interface
 #
 
+SCHEDULER_TASK_DATE_MODE = 'Date-style scheduling'
 SCHEDULER_TASK_DATE_INFO = 'pyams_scheduler.trigger.date'
 
 
@@ -204,6 +207,7 @@ class IDateTaskScheduling(IBaseTaskScheduling):
 # Scheduler loop-style tasks interface
 #
 
+SCHEDULER_TASK_LOOP_MODE = 'Loop-style scheduling'
 SCHEDULER_TASK_LOOP_INFO = 'pyams_scheduler.trigger.loop'
 
 
