@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.6.4
+-----
+ - use constants to define tasks schedule modes
+ - use new generic ZMI columns classes in notifications management view
+
 1.6.3
 -----
  - translation update
