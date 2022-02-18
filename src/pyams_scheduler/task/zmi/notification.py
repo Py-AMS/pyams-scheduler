@@ -33,7 +33,6 @@ from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
-from pyams_utils.data import ObjectDataManagerMixin
 from pyams_utils.registry import get_utility
 from pyams_utils.traversing import get_parent
 from pyams_utils.url import absolute_url
@@ -45,8 +44,8 @@ from pyams_zmi.helper.event import get_json_table_row_add_callback, \
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
-from pyams_zmi.table import ActionColumn, IconColumn, InnerTableAdminView, JsActionColumn, \
-    NameColumn, Table, TableElementEditor, TrashColumn
+from pyams_zmi.table import ActionColumn, IconColumn, InnerTableAdminView, NameColumn, Table, \
+    TableElementEditor, TrashColumn, VisibilityColumn
 
 
 __docformat__ = 'restructuredtext'
@@ -109,13 +108,10 @@ class TaskNotificationsTableValues(ContextRequestViewAdapter):
 @adapter_config(name='enabled',
                 required=(ITask, IAdminLayer, TaskNotificationsTable),
                 provides=IColumn)
-class TaskNotificationsTableEnabledColumn(ObjectDataManagerMixin, JsActionColumn):
+class TaskNotificationsTableEnabledColumn(VisibilityColumn):
     """Task notifications table enabled column"""
 
     hint = _("Click icon to enable or disable notification")
-
-    href = 'MyAMS.container.switchElementAttribute'
-    modal_target = False
 
     object_data = {
         'ams-modules': 'container',
@@ -124,8 +120,6 @@ class TaskNotificationsTableEnabledColumn(ObjectDataManagerMixin, JsActionColumn
         'ams-icon-on': 'far fa-bell',
         'ams-icon-off': 'far fa-bell-slash'
     }
-
-    weight = 1
 
     def get_icon_class(self, item):
         """Icon class getter"""
