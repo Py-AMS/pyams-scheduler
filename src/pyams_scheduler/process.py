@@ -228,7 +228,7 @@ class SchedulerHandler:
             'id': job.id,
             'name': job.name,
             'trigger': '{0!s}'.format(job.trigger),
-            'next_run': job.next_run_time.timestamp()
+            'next_run': job.next_run_time.timestamp() if job.next_run_time else None
         } for job in scheduler.get_jobs()]]
 
     def reset_task(self, settings):
