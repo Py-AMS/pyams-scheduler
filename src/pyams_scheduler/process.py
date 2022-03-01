@@ -209,6 +209,10 @@ class SchedulerHandler:
 
     process = None
 
+    def ping(self, settings):
+        """Scheduler ping handler"""
+        return [200, 'pong']
+
     def test(self, settings):  # pylint: disable=unused-argument
         """Scheduler handler test"""
         messages = [
