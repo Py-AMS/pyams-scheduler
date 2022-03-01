@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.6.5
+-----
+ - check job next run time when getting list of scheduled jobs
+ - added ping message handler to check process communication
+
 1.6.4
 -----
  - use constants to define tasks schedule modes
