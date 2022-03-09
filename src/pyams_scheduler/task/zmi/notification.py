@@ -44,8 +44,9 @@ from pyams_zmi.helper.event import get_json_table_row_add_callback, \
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
-from pyams_zmi.table import ActionColumn, IconColumn, InnerTableAdminView, NameColumn, Table, \
-    TableElementEditor, TrashColumn, VisibilityColumn
+from pyams_zmi.table import ActionColumn, AttributeSwitcherColumn, IconColumn, \
+    InnerTableAdminView, NameColumn, Table, \
+    TableElementEditor, TrashColumn
 
 
 __docformat__ = 'restructuredtext'
@@ -108,22 +109,16 @@ class TaskNotificationsTableValues(ContextRequestViewAdapter):
 @adapter_config(name='enabled',
                 required=(ITask, IAdminLayer, TaskNotificationsTable),
                 provides=IColumn)
-class TaskNotificationsTableEnabledColumn(VisibilityColumn):
+class TaskNotificationsTableEnabledColumn(AttributeSwitcherColumn):
     """Task notifications table enabled column"""
 
     hint = _("Click icon to enable or disable notification")
 
-    object_data = {
-        'ams-modules': 'container',
-        'ams-update-target': 'switch-active-notification.json',
-        'ams-attribute-name': 'enabled',
-        'ams-icon-on': 'far fa-bell',
-        'ams-icon-off': 'far fa-bell-slash'
-    }
+    attribute_name = 'enabled'
+    attribute_switcher = 'switch-active-notification.json'
 
-    def get_icon_class(self, item):
-        """Icon class getter"""
-        return 'far fa-bell' if item.enabled else 'far fa-bell-slash'
+    icon_on_class = 'far fa-bell'
+    icon_off_class = 'far fa-bell-slash'
 
 
 @view_config(name='switch-active-notification.json',
