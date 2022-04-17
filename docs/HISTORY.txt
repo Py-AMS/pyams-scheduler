@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.6.6
+-----
+ - added support for Python 3.10
+ - PyAMS_security interfaces refactoring
+ - use new ZMI attribute switcher column in task notifications
+
 1.6.5
 -----
  - check job next run time when getting list of scheduled jobs
