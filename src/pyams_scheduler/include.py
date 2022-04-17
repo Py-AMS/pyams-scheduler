@@ -20,7 +20,6 @@ import logging
 import os.path
 import re
 import sys
-
 from pyramid.events import subscriber
 from pyramid.interfaces import IApplicationCreated
 from pyramid.settings import asbool
@@ -30,8 +29,8 @@ from pyams_scheduler.interfaces import MANAGE_SCHEDULER_PERMISSION, MANAGE_TASKS
     SCHEDULER_AUTH_KEY, SCHEDULER_CLIENTS_KEY, SCHEDULER_HANDLER_KEY, SCHEDULER_MANAGER_ROLE, \
     SCHEDULER_NAME, SCHEDULER_STARTER_KEY, TASKS_MANAGER_ROLE
 from pyams_scheduler.process import SchedulerMessageHandler, SchedulerProcess
-from pyams_security.interfaces import ADMIN_USER_ID, SYSTEM_ADMIN_ROLE
 from pyams_security.interfaces.base import MANAGE_ROLES_PERMISSION, ROLE_ID
+from pyams_security.interfaces.names import ADMIN_USER_ID, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.protocol.tcp import is_port_in_use
 from pyams_utils.registry import get_pyramid_registry, set_local_registry
