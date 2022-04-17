@@ -48,8 +48,8 @@ from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, ISch
 from pyams_scheduler.interfaces.task import ITaskHistoryContainer, ITaskInfo, \
     ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_EMPTY, TASK_STATUS_ERROR, \
     TASK_STATUS_NONE, TASK_STATUS_OK
-from pyams_security.interfaces import ADMIN_USER_ID, INTERNAL_USER_ID, IProtectedObject, \
-    IViewContextPermissionChecker, SYSTEM_ADMIN_ROLE
+from pyams_security.interfaces import IProtectedObject, IViewContextPermissionChecker
+from pyams_security.interfaces.names import ADMIN_USER_ID, INTERNAL_USER_ID, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.date import get_duration
@@ -58,7 +58,7 @@ from pyams_utils.registry import get_pyramid_registry, get_utility, query_utilit
     set_local_registry
 from pyams_utils.request import check_request
 from pyams_utils.timezone import tztime
-from pyams_utils.transaction import TransactionClient, transactional
+from pyams_utils.transaction import COMMITTED_STATUS, TransactionClient, transactional
 from pyams_utils.traversing import get_parent
 from pyams_utils.zodb import ZODBConnection
 from pyams_zmq.socket import zmq_response, zmq_socket
@@ -322,7 +322,7 @@ class Task(Persistent, Contained):
                                 registry.notify(AfterRunJobEvent(task, status, result))
                                 task.store_report(report, status, start_date, duration)
                                 task.send_report(report, status, registry)
-                            if t.status == 'Committed':
+                            if t.status == COMMITTED_STATUS:
                                 break
             except:  # pylint: disable=bare-except
                 self._log_exception(None, "Can't execute scheduled job {0}".format(self.name))
