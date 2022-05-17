@@ -115,6 +115,18 @@ class IRESTCallerTaskInfo(Interface):
                                         required=False,
                                         default=('POST', '/api/auth/jwt/token'))
 
+    jwt_login_field = TextLine(title=_("JWT login attribute"),
+                               description=_("Name of the attribute containing principal ID "
+                                             "sent to JWT authority"),
+                               required=False,
+                               default='login')
+
+    jwt_password_field = TextLine(title=_("JWT password attribute"),
+                                  description=_("Name of the attribute containing principal "
+                                                "password sent to JWT authority"),
+                                  required=False,
+                                  default='password')
+
     jwt_token_attribute = TextLine(title=_("JWT token attribute"),
                                    description=_("Name of the attribute containing the access "
                                                  "token in JSON response"),

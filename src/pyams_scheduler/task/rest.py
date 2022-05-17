@@ -62,6 +62,8 @@ class RESTCallerTask(Task):
     use_jwt_authority = FieldProperty(IRESTCallerTask['use_jwt_authority'])
     jwt_authority_url = FieldProperty(IRESTCallerTask['jwt_authority_url'])
     jwt_token_service = FieldProperty(IRESTCallerTask['jwt_token_service'])
+    jwt_login_field = FieldProperty(IRESTCallerTask['jwt_login_field'])
+    jwt_password_field = FieldProperty(IRESTCallerTask['jwt_password_field'])
     jwt_token_attribute = FieldProperty(IRESTCallerTask['jwt_token_attribute'])
     jwt_use_proxy = FieldProperty(IRESTCallerTask['jwt_use_proxy'])
 
@@ -98,31 +100,28 @@ class RESTCallerTask(Task):
         # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         # get remote service URL
         method, service = self.service
-        rest_service = '{}{}'.format(self.base_url, service)
-        report.write('HTTP service output\n'
-                     '===================\n'
-                     'HTTP service: \n    {} {}\n\n'.format(
-            method, rest_service))
+        rest_service = f'{self.base_url}{service}'
+        report.write(f'HTTP service output\n'
+                     f'===================\n'
+                     f'HTTP service: \n    {method} {rest_service}\n\n')
         # check proxy configuration
         proxies = {}
         if self.use_proxy:
             parsed = parse.urlparse(self.base_url)
             if self.proxy_username:
-                proxy_auth = '{}:{}@'.format(self.proxy_username, self.proxy_password)
+                proxy_auth = f'{self.proxy_username}:{self.proxy_password}@'
             else:
                 proxy_auth = ''
-            proxies[parsed.scheme] = 'http://{}{}:{}'.format(proxy_auth,
-                                                             self.proxy_server,
-                                                             self.proxy_port)
+            proxies[parsed.scheme] = f'http://{proxy_auth}{self.proxy_server}:{self.proxy_port}'
         # check JWT authorization
         auth = None
         headers = {}
         if self.use_jwt_authority:
             jwt_method, jwt_service = self.jwt_token_service
-            jwt_service = '{}{}'.format(self.jwt_authority_url, jwt_service)
+            jwt_service = f'{self.jwt_authority_url}{jwt_service}'
             jwt_params = {
-                'login': self.username,
-                'password': self.password
+                self.jwt_login_field: self.username,
+                self.jwt_password_field: self.password
             }
             jwt_request = requests.request(jwt_method, jwt_service,
                                            params=jwt_params if method == 'GET' else None,
@@ -131,13 +130,13 @@ class RESTCallerTask(Task):
                                            timeout=self.connection_timeout,
                                            allow_redirects=False)
             status_code = jwt_request.status_code
-            report.write('JWT token status code: {}\n'.format(status_code))
+            report.write(f'JWT token status code: {status_code}\n')
             if status_code != requests.codes.ok:  # pylint: disable=no-member
-                report.write('JWT headers: {}\n'.format(format_dict(jwt_request.headers)))
-                report.write('JWT report: {}\n\n'.format(jwt_request.text))
+                report.write(f'JWT headers: {format_dict(jwt_request.headers)}\n')
+                report.write(f'JWT report: {jwt_request.text}\n\n')
                 return TASK_STATUS_ERROR, None
-            headers['Authorization'] = 'Bearer {}'.format(
-                jwt_request.json().get(self.jwt_token_attribute))
+            headers['Authorization'] = f'Bearer ' \
+                                       f'{jwt_request.json().get(self.jwt_token_attribute)}'
         # build authorization headers
         elif self.username:
             auth = self.username, self.password
@@ -158,8 +157,8 @@ class RESTCallerTask(Task):
                                         allow_redirects=self.allow_redirects)
         # check request status
         status_code = rest_request.status_code
-        report.write('Status code: {}\n'.format(status_code))
-        report.write('Headers: {}\n\n'.format(format_dict(rest_request.headers)))
+        report.write(f'Status code: {status_code}\n')
+        report.write(f'Headers: {format_dict(rest_request.headers)}\n\n')
         # check request content
         content_type = rest_request.headers.get('Content-Type', 'text/plain')
         if content_type.startswith('application/json'):

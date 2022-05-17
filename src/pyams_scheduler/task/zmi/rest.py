@@ -21,7 +21,6 @@ from pyramid.events import subscriber
 from zope.interface import Interface, Invalid, alsoProvides, implementer
 
 from pyams_form.ajax import ajax_form_config
-from pyams_form.browser.checkbox import SingleCheckBoxFieldWidget
 from pyams_form.field import Fields
 from pyams_form.group import GroupManager
 from pyams_form.interfaces.form import IDataExtractedEvent, IForm, IGroup, IInnerTabForm
@@ -30,8 +29,8 @@ from pyams_layer.interfaces import IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask, IRESTCallerTaskInfo
 from pyams_scheduler.task.rest import RESTCallerTask
-from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_skin.viewlet.menu import MenuItem
@@ -60,8 +59,6 @@ class RESTTaskFormInfo(GroupManager):
     fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'params', 'verify_ssl',
                                                 'connection_timeout', 'ok_status',
                                                 'allow_redirects')
-    fields['verify_ssl'].widget_factory = SingleCheckBoxFieldWidget
-    fields['allow_redirects'].widget_factory = SingleCheckBoxFieldWidget
 
     def update_widgets(self, prefix=None):
         """Widgets update"""
@@ -158,9 +155,9 @@ class RESTTaskFormJWTInfo(FormGroupChecker):
     """REST task form JWT info"""
 
     fields = Fields(IRESTCallerTaskInfo).select('use_jwt_authority', 'jwt_authority_url',
-                                                'jwt_token_service', 'jwt_token_attribute',
+                                                'jwt_token_service', 'jwt_login_field',
+                                                'jwt_password_field', 'jwt_token_attribute',
                                                 'jwt_use_proxy')
-    fields['jwt_use_proxy'].widget_factory = SingleCheckBoxFieldWidget
 
     weight = 30
 
