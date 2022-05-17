@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.7.1
+-----
+ - updated JWT tokens handler in REST API client task
+
 1.7.0
 -----
  - added properties to REST API client task to set login and password attributes of
