@@ -124,8 +124,12 @@ class RESTCallerTask(Task):
                 self.jwt_password_field: self.password
             }
             jwt_request = requests.request(jwt_method, jwt_service,
-                                           params=jwt_params if method == 'GET' else None,
-                                           data=jwt_params if method != 'GET' else None,
+                                           headers={
+                                               'Content-Type': 'application/json'
+                                           },
+                                           params=jwt_params if jwt_method == 'GET' else None,
+                                           data=json.dumps(jwt_params)
+                                               if jwt_method != 'GET' else None,
                                            proxies=proxies if self.jwt_use_proxy else None,
                                            timeout=self.connection_timeout,
                                            allow_redirects=False)
@@ -133,6 +137,7 @@ class RESTCallerTask(Task):
             report.write(f'JWT token status code: {status_code}\n')
             if status_code != requests.codes.ok:  # pylint: disable=no-member
                 report.write(f'JWT headers: {format_dict(jwt_request.headers)}\n')
+                report.write(f'JWT params: {format_dict(jwt_params)}\n')
                 report.write(f'JWT report: {jwt_request.text}\n\n')
                 return TASK_STATUS_ERROR, None
             headers['Authorization'] = f'Bearer ' \
