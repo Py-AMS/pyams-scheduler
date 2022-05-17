@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.7.0
+-----
+ - added properties to REST API client task to set login and password attributes of
+   JWT authentication service
+
 1.6.7
 -----
  - updated Gitlab-CI for Python 3.10
