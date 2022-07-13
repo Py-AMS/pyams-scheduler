@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.8.0
+-----
+ - added exception class to handle task execution errors
+ - updated notification status on task execution error
+
 1.7.1
 -----
  - updated JWT tokens handler in REST API client task
