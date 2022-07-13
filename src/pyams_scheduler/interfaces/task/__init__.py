@@ -324,6 +324,10 @@ class ITask(ITaskInfo, IAttributeAnnotatable):
         """Ask task for immediate execution"""
 
 
+class TaskRunException(Exception):
+    """Scheduler task run exception"""
+
+
 #
 # Task notifications interfaces
 #
