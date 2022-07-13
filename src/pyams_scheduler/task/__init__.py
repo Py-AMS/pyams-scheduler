@@ -304,7 +304,7 @@ class Task(Persistent, Contained):
                                     # pylint: disable=protected-access
                                     task._log_exception(report,
                                                         "An error occurred during execution of "
-                                                        "task '{0}'".format(task.name))
+                                                        "task '{}'".format(task.name))
                                     if scheduler_util.notified_host and (ChatMessage is not None):
                                         message = ChatMessage(
                                             request=request,
