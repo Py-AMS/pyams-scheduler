@@ -27,7 +27,7 @@ from paramiko import AutoAddPolicy, SSHClient, SSHException
 from persistent import Persistent
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task import TASK_STATUS_FAIL, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.ssh import ISSHCallerTask, ISSHConnectionInfo
 from pyams_scheduler.task import Task
 from pyams_utils.factory import factory_config
@@ -138,26 +138,35 @@ class SSHCallerTask(Task):
                         else stdout.channel.exit_status,
                     stdout
                 )
-        except SSHException:
+        except (OSError, SSHException):
             etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
             report.write('\n\n'
-                         'An SSH error occurred\n'
-                         '=====================\n')
+                         'A system error occurred\n'
+                         '=======================\n')
             report.write(''.join(traceback.format_exception(etype, value, tb)))
-            return TASK_STATUS_ERROR, None
+            return TASK_STATUS_FAIL, None
 
     def _run_local(self, report, **kwargs):  # pylint: disable=unused-argument
         """Run local system command"""
-        shell = subprocess.Popen(self.cmdline, shell=True, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
-        stdout, stderr = shell.communicate()
-        report.write(stdout.decode())
-        if stderr:
+        try:
+            shell = subprocess.Popen(self.cmdline, shell=True, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+            stdout, stderr = shell.communicate()
+        except:  # pylint: disable=bare-except
+            etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
             report.write('\n\n'
-                         'Some errors occurred\n'
-                         '====================\n')
-            report.write(stderr.decode())
-        return (
-            TASK_STATUS_OK if shell.returncode in self.ok_status_list else shell.returncode,
-            stdout
-        )
+                         'A system error occurred\n'
+                         '=======================\n')
+            report.write(''.join(traceback.format_exception(etype, value, tb)))
+            return TASK_STATUS_FAIL, None
+        else:
+            report.write(stdout.decode())
+            if stderr:
+                report.write('\n\n'
+                             'Some errors occurred\n'
+                             '====================\n')
+                report.write(stderr.decode())
+            return (
+                TASK_STATUS_OK if shell.returncode in self.ok_status_list else shell.returncode,
+                stdout
+            )

@@ -18,13 +18,16 @@ This module defines REST caller task.
 import codecs
 import json
 import pprint
+import sys
+import traceback
 from urllib import parse
 
 import chardet
 import requests
+from requests import ConnectionError
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_FAIL, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask
 from pyams_scheduler.task import Task
 from pyams_utils.dict import format_dict
@@ -123,25 +126,34 @@ class RESTCallerTask(Task):
                 self.jwt_login_field: self.username,
                 self.jwt_password_field: self.password
             }
-            jwt_request = requests.request(jwt_method, jwt_service,
-                                           headers={
-                                               'Content-Type': 'application/json'
-                                           },
-                                           params=jwt_params if jwt_method == 'GET' else None,
-                                           data=json.dumps(jwt_params)
-                                               if jwt_method != 'GET' else None,
-                                           proxies=proxies if self.jwt_use_proxy else None,
-                                           timeout=self.connection_timeout,
-                                           allow_redirects=False)
-            status_code = jwt_request.status_code
-            report.write(f'JWT token status code: {status_code}\n')
-            if status_code != requests.codes.ok:  # pylint: disable=no-member
-                report.write(f'JWT headers: {format_dict(jwt_request.headers)}\n')
-                report.write(f'JWT params: {format_dict(jwt_params)}\n')
-                report.write(f'JWT report: {jwt_request.text}\n\n')
-                return TASK_STATUS_ERROR, None
-            headers['Authorization'] = f'Bearer ' \
-                                       f'{jwt_request.json().get(self.jwt_token_attribute)}'
+            try:
+                jwt_request = requests.request(jwt_method, jwt_service,
+                                               headers={
+                                                   'Content-Type': 'application/json'
+                                               },
+                                               params=jwt_params if jwt_method == 'GET' else None,
+                                               data=json.dumps(jwt_params)
+                                                   if jwt_method != 'GET' else None,
+                                               proxies=proxies if self.jwt_use_proxy else None,
+                                               timeout=self.connection_timeout,
+                                               allow_redirects=False)
+            except ConnectionError:
+                etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
+                report.write('\n\n'
+                             'An HTTP error occurred\n'
+                             '======================\n')
+                report.write(''.join(traceback.format_exception(etype, value, tb)))
+                return TASK_STATUS_FAIL, None
+            else:
+                status_code = jwt_request.status_code
+                report.write(f'JWT token status code: {status_code}\n')
+                if status_code != requests.codes.ok:  # pylint: disable=no-member
+                    report.write(f'JWT headers: {format_dict(jwt_request.headers)}\n')
+                    report.write(f'JWT params: {format_dict(jwt_params)}\n')
+                    report.write(f'JWT report: {jwt_request.text}\n\n')
+                    return TASK_STATUS_ERROR, None
+                headers['Authorization'] = f'Bearer ' \
+                                           f'{jwt_request.json().get(self.jwt_token_attribute)}'
         # build authorization headers
         elif self.username:
             auth = self.username, self.password
@@ -151,38 +163,47 @@ class RESTCallerTask(Task):
             params.update(json.loads(self.params))
         params.update(kwargs)
         # build HTTP request
-        rest_request = requests.request(method, rest_service,
-                                        auth=auth,
-                                        headers=headers,
-                                        params=params if method == 'GET' else None,
-                                        data=params if method != 'GET' else None,
-                                        verify=self.verify_ssl,
-                                        proxies=proxies,
-                                        timeout=self.connection_timeout,
-                                        allow_redirects=self.allow_redirects)
-        # check request status
-        status_code = rest_request.status_code
-        report.write(f'Status code: {status_code}\n')
-        report.write(f'Headers: {format_dict(rest_request.headers)}\n\n')
-        # check request content
-        content_type = rest_request.headers.get('Content-Type', 'text/plain')
-        if content_type.startswith('application/json'):
-            response = rest_request.json()
-            message = pprint.pformat(response)
-        elif content_type.startswith('text/html'):
-            message = html_to_text(rest_request.text)
-        elif content_type.startswith('text/'):
-            message = rest_request.text
+        try:
+            rest_request = requests.request(method, rest_service,
+                                            auth=auth,
+                                            headers=headers,
+                                            params=params if method == 'GET' else None,
+                                            data=params if method != 'GET' else None,
+                                            verify=self.verify_ssl,
+                                            proxies=proxies,
+                                            timeout=self.connection_timeout,
+                                            allow_redirects=self.allow_redirects)
+        except ConnectionError:
+            etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
+            report.write('\n\n'
+                         'An HTTP error occurred\n'
+                         '======================\n')
+            report.write(''.join(traceback.format_exception(etype, value, tb)))
+            return TASK_STATUS_FAIL, None
         else:
-            content = rest_request.content
-            if 'charset=' in content_type.lower():
-                charset = content_type.split('=', 1)[1]
+            # check request status
+            status_code = rest_request.status_code
+            report.write(f'Status code: {status_code}\n')
+            report.write(f'Headers: {format_dict(rest_request.headers)}\n\n')
+            # check request content
+            content_type = rest_request.headers.get('Content-Type', 'text/plain')
+            if content_type.startswith('application/json'):
+                response = rest_request.json()
+                message = pprint.pformat(response)
+            elif content_type.startswith('text/html'):
+                message = html_to_text(rest_request.text)
+            elif content_type.startswith('text/'):
+                message = rest_request.text
             else:
-                charset = chardet.detect(content).get('encoding') or 'utf-8'
-            message = codecs.decode(content, charset)
-        report.write(message)
-        report.write('\n\n')
-        return (
-            TASK_STATUS_OK if status_code in self.ok_status_list else status_code,
-            rest_request
-        )
+                content = rest_request.content
+                if 'charset=' in content_type.lower():
+                    charset = content_type.split('=', 1)[1]
+                else:
+                    charset = chardet.detect(content).get('encoding') or 'utf-8'
+                message = codecs.decode(content, charset)
+            report.write(message)
+            report.write('\n\n')
+            return (
+                TASK_STATUS_OK if status_code in self.ok_status_list else status_code,
+                rest_request
+            )

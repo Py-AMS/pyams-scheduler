@@ -45,9 +45,9 @@ except ImportError:
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
     ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
     SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
-from pyams_scheduler.interfaces.task import ITaskHistoryContainer, ITaskInfo, \
-    ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_EMPTY, TASK_STATUS_ERROR, \
-    TASK_STATUS_NONE, TASK_STATUS_OK, TaskRunException
+from pyams_scheduler.interfaces.task import FailedTaskRunException, ITaskHistoryContainer, \
+    ITaskInfo, ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_CLASS, \
+    TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_FAIL, TASK_STATUS_NONE, TASK_STATUS_OK
 from pyams_security.interfaces import IProtectedObject, IViewContextPermissionChecker
 from pyams_security.interfaces.names import ADMIN_USER_ID, INTERNAL_USER_ID, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
@@ -273,45 +273,52 @@ class Task(Persistent, Contained):
                         tm = ITransactionManager(task)  # pylint: disable=invalid-name
                         for attempt in tm.attempts():
                             with attempt as t:  # pylint: disable=invalid-name
+                                status = TASK_STATUS_NONE
                                 start_date = datetime.utcnow()
                                 duration = 0.
                                 try:
                                     registry.notify(BeforeRunJobEvent(task))
                                     (status, result) = task.run(report, **kwargs)
+                                    if status == TASK_STATUS_FAIL:
+                                        raise FailedTaskRunException
                                     end_date = datetime.utcnow()
                                     duration = (end_date - start_date).total_seconds()
                                     report.write('\n\nTask duration: {0}'.format(
                                         get_duration(start_date, request=request)))
-                                    if status == TASK_STATUS_ERROR:
-                                        raise TaskRunException
-                                    if scheduler_util.notified_host and (ChatMessage is not None):
+                                    if (ChatMessage is not None) and scheduler_util.notified_host:
+                                        if status == TASK_STATUS_ERROR:
+                                            message_text = translate(_("Task '{}' was executed "
+                                                                       "with error")) \
+                                                .format(task.name)
+                                        else:
+                                            message_text = translate(_("Task '{}' was executed "
+                                                                       "without error")) \
+                                                .format(task.name)
                                         message = ChatMessage(
                                             request=request,
                                             host=scheduler_util.notified_host,
                                             action='notify',
                                             category='scheduler.run',
-                                            status='success',
+                                            status=TASK_STATUS_CLASS.get(status, 'info'),
                                             source=INTERNAL_USER_ID,
                                             title=translate(_("Task execution")),
-                                            message=translate(_("Task '{}' was executed without "
-                                                                "error")).format(task.name),
+                                            message=message_text,
                                             url='/'.join(('', '++etc++site',
                                                           scheduler_util.__name__, 'admin'))
                                         )
                                         message.send()
-                                except:  # pylint: disable=bare-except
-                                    status = TASK_STATUS_ERROR
+                                except FailedTaskRunException:  # pylint: disable=bare-except
                                     # pylint: disable=protected-access
                                     task._log_exception(report,
                                                         "An error occurred during execution of "
                                                         "task '{}'".format(task.name))
-                                    if scheduler_util.notified_host and (ChatMessage is not None):
+                                    if (ChatMessage is not None) and scheduler_util.notified_host:
                                         message = ChatMessage(
                                             request=request,
                                             host=scheduler_util.notified_host,
                                             action='notify',
                                             category='scheduler.run',
-                                            status='danger',
+                                            status=TASK_STATUS_CLASS.get(status, 'danger'),
                                             source=INTERNAL_USER_ID,
                                             title=translate(_("Task execution")),
                                             message=translate(_("An error occurred during "

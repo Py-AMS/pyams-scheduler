@@ -554,7 +554,7 @@ msgstr "Jours de la semaine"
 #: src/pyams_scheduler/interfaces/task/__init__.py:165
 msgid "Week days (0-6, with 0 as monday) for which to schedule the job"
 msgstr ""
-"Jours de la semaine (de 0 à 6, 0 étant le dimanche) de planification de la "
+"Jours de la semaine (de 0 à 6, 0 étant le lundi) de planification de la "
 "tâche"
 
 #: src/pyams_scheduler/interfaces/task/__init__.py:170

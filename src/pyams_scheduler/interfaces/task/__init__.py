@@ -20,6 +20,7 @@ from zope.container.constraints import containers, contains
 from zope.container.interfaces import IContainer
 from zope.interface import Attribute, Interface
 from zope.schema import Bool, Bytes, Choice, Datetime, Float, Int, List, Object, Text, TextLine
+
 from pyams_utils.schema import TextLineListField
 
 
@@ -33,13 +34,24 @@ TASK_STATUS_EMPTY = 'empty'
 TASK_STATUS_OK = 'OK'
 TASK_STATUS_WARNING = 'warning'
 TASK_STATUS_ERROR = 'error'
+TASK_STATUS_FAIL = 'fail'
+
+TASK_STATUS_CLASS = {
+    TASK_STATUS_EMPTY: 'light',
+    TASK_STATUS_NONE: 'secondary',
+    TASK_STATUS_OK: 'success',
+    TASK_STATUS_WARNING: 'warning',
+    TASK_STATUS_ERROR: 'danger',
+    TASK_STATUS_FAIL: 'danger'
+}
 
 TASK_STATUS_STYLES = {
     TASK_STATUS_EMPTY: 'table-secondary',
     TASK_STATUS_NONE: 'table-info',
     TASK_STATUS_OK: 'table-success',
     TASK_STATUS_WARNING: 'table-warning',
-    TASK_STATUS_ERROR: 'table-danger'
+    TASK_STATUS_ERROR: 'table-danger',
+    TASK_STATUS_FAIL: 'table-danger'
 }
 
 
@@ -326,6 +338,10 @@ class ITask(ITaskInfo, IAttributeAnnotatable):
 
 class TaskRunException(Exception):
     """Scheduler task run exception"""
+
+
+class FailedTaskRunException(TaskRunException):
+    """Failed scheduler task run exception"""
 
 
 #

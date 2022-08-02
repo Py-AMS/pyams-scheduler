@@ -27,7 +27,8 @@ from persistent import Persistent
 from zope.component import queryAdapter
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces.task import TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task import TASK_STATUS_EMPTY, TASK_STATUS_ERROR, \
+    TASK_STATUS_FAIL, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.sync import DirectorySyncError, IDirectoryHandler, \
     IDirectoryInfo, IDirectorySyncTask
 from pyams_scheduler.task import Task
@@ -263,4 +264,4 @@ class DirectorySyncTask(Task):
                          'An error occurred\n'
                          '=================\n')
             report.write(''.join(traceback.format_exception(etype, value, tb)))
-            return TASK_STATUS_ERROR, None
+            return TASK_STATUS_FAIL, None
