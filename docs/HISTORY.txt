@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.9.1
+-----
+ - use new PyAMS_security constant
+
 1.9.0
 -----
  - added new status to be used on task execution failure

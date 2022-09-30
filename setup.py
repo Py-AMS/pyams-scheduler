@@ -23,7 +23,7 @@ DOCS = os.path.join(os.path.dirname(__file__),
 README = os.path.join(DOCS, 'README.txt')
 HISTORY = os.path.join(DOCS, 'HISTORY.txt')
 
-version = '1.9.0'
+version = '1.9.1'
 long_description = open(README).read() + '\n\n' + open(HISTORY).read()
 
 tests_require = [
@@ -68,7 +68,7 @@ setup(name='pyams_scheduler',
           'persistent',
           'pyams_layer',
           'pyams_mail',
-          'pyams_security',
+          'pyams_security >= 1.10.5',
           'pyams_site',
           'pyams_utils',
           'pyams_zmq',
