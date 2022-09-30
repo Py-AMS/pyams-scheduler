@@ -30,6 +30,7 @@ from zope.schema.fieldproperty import FieldProperty
 from pyams_scheduler.interfaces.task import TASK_STATUS_FAIL, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.ssh import ISSHCallerTask, ISSHConnectionInfo
 from pyams_scheduler.task import Task
+from pyams_security.interfaces.names import UNCHANGED_PASSWORD
 from pyams_utils.factory import factory_config
 
 
@@ -68,7 +69,7 @@ class SSHConnectionInfo(Persistent):
     @password.setter
     def password(self, value):
         """Password setter"""
-        if value == '*****':
+        if value == UNCHANGED_PASSWORD:
             return
         self._password = value
 

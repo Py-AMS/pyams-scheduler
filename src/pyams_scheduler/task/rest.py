@@ -30,6 +30,7 @@ from zope.schema.fieldproperty import FieldProperty
 from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_FAIL, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask
 from pyams_scheduler.task import Task
+from pyams_security.interfaces.names import UNCHANGED_PASSWORD
 from pyams_utils.dict import format_dict
 from pyams_utils.factory import factory_config
 from pyams_utils.html import html_to_text
@@ -78,7 +79,7 @@ class RESTCallerTask(Task):
     @password.setter
     def password(self, value):
         """Password setter"""
-        if value == '*****':
+        if value == UNCHANGED_PASSWORD:
             return
         self._password = value
 
@@ -90,7 +91,7 @@ class RESTCallerTask(Task):
     @proxy_password.setter
     def proxy_password(self, value):
         """Proxy password setter"""
-        if value == '*****':
+        if value == UNCHANGED_PASSWORD:
             return
         self._proxy_password = value
 

@@ -32,6 +32,7 @@ from pyams_scheduler.interfaces.task import TASK_STATUS_EMPTY, TASK_STATUS_ERROR
 from pyams_scheduler.interfaces.task.sync import DirectorySyncError, IDirectoryHandler, \
     IDirectoryInfo, IDirectorySyncTask
 from pyams_scheduler.task import Task
+from pyams_security.interfaces.names import UNCHANGED_PASSWORD
 from pyams_utils.factory import factory_config
 from pyams_utils.size import get_human_size
 
@@ -76,7 +77,7 @@ class DirectoryInfo(Persistent):
     @password.setter
     def password(self, value):
         """Password setter"""
-        if value == '*****':
+        if value == UNCHANGED_PASSWORD:
             return
         self._password = value
 
