@@ -40,7 +40,9 @@ class IRESTCallerTaskInfo(Interface):
                               default=('GET', '/'))
 
     params = Text(title=_("Service parameters"),
-                  description=_("Enter service parameters, in JSON object format"),
+                  description=_("Enter service parameters, in JSON object format; you can "
+                                "include dynamic fragments into your JSON code using PyAMS "
+                                "text renderers rules (see documentation)"),
                   required=False)
 
     verify_ssl = Bool(title=_("Verify SSL?"),

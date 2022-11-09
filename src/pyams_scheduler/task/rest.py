@@ -34,6 +34,7 @@ from pyams_security.interfaces.names import UNCHANGED_PASSWORD
 from pyams_utils.dict import format_dict
 from pyams_utils.factory import factory_config
 from pyams_utils.html import html_to_text
+from pyams_utils.text import render_text
 
 
 __docformat__ = 'restructuredtext'
@@ -161,8 +162,10 @@ class RESTCallerTask(Task):
         # check params
         params = {}
         if self.params:
-            params.update(json.loads(self.params))
+            params.update(json.loads(render_text(self.params)))
         params.update(kwargs)
+        if params:
+            report.write(f'Request params: {format_dict(params)}\n\n')
         # build HTTP request
         try:
             rest_request = requests.request(method, rest_service,
@@ -184,7 +187,7 @@ class RESTCallerTask(Task):
         else:
             # check request status
             status_code = rest_request.status_code
-            report.write(f'Status code: {status_code}\n')
+            report.write(f'Response status code: {status_code}\n')
             report.write(f'Headers: {format_dict(rest_request.headers)}\n\n')
             # check request content
             content_type = rest_request.headers.get('Content-Type', 'text/plain')
