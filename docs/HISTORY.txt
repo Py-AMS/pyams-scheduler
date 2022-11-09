@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.10.0
+------
+ - allow usage of dynamic text formatters into scheduler HTTP client tasks
+
 1.9.1
 -----
  - use new PyAMS_security constant
