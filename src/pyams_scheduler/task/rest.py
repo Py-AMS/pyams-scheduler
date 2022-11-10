@@ -28,7 +28,7 @@ from requests import ConnectionError
 from zope.schema.fieldproperty import FieldProperty
 
 from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_FAIL, TASK_STATUS_OK
-from pyams_scheduler.interfaces.task.rest import IRESTCallerTask
+from pyams_scheduler.interfaces.task.rest import GET_METHOD, IRESTCallerTask, JSON_CONTENT_TYPE
 from pyams_scheduler.task import Task
 from pyams_security.interfaces.names import UNCHANGED_PASSWORD
 from pyams_utils.dict import format_dict
@@ -52,6 +52,7 @@ class RESTCallerTask(Task):
     base_url = FieldProperty(IRESTCallerTask['base_url'])
     service = FieldProperty(IRESTCallerTask['service'])
     params = FieldProperty(IRESTCallerTask['params'])
+    content_type = FieldProperty(IRESTCallerTask['content_type'])
     verify_ssl = FieldProperty(IRESTCallerTask['verify_ssl'])
     connection_timeout = FieldProperty(IRESTCallerTask['connection_timeout'])
     allow_redirects = FieldProperty(IRESTCallerTask['allow_redirects'])
@@ -101,6 +102,18 @@ class RESTCallerTask(Task):
         """OK status list getter"""
         return map(int, self.ok_status.split(','))
 
+    def get_request_params(self, method, params):
+        """Request params getter"""
+        result = {}
+        if method == GET_METHOD:
+            result['params'] = params
+        else:
+            if self.content_type == JSON_CONTENT_TYPE:
+                result['json'] = params
+            else:
+                result['data'] = params
+        return result
+
     def run(self, report, **kwargs):
         # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         # get remote service URL
@@ -130,12 +143,8 @@ class RESTCallerTask(Task):
             }
             try:
                 jwt_request = requests.request(jwt_method, jwt_service,
-                                               headers={
-                                                   'Content-Type': 'application/json'
-                                               },
                                                params=jwt_params if jwt_method == 'GET' else None,
-                                               data=json.dumps(jwt_params)
-                                                   if jwt_method != 'GET' else None,
+                                               json=jwt_params if jwt_method != 'GET' else None,
                                                proxies=proxies if self.jwt_use_proxy else None,
                                                timeout=self.connection_timeout,
                                                allow_redirects=False)
@@ -157,7 +166,7 @@ class RESTCallerTask(Task):
                 headers['Authorization'] = f'Bearer ' \
                                            f'{jwt_request.json().get(self.jwt_token_attribute)}'
         # build authorization headers
-        elif self.username:
+        elif self.authenticate and self.username:
             auth = self.username, self.password
         # check params
         params = {}
@@ -171,12 +180,11 @@ class RESTCallerTask(Task):
             rest_request = requests.request(method, rest_service,
                                             auth=auth,
                                             headers=headers,
-                                            params=params if method == 'GET' else None,
-                                            data=params if method != 'GET' else None,
                                             verify=self.verify_ssl,
                                             proxies=proxies,
                                             timeout=self.connection_timeout,
-                                            allow_redirects=self.allow_redirects)
+                                            allow_redirects=self.allow_redirects,
+                                            **self.get_request_params(method, params))
         except ConnectionError:
             etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
             report.write('\n\n'

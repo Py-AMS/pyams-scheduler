@@ -130,7 +130,7 @@ class DirectorySyncTaskFormInfo(GroupManager):
 
 @viewlet_config(name='add-sync-task.menu',
                 context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
-                manager=IContextAddingsViewletManager, weight=40,
+                manager=IContextAddingsViewletManager, weight=20,
                 permission=MANAGE_TASKS_PERMISSION)
 class DirectorySyncTaskAddMenu(MenuItem):
     """Directory synchronization task add menu"""

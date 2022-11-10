@@ -56,7 +56,8 @@ class RESTTaskFormInfo(GroupManager):
     """REST API caller task add form info"""
 
     title = _("HTTP/REST API settings")
-    fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'params', 'verify_ssl',
+    fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'params',
+                                                'content_type', 'verify_ssl',
                                                 'connection_timeout', 'ok_status',
                                                 'allow_redirects')
 
@@ -190,7 +191,7 @@ def extract_rest_jwt_info(event):
 
 @viewlet_config(name='add-rest-task.menu',
                 context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
-                manager=IContextAddingsViewletManager, weight=20,
+                manager=IContextAddingsViewletManager, weight=30,
                 permission=MANAGE_TASKS_PERMISSION)
 class RESTTaskAddMenu(MenuItem):
     """REST task add menu"""
@@ -204,6 +205,8 @@ class RESTTaskAddMenu(MenuItem):
                   permission=MANAGE_TASKS_PERMISSION)
 class RESTTaskAddForm(BaseTaskAddForm):
     """REST task add form"""
+
+    modal_class = 'modal-xl'
 
     content_factory = IRESTCallerTask
     content_label = RESTCallerTask.label
@@ -224,6 +227,8 @@ class RESTTaskAddFormInfo(RESTTaskFormInfo, InnerAddForm):
                   permission=MANAGE_TASKS_PERMISSION)
 class RESTTaskEditForm(BaseTaskEditForm):
     """REST task edit form"""
+
+    modal_class = 'modal-xl'
 
 
 @adapter_config(name='rest-task-info.form',

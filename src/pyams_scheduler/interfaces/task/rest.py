@@ -16,7 +16,7 @@ This module defines interface of REST API caller task.
 """
 
 from zope.interface import Interface
-from zope.schema import Bool, Int, Password, Text, TextLine, URI
+from zope.schema import Bool, Choice, Int, Password, Text, TextLine, URI
 
 from pyams_scheduler.interfaces import ITask
 from pyams_utils.schema import HTTPMethodField
@@ -25,6 +25,13 @@ from pyams_utils.schema import HTTPMethodField
 __docformat__ = 'restructuredtext'
 
 from pyams_scheduler import _  # pylint: disable=ungrouped-imports
+
+
+GET_METHOD = 'GET'
+POST_METHOD = 'POST'
+
+JSON_CONTENT_TYPE = 'application/json'
+FORM_CONTENT_TYPE = 'application/x-www-form-urlencoded'
 
 
 class IRESTCallerTaskInfo(Interface):
@@ -37,13 +44,19 @@ class IRESTCallerTaskInfo(Interface):
     service = HTTPMethodField(title=_("REST service"),
                               description=_("Method and relative URL of REST service"),
                               required=True,
-                              default=('GET', '/'))
+                              default=(GET_METHOD, '/'))
 
     params = Text(title=_("Service parameters"),
                   description=_("Enter service parameters, in JSON object format; you can "
                                 "include dynamic fragments into your JSON code using PyAMS "
                                 "text renderers rules (see documentation)"),
                   required=False)
+
+    content_type = Choice(title=_("POST content type"),
+                          description=_("Content type used to send POST parameters"),
+                          values=(JSON_CONTENT_TYPE, FORM_CONTENT_TYPE),
+                          required=True,
+                          default=JSON_CONTENT_TYPE)
 
     verify_ssl = Bool(title=_("Verify SSL?"),
                       description=_("If 'no', SSL certificates will not be verified"),
@@ -115,7 +128,7 @@ class IRESTCallerTaskInfo(Interface):
                                         description=_("Method and relative URL of REST API used "
                                                       "to get access tokens"),
                                         required=False,
-                                        default=('POST', '/api/auth/jwt/token'))
+                                        default=(POST_METHOD, '/api/auth/jwt/token'))
 
     jwt_login_field = TextLine(title=_("JWT login attribute"),
                                description=_("Name of the attribute containing principal ID "
