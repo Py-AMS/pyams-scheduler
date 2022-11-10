@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.10.1
+------
+ - added content-type property to REST service client task
+
 1.10.0
 ------
  - allow usage of dynamic text formatters into scheduler HTTP client tasks
