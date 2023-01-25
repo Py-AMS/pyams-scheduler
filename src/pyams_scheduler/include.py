@@ -20,6 +20,8 @@ import logging
 import os.path
 import re
 import sys
+
+from ZODB.interfaces import IBroken
 from pyramid.events import subscriber
 from pyramid.interfaces import IApplicationCreated
 from pyramid.settings import asbool
@@ -156,6 +158,8 @@ def handle_new_application(event):  # pylint: disable=unused-argument,too-many-l
                                        registry)
             # load tasks
             for task in scheduler_util.values():
+                if IBroken.providedBy(task):
+                    continue
                 if not task.is_runnable():
                     continue
                 trigger = task.get_trigger()
