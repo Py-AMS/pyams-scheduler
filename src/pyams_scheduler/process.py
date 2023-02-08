@@ -261,6 +261,8 @@ class SchedulerProcess(ZMQProcess):
         # pylint: disable=too-many-arguments
         super().__init__(zmq_address, handler, auth, clients, registry)
         self.scheduler = BackgroundScheduler()
+        self.scheduler.configure(registry.settings,
+                                 prefix='pyams_scheduler.config.')
         self.jobstore = MemoryJobStore()
 
     def run(self):
