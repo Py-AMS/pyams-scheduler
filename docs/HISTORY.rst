@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.10.2
+------
+ - added check for broken tasks on application start
+ - added support for scheduler configuration from Pyramid settings file
+ - added support for Python 3.11
+
 1.10.1
 ------
  - added content-type property to REST service client task
