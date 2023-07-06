@@ -56,7 +56,7 @@ class RESTTaskFormInfo(GroupManager):
     """REST API caller task add form info"""
 
     title = _("HTTP/REST API settings")
-    fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'params',
+    fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'headers', 'params',
                                                 'content_type', 'verify_ssl',
                                                 'connection_timeout', 'ok_status',
                                                 'allow_redirects')
@@ -84,6 +84,37 @@ def extract_rest_task_info(event):
             event.form.widgets.errors += (Invalid(_("Missing base target URI!")), )
 
 
+@adapter_config(name='rest-proxy.group',
+                required=(IScheduler, IAdminLayer, IRESTTaskForm),
+                provides=IGroup)
+@adapter_config(name='rest-proxy.group',
+                required=(IRESTCallerTask, IAdminLayer, IRESTTaskForm),
+                provides=IGroup)
+class RESTTaskFormProxyInfo(FormGroupChecker):
+    """REST task form proxy info"""
+
+    legend = _("Proxy settings")
+    fields = Fields(IRESTCallerTaskInfo).select('use_proxy', 'proxy_server', 'proxy_port',
+                                                'proxy_username', 'proxy_password')
+
+    weight = 10
+
+    def update_widgets(self, prefix=None):
+        super().update_widgets(prefix)
+        password = self.widgets.get('proxy_password')
+        if password is not None:
+            password.autocomplete = 'new-password'
+
+
+@subscriber(IDataExtractedEvent, form_selector=RESTTaskFormProxyInfo)
+def extract_rest_proxy_info(event):
+    """Extract REST task proxy info"""
+    data = event.data
+    use_proxy = data.get('use_proxy')
+    if use_proxy and not data.get('proxy_server'):
+        event.form.widgets.errors += (Invalid(_("Proxy access defined without proxy server!")), )
+
+
 @adapter_config(name='rest-auth.group',
                 required=(IScheduler, IAdminLayer, IRESTTaskForm),
                 provides=IGroup)
@@ -96,7 +127,7 @@ class RESTTaskFormAuthInfo(FormGroupChecker):
     legend = _("Authentication")
     fields = Fields(IRESTCallerTaskInfo).select('authenticate', 'username', 'password')
 
-    weight = 10
+    weight = 20
 
     def update_widgets(self, prefix=None):
         super().update_widgets(prefix)
@@ -113,37 +144,6 @@ def extract_rest_auth_info(event):
     if authenticate and not data.get('username'):
         event.form.widgets.errors += (Invalid(_("Username and password are required to use "
                                                 "authentication!")), )
-
-
-@adapter_config(name='rest-proxy.group',
-                required=(IScheduler, IAdminLayer, IRESTTaskForm),
-                provides=IGroup)
-@adapter_config(name='rest-proxy.group',
-                required=(IRESTCallerTask, IAdminLayer, IRESTTaskForm),
-                provides=IGroup)
-class RESTTaskFormProxyInfo(FormGroupChecker):
-    """REST task form proxy info"""
-
-    legend = _("Proxy settings")
-    fields = Fields(IRESTCallerTaskInfo).select('use_proxy', 'proxy_server', 'proxy_port',
-                                                'proxy_username', 'proxy_password')
-
-    weight = 20
-
-    def update_widgets(self, prefix=None):
-        super().update_widgets(prefix)
-        password = self.widgets.get('proxy_password')
-        if password is not None:
-            password.autocomplete = 'new-password'
-
-
-@subscriber(IDataExtractedEvent, form_selector=RESTTaskFormProxyInfo)
-def extract_rest_proxy_info(event):
-    """Extract REST task proxy info"""
-    data = event.data
-    use_proxy = data.get('use_proxy')
-    if use_proxy and not data.get('proxy_server'):
-        event.form.widgets.errors += (Invalid(_("Proxy access defined without proxy server!")), )
 
 
 @adapter_config(name='rest-jwt-authority.group',
@@ -183,6 +183,30 @@ def extract_rest_jwt_info(event):
     if use_jwt_authority and not data.get('jwt_authority_url'):
         event.form.widgets.errors += (Invalid(_("JWT authority location is required to enable "
                                                 "JWT authentication!")), )
+
+
+@adapter_config(name='api-key.group',
+                required=(IScheduler, IAdminLayer, IRESTTaskForm),
+                provides=IGroup)
+@adapter_config(name='api-key.group',
+                required=(IRESTCallerTask, IAdminLayer, IRESTTaskForm),
+                provides=IGroup)
+class RESTTaskFormAPIKeyInfo(FormGroupChecker):
+    """REST task form API key info"""
+
+    legend = _("API key authentication")
+    fields = Fields(IRESTCallerTaskInfo).select('use_api_key', 'api_key_header', 'api_key_value')
+
+    weight = 40
+
+
+@subscriber(IDataExtractedEvent, form_selector=RESTTaskFormAPIKeyInfo)
+def extract_api_key_info(event):
+    """Extract REST task API key info"""
+    data = event.data
+    use_api_key = data.get('use_api_key')
+    if use_api_key and not data.get('api_key_value'):
+        event.form.widgets.errors += (Invalid(_("API key is required to use API key authentication!")), )
 
 
 #

@@ -51,20 +51,21 @@ class RESTCallerTask(Task):
 
     base_url = FieldProperty(IRESTCallerTask['base_url'])
     service = FieldProperty(IRESTCallerTask['service'])
+    headers = FieldProperty(IRESTCallerTask['headers'])
     params = FieldProperty(IRESTCallerTask['params'])
     content_type = FieldProperty(IRESTCallerTask['content_type'])
     verify_ssl = FieldProperty(IRESTCallerTask['verify_ssl'])
     connection_timeout = FieldProperty(IRESTCallerTask['connection_timeout'])
     allow_redirects = FieldProperty(IRESTCallerTask['allow_redirects'])
     ok_status = FieldProperty(IRESTCallerTask['ok_status'])
-    authenticate = FieldProperty(IRESTCallerTask['authenticate'])
-    username = FieldProperty(IRESTCallerTask['username'])
-    _password = FieldProperty(IRESTCallerTask['password'])
     use_proxy = FieldProperty(IRESTCallerTask['use_proxy'])
     proxy_server = FieldProperty(IRESTCallerTask['proxy_server'])
     proxy_port = FieldProperty(IRESTCallerTask['proxy_port'])
     proxy_username = FieldProperty(IRESTCallerTask['proxy_username'])
     _proxy_password = FieldProperty(IRESTCallerTask['proxy_password'])
+    authenticate = FieldProperty(IRESTCallerTask['authenticate'])
+    username = FieldProperty(IRESTCallerTask['username'])
+    _password = FieldProperty(IRESTCallerTask['password'])
     use_jwt_authority = FieldProperty(IRESTCallerTask['use_jwt_authority'])
     jwt_authority_url = FieldProperty(IRESTCallerTask['jwt_authority_url'])
     jwt_token_service = FieldProperty(IRESTCallerTask['jwt_token_service'])
@@ -72,6 +73,9 @@ class RESTCallerTask(Task):
     jwt_password_field = FieldProperty(IRESTCallerTask['jwt_password_field'])
     jwt_token_attribute = FieldProperty(IRESTCallerTask['jwt_token_attribute'])
     jwt_use_proxy = FieldProperty(IRESTCallerTask['jwt_use_proxy'])
+    use_api_key = FieldProperty(IRESTCallerTask['use_api_key'])
+    api_key_header = FieldProperty(IRESTCallerTask['api_key_header'])
+    api_key_value = FieldProperty(IRESTCallerTask['api_key_value'])
 
     @property
     def password(self):
@@ -102,6 +106,20 @@ class RESTCallerTask(Task):
         """OK status list getter"""
         return map(int, self.ok_status.split(','))
 
+    def get_request_headers(self):
+        """Request HTTP headers getter"""
+        result = {}
+        for header in (self.headers or ()):
+            if not header:
+                continue
+            try:
+                name, value = header.split('=', 1)
+            except ValueError:
+                continue
+            else:
+                result[name] = value
+        return result
+
     def get_request_params(self, method, params):
         """Request params getter"""
         result = {}
@@ -131,10 +149,13 @@ class RESTCallerTask(Task):
             else:
                 proxy_auth = ''
             proxies[parsed.scheme] = f'http://{proxy_auth}{self.proxy_server}:{self.proxy_port}'
-        # check JWT authorization
+        # check custom headers
+        headers = self.get_request_headers()
+        # check authorizations
         auth = None
-        headers = {}
-        if self.use_jwt_authority:
+        if self.use_api_key:  # API key authentication
+            headers[self.api_key_header] = self.api_key_value
+        elif self.use_jwt_authority:  # JWT authentication
             jwt_method, jwt_service = self.jwt_token_service
             jwt_service = f'{self.jwt_authority_url}{jwt_service}'
             jwt_params = {
@@ -165,16 +186,18 @@ class RESTCallerTask(Task):
                     return TASK_STATUS_ERROR, None
                 headers['Authorization'] = f'Bearer ' \
                                            f'{jwt_request.json().get(self.jwt_token_attribute)}'
-        # build authorization headers
-        elif self.authenticate and self.username:
+        elif self.authenticate and self.username:  # Basic authentication
             auth = self.username, self.password
+        if headers:
+            report.write(f'Request headers: {format_dict(headers)}\n')
         # check params
         params = {}
         if self.params:
             params.update(json.loads(render_text(self.params)))
         params.update(kwargs)
         if params:
-            report.write(f'Request params: {format_dict(params)}\n\n')
+            report.write(f'Request params: {format_dict(params)}\n')
+        report.write('\n')
         # build HTTP request
         try:
             rest_request = requests.request(method, rest_service,

@@ -19,8 +19,7 @@ from zope.interface import Interface
 from zope.schema import Bool, Choice, Int, Password, Text, TextLine, URI
 
 from pyams_scheduler.interfaces import ITask
-from pyams_utils.schema import HTTPMethodField
-
+from pyams_utils.schema import HTTPMethodField, TextLineListField
 
 __docformat__ = 'restructuredtext'
 
@@ -45,6 +44,12 @@ class IRESTCallerTaskInfo(Interface):
                               description=_("Method and relative URL of REST service"),
                               required=True,
                               default=(GET_METHOD, '/'))
+
+    headers = TextLineListField(title=_("HTTP headers"),
+                                description=_("Custom HTTP headers required by this service; you can enter "
+                                              "one header per line, using \"Header=Value\" syntax for each "
+                                              "header"),
+                                required=False)
 
     params = Text(title=_("Service parameters"),
                   description=_("Enter service parameters, in JSON object format; you can "
@@ -80,19 +85,6 @@ class IRESTCallerTaskInfo(Interface):
                          required=True,
                          default='200')
 
-    authenticate = Bool(title=_("Required authentication?"),
-                        description=_(""),
-                        required=False,
-                        default=False)
-
-    username = TextLine(title=_("User name"),
-                        description=_("Service login"),
-                        required=False)
-
-    password = Password(title=_("Password"),
-                        description=_("Service password"),
-                        required=False)
-
     use_proxy = Bool(title=_("Use proxy server?"),
                      description=_("Check if an HTTP proxy is required"),
                      required=False,
@@ -112,6 +104,19 @@ class IRESTCallerTaskInfo(Interface):
 
     proxy_password = Password(title=_("Proxy password"),
                               required=False)
+
+    authenticate = Bool(title=_("Required authentication?"),
+                        description=_(""),
+                        required=False,
+                        default=False)
+
+    username = TextLine(title=_("User name"),
+                        description=_("Service login"),
+                        required=False)
+
+    password = Password(title=_("Password"),
+                        description=_("Service password"),
+                        required=False)
 
     use_jwt_authority = Bool(title=_("Use JWT authority?"),
                              description=_("If 'yes', get JWT token from authentication "
@@ -153,6 +158,20 @@ class IRESTCallerTaskInfo(Interface):
                                        "to get access to JWT authority"),
                          required=False,
                          default=False)
+
+    use_api_key = Bool(title=_("Use API key?"),
+                       description=_("Check if an API key can be used for authentication"),
+                       required=False,
+                       default=False)
+
+    api_key_header = TextLine(title=_("API key header"),
+                              description=_("HTTP header used to send API key"),
+                              required=False,
+                              default='X-API-Key')
+
+    api_key_value = TextLine(title=_("API key value"),
+                             description=_("Provided API key"),
+                             required=False)
 
 
 class IRESTCallerTask(ITask, IRESTCallerTaskInfo):
