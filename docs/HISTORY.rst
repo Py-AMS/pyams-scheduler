@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.11.0
+------
+ - added support for API keys authentication in REST tasks
+ - added support for custom HTTP headers in REST tasks
+
 1.10.2
 ------
  - added check for broken tasks on application start
