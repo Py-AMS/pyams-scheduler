@@ -15,6 +15,7 @@
 This module provides components used to manage tasks notifications.
 """
 
+from pyramid.decorator import reify
 from pyramid.view import view_config
 from zope.interface import Interface
 from zope.intid import IIntIds
@@ -82,7 +83,7 @@ class TaskNotificationsView(TaskBaseFormMixin, AdminModalDisplayForm):
 class TaskNotificationsTable(Table):
     """Task notifications table"""
 
-    @property
+    @reify
     def data_attributes(self):
         attributes = super().data_attributes
         container = ITaskNotificationContainer(self.context)

@@ -17,6 +17,7 @@ This module defines views which are used to display content history.
 
 from datetime import timedelta
 
+from pyramid.decorator import reify
 from zope.interface import Interface
 from zope.traversing.interfaces import ITraversable
 
@@ -67,7 +68,7 @@ class SchedulerHistoryTable(Table):
         'table': 'table table-striped table-hover table-xs datatable'
     }
 
-    @property
+    @reify
     def data_attributes(self):
         attributes = super().data_attributes
         attributes['table'].update({

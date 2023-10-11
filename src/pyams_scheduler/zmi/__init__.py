@@ -15,6 +15,7 @@
 This module defines base tasks management views.
 """
 
+from pyramid.decorator import reify
 from pyramid.view import view_config
 from zope.interface import Interface
 
@@ -80,7 +81,7 @@ class SchedulerTasksTable(Table):
 
     display_if_empty = True
 
-    @property
+    @reify
     def data_attributes(self):
         attributes = super().data_attributes
         attributes['table'].update({
