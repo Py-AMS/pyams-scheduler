@@ -18,8 +18,10 @@ This module is used for Pyramid integration.
 import atexit
 import logging
 import os.path
+import random
 import re
 import sys
+from time import sleep
 
 from ZODB.interfaces import IBroken
 from pyramid.events import subscriber
@@ -120,6 +122,9 @@ def handle_new_application(event):  # pylint: disable=unused-argument,too-many-l
     start_handler = asbool(settings.get(SCHEDULER_STARTER_KEY, False))
     if not start_handler:
         return
+
+    # add random sleep to avoid concurrent access
+    sleep(random.random() * 5.)
 
     # check if port is available
     handler_address = settings.get(SCHEDULER_HANDLER_KEY, '127.0.0.1:5555')
