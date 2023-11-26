@@ -23,7 +23,7 @@ DOCS = os.path.join(os.path.dirname(__file__),
 README = os.path.join(DOCS, 'README.rst')
 HISTORY = os.path.join(DOCS, 'HISTORY.rst')
 
-version = '1.11.0'
+version = '2.0.0'
 long_description = open(README).read() + '\n\n' + open(HISTORY).read()
 
 tests_require = [
@@ -72,7 +72,7 @@ setup(name='pyams_scheduler',
           'pyams_site',
           'pyams_utils >= 1.15.0',
           'pyams_zmq',
-          'pyramid',
+          'pyramid >= 2.0.0',
           'pyramid_mailer',
           'requests',
           'transaction',

@@ -99,8 +99,8 @@ class RESTTaskFormProxyInfo(FormGroupChecker):
 
     weight = 10
 
-    def update_widgets(self, prefix=None):
-        super().update_widgets(prefix)
+    def update_widgets(self, prefix=None, use_form_mode=True):
+        super().update_widgets(prefix, use_form_mode)
         password = self.widgets.get('proxy_password')
         if password is not None:
             password.autocomplete = 'new-password'
@@ -129,8 +129,8 @@ class RESTTaskFormAuthInfo(FormGroupChecker):
 
     weight = 20
 
-    def update_widgets(self, prefix=None):
-        super().update_widgets(prefix)
+    def update_widgets(self, prefix=None, use_form_mode=True):
+        super().update_widgets(prefix, use_form_mode)
         password = self.widgets.get('password')
         if password is not None:
             password.autocomplete = 'new-password'
