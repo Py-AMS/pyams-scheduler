@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2023-07-06 10:50+0200\n"
+"POT-Creation-Date: 2023-12-09 01:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,94 +28,20 @@ msgstr ""
 msgid "Task is not configured for loop-style scheduling!"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:60
+#: ./src/pyams_scheduler/include.py:62
 msgid "Manage scheduler properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:64
+#: ./src/pyams_scheduler/include.py:66
 msgid "Manage scheduler tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:77
+#: ./src/pyams_scheduler/include.py:79
 msgid "Scheduler manager (role)"
 msgstr ""
 
-#: ./src/pyams_scheduler/include.py:90
+#: ./src/pyams_scheduler/include.py:92
 msgid "Tasks manager (role)"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/scheduler.py:87
-msgid "Configuration"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/scheduler.py:98
-msgid "Scheduler configuration"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/jobs.py:45
-msgid "Scheduled jobs"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/jobs.py:79
-msgid "Name"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/jobs.py:90
-msgid "ID"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/jobs.py:101
-msgid "Trigger"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/jobs.py:112
-msgid "Next run"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/jobs.py:128
-msgid "Scheduler jobs"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/jobs.py:130
-msgid "List of scheduler jobs"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:59
-msgid "Jobs history"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:100
-#: ./src/pyams_scheduler/interfaces/task/__init__.py:272
-msgid "Task name"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:115
-msgid "Run date"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:128
-msgid "Duration"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:146
-msgid "Status"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:158
-msgid "Tasks execution history"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:160
-msgid "List of executed tasks"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:175
-#: ./src/pyams_scheduler/zmi/history.py:237
-msgid "Task run history"
-msgstr ""
-
-#: ./src/pyams_scheduler/zmi/history.py:197
-msgid "List of executed jobs"
 msgstr ""
 
 #: ./src/pyams_scheduler/zmi/trigger.py:63
@@ -166,28 +92,106 @@ msgid ""
 "An asterisk means that all possible values are selected (warning when setting this value on seconds!!)"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:73
+#: ./src/pyams_scheduler/zmi/history.py:64
+msgid "Jobs history"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:105
+#: ./src/pyams_scheduler/interfaces/task/__init__.py:272
+msgid "Task name"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:120
+msgid "Run date"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:133
+msgid "Duration"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:151
+msgid "Status"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:163
+msgid "Tasks execution history"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:165
+msgid "List of executed tasks"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:180
+#: ./src/pyams_scheduler/zmi/history.py:243
+msgid "Task run history"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:203
+msgid "List of executed jobs"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:244
+msgid "Task execution log"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/jobs.py:45
+msgid "Scheduled jobs"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/jobs.py:79
+msgid "Name"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/jobs.py:90
+msgid "ID"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/jobs.py:101
+msgid "Trigger"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/jobs.py:112
+msgid "Next run"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/jobs.py:128
+msgid "Scheduler jobs"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/jobs.py:130
+msgid "List of scheduler jobs"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/scheduler.py:87
+msgid "Configuration"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/scheduler.py:98
+msgid "Scheduler configuration"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/__init__.py:74
 msgid "Tasks definition"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:113
+#: ./src/pyams_scheduler/zmi/__init__.py:114
 msgid "Enabled task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:114
+#: ./src/pyams_scheduler/zmi/__init__.py:115
 msgid "Disabled task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:152
+#: ./src/pyams_scheduler/zmi/__init__.py:153
 msgid "Task ID"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:171
+#: ./src/pyams_scheduler/zmi/__init__.py:172
 #: ./src/pyams_scheduler/interfaces/__init__.py:146
 msgid "Scheduler tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:173
+#: ./src/pyams_scheduler/zmi/__init__.py:174
 msgid "List of scheduler tasks"
 msgstr ""
 
@@ -201,12 +205,12 @@ msgstr ""
 msgid "Command line"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/rest.py:49
-msgid "HTTP service"
-msgstr ""
-
 #: ./src/pyams_scheduler/task/sync.py:106
 msgid "Directory synchronization"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/rest.py:49
+msgid "HTTP service"
 msgstr ""
 
 #: ./src/pyams_scheduler/task/__init__.py:290
@@ -222,6 +226,59 @@ msgstr ""
 #: ./src/pyams_scheduler/task/__init__.py:324
 #, python-format
 msgid "An error occurred during execution of task '{}'"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:64
+#: ./src/pyams_scheduler/task/zmi/notification.py:214
+msgid "Task notifications"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:116
+msgid "Click icon to enable or disable notification"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:139
+msgid "Target"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:149
+msgid "Send errors reports only"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:161
+msgid "Send all reports"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:172
+msgid "Send empty reports"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:184
+msgid "Don't send empty reports"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:216
+msgid "List of defined task notifications"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:226
+msgid "New notification properties"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:260
+msgid "Notification properties"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/notification.py:294
+msgid "Add mail notification..."
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/ssh.py:88
+msgid "Command settings"
+msgstr ""
+
+#: ./src/pyams_scheduler/task/zmi/ssh.py:104
+msgid "Add local/remote command launcher..."
 msgstr ""
 
 #: ./src/pyams_scheduler/task/zmi/sync.py:122
@@ -278,92 +335,39 @@ msgstr ""
 msgid "Add HTTP/REST API caller task..."
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/notification.py:63
-#: ./src/pyams_scheduler/task/zmi/notification.py:213
-msgid "Task notifications"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:115
-msgid "Click icon to enable or disable notification"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:138
-msgid "Target"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:148
-msgid "Send errors reports only"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:160
-msgid "Send all reports"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:171
-msgid "Send empty reports"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:183
-msgid "Don't send empty reports"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:215
-msgid "List of defined task notifications"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:225
-msgid "New notification properties"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:259
-msgid "Notification properties"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/notification.py:293
-msgid "Add mail notification..."
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/__init__.py:57
+#: ./src/pyams_scheduler/task/zmi/__init__.py:59
 msgid ""
 "You can limit history conservation to a duration or to a number of "
 "iterations. If both are specified, the first encountered limit will take "
 "precedence."
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:74
-#, python-format
-msgid "New task: {}"
+#: ./src/pyams_scheduler/task/zmi/__init__.py:70
+msgid "New task"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:76
+#: ./src/pyams_scheduler/task/zmi/__init__.py:71
 msgid "New task properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:92
-#: ./src/pyams_scheduler/task/zmi/__init__.py:174
+#: ./src/pyams_scheduler/task/zmi/__init__.py:87
+#: ./src/pyams_scheduler/task/zmi/__init__.py:195
 msgid "Task reports"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:151
+#: ./src/pyams_scheduler/task/zmi/__init__.py:145
+#: ./src/pyams_scheduler/task/zmi/__init__.py:160
 #, python-format
 msgid "Task: {}"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:157
+#: ./src/pyams_scheduler/task/zmi/__init__.py:178
 msgid "Task properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/__init__.py:216
-#: ./src/pyams_scheduler/task/zmi/__init__.py:229
+#: ./src/pyams_scheduler/task/zmi/__init__.py:237
+#: ./src/pyams_scheduler/task/zmi/__init__.py:250
 msgid "Clone task"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/ssh.py:88
-msgid "Command settings"
-msgstr ""
-
-#: ./src/pyams_scheduler/task/zmi/ssh.py:104
-msgid "Add local/remote command launcher..."
 msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/__init__.py:100
@@ -434,6 +438,397 @@ msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/__init__.py:164
 msgid "Tasks manager"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:32
+msgid "Hostname or IP address"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:33
+msgid ""
+"Enter hostname or IP address of a remote host; keep empty for local server "
+"host"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:37
+#: ./src/pyams_scheduler/interfaces/task/sync.py:108
+msgid "Automatically add host key?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:38
+msgid "If 'yes', connection will be opened event if server key is unknown"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:43
+#: ./src/pyams_scheduler/interfaces/task/sync.py:103
+msgid "Port number"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:47
+#: ./src/pyams_scheduler/interfaces/task/sync.py:114
+#: ./src/pyams_scheduler/interfaces/task/rest.py:113
+msgid "User name"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:50
+#: ./src/pyams_scheduler/interfaces/task/sync.py:117
+msgid "Private key filename"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:51
+#: ./src/pyams_scheduler/interfaces/task/sync.py:118
+msgid ""
+"Enter name of private key file; use '~' to identify running server user home "
+"directory, as in ~/.ssh/id_rsa"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:56
+#: ./src/pyams_scheduler/interfaces/task/sync.py:123
+#: ./src/pyams_scheduler/interfaces/task/rest.py:117
+msgid "Password"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:57
+#: ./src/pyams_scheduler/interfaces/task/sync.py:124
+msgid "If not using private key, you must provide user's password"
+msgstr ""
+
+#. 
+#. pylint: disable=unsubscriptable-object
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:65
+#: ./src/pyams_scheduler/interfaces/task/sync.py:136
+msgid ""
+"You must provide a private key filename OR a password when defining remote "
+"tasks"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:78
+msgid "SSH connection"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:83
+msgid "Enter command line, using absolute path names"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:86
+#: ./src/pyams_scheduler/interfaces/task/rest.py:82
+msgid "OK status"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/ssh.py:87
+msgid ""
+"Comma-separated list of command exit codes which should be considered as "
+"success"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:99
+msgid "Host"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:100
+msgid "Protocol and host name"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:104
+msgid "Port number is required for remote protocols like SFTP or FTP"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:109
+msgid ""
+"If 'yes', an SSH connection will be accepted even if server key is unknown"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:128
+msgid "Directory name"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:129
+msgid "Enter absolute directory name"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:146
+msgid "Source directory"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:150
+msgid "Files names filter"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:151
+msgid "Filter used to select only a subset of directory contents"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:156
+msgid "Recursive copy?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:157
+msgid "If 'yes', sub-directories will also be synchronized"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:161
+msgid "Follow symbolic links?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:162
+msgid ""
+"If 'yes', symbolic links targets will be copied as normal files; be warmed "
+"that symbolic links can be seen as regular files while using an SFTP source!"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:168
+msgid "Ignore read errors?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:169
+msgid ""
+"If 'yes', source files which can't be opened will just be ignored; otherwise,"
+" read errors will stop the synchronization"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:175
+msgid "Use datetime?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:176
+msgid ""
+"If 'yes', last modification time will be used to compare files between source"
+" and target, and last modification date will be restored on target after copy"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:182
+msgid "Delete source after copy"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:183
+msgid ""
+"If 'yes', source directory will be cleared after a successful synchronization"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:188
+msgid "Ignore delete errors?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:189
+msgid ""
+"If 'yes', source files which can't be deleted after copy will just be "
+"ignored; otherwise, delete errors will stop the synchronization"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:195
+msgid "Target directory"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:199
+msgid "Ignore write errors?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/sync.py:200
+msgid ""
+"If 'yes', target files which can't be opened will just be ignored; otherwise,"
+" write errors will stop the synchronization"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:39
+msgid "Base target URI"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:40
+msgid "Base URI, including protocol and hostname of remote service"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:43
+msgid "REST service"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:44
+msgid "Method and relative URL of REST service"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:48
+msgid "HTTP headers"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:49
+msgid ""
+"Custom HTTP headers required by this service; you can enter one header per "
+"line, using \"Header=Value\" syntax for each header"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:54
+msgid "Service parameters"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:55
+msgid ""
+"Enter service parameters, in JSON object format; you can include dynamic "
+"fragments into your JSON code using PyAMS text renderers rules (see "
+"documentation)"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:60
+msgid "POST content type"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:61
+msgid "Content type used to send POST parameters"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:66
+msgid "Verify SSL?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:67
+msgid "If 'no', SSL certificates will not be verified"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:71
+msgid "Connection timeout"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:72
+msgid ""
+"Connection timeout, in seconds; keep empty to use system's default, which is "
+"also none by default"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:77
+msgid "Allow redirects?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:78
+msgid "If disabled, redirections will now be handled"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:83
+msgid "Comma-separated list of HTTP status which may be considered as success"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:88
+msgid "Use proxy server?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:89
+msgid "Check if an HTTP proxy is required"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:93
+msgid "Proxy server"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:94
+msgid "Proxy server name"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:97
+msgid "Proxy port"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:98
+msgid "Proxy server port"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:102
+msgid "Proxy user name"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:105
+msgid "Proxy password"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:108
+msgid "Required authentication?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:114
+msgid "Service login"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:118
+msgid "Service password"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:121
+msgid "Use JWT authority?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:122
+msgid "If 'yes', get JWT token from authentication authority"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:127
+msgid "JWT authority location"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:128
+msgid "Base URL (protocol and hostname) or JWT authentication authority"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:132
+msgid "Token getter service"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:133
+msgid "Method and relative URL of REST API used to get access tokens"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:138
+msgid "JWT login attribute"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:139
+msgid "Name of the attribute containing principal ID sent to JWT authority"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:144
+msgid "JWT password attribute"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:145
+msgid ""
+"Name of the attribute containing principal password sent to JWT authority"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:150
+msgid "JWT token attribute"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:151
+msgid "Name of the attribute containing the access token in JSON response"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:156
+msgid "Use proxy settings for JWT API?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:157
+msgid ""
+"If 'yes', proxy settings defined above will also be used to get access to JWT"
+" authority"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:162
+msgid "Use API key?"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:163
+msgid "Check if an API key can be used for authentication"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:167
+msgid "API key header"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:168
+msgid "HTTP header used to send API key"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:172
+msgid "API key value"
+msgstr ""
+
+#: ./src/pyams_scheduler/interfaces/task/rest.py:173
+msgid "Provided API key"
 msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/task/__init__.py:73
@@ -664,395 +1059,4 @@ msgstr ""
 msgid ""
 "Email address of report's recipient; you can enter email address in a simple "
 "form or in in a complete \"Name <adresse@domain.com>\" form"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:99
-msgid "Host"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:100
-msgid "Protocol and host name"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:103
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:43
-msgid "Port number"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:104
-msgid "Port number is required for remote protocols like SFTP or FTP"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:108
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:37
-msgid "Automatically add host key?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:109
-msgid ""
-"If 'yes', an SSH connection will be accepted even if server key is unknown"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:114
-#: ./src/pyams_scheduler/interfaces/task/rest.py:113
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:47
-msgid "User name"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:117
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:50
-msgid "Private key filename"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:118
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:51
-msgid ""
-"Enter name of private key file; use '~' to identify running server user home "
-"directory, as in ~/.ssh/id_rsa"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:123
-#: ./src/pyams_scheduler/interfaces/task/rest.py:117
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:56
-msgid "Password"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:124
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:57
-msgid "If not using private key, you must provide user's password"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:128
-msgid "Directory name"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:129
-msgid "Enter absolute directory name"
-msgstr ""
-
-#. pylint: disable=unsubscriptable-object
-#. 
-#: ./src/pyams_scheduler/interfaces/task/sync.py:136
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:65
-msgid ""
-"You must provide a private key filename OR a password when defining remote "
-"tasks"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:146
-msgid "Source directory"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:150
-msgid "Files names filter"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:151
-msgid "Filter used to select only a subset of directory contents"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:156
-msgid "Recursive copy?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:157
-msgid "If 'yes', sub-directories will also be synchronized"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:161
-msgid "Follow symbolic links?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:162
-msgid ""
-"If 'yes', symbolic links targets will be copied as normal files; be warmed "
-"that symbolic links can be seen as regular files while using an SFTP source!"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:168
-msgid "Ignore read errors?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:169
-msgid ""
-"If 'yes', source files which can't be opened will just be ignored; otherwise,"
-" read errors will stop the synchronization"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:175
-msgid "Use datetime?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:176
-msgid ""
-"If 'yes', last modification time will be used to compare files between source"
-" and target, and last modification date will be restored on target after copy"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:182
-msgid "Delete source after copy"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:183
-msgid ""
-"If 'yes', source directory will be cleared after a successful synchronization"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:188
-msgid "Ignore delete errors?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:189
-msgid ""
-"If 'yes', source files which can't be deleted after copy will just be "
-"ignored; otherwise, delete errors will stop the synchronization"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:195
-msgid "Target directory"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:199
-msgid "Ignore write errors?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/sync.py:200
-msgid ""
-"If 'yes', target files which can't be opened will just be ignored; otherwise,"
-" write errors will stop the synchronization"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:39
-msgid "Base target URI"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:40
-msgid "Base URI, including protocol and hostname of remote service"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:43
-msgid "REST service"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:44
-msgid "Method and relative URL of REST service"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:48
-msgid "HTTP headers"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:49
-msgid ""
-"Custom HTTP headers required by this service; you can enter one header per "
-"line, using \"Header=Value\" syntax for each header"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:54
-msgid "Service parameters"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:55
-msgid ""
-"Enter service parameters, in JSON object format; you can include dynamic "
-"fragments into your JSON code using PyAMS text renderers rules (see "
-"documentation)"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:60
-msgid "POST content type"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:61
-msgid "Content type used to send POST parameters"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:66
-msgid "Verify SSL?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:67
-msgid "If 'no', SSL certificates will not be verified"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:71
-msgid "Connection timeout"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:72
-msgid ""
-"Connection timeout, in seconds; keep empty to use system's default, which is "
-"also none by default"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:77
-msgid "Allow redirects?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:78
-msgid "If disabled, redirections will now be handled"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:82
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:86
-msgid "OK status"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:83
-msgid "Comma-separated list of HTTP status which may be considered as success"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:88
-msgid "Use proxy server?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:89
-msgid "Check if an HTTP proxy is required"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:93
-msgid "Proxy server"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:94
-msgid "Proxy server name"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:97
-msgid "Proxy port"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:98
-msgid "Proxy server port"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:102
-msgid "Proxy user name"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:105
-msgid "Proxy password"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:108
-msgid "Required authentication?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:114
-msgid "Service login"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:118
-msgid "Service password"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:121
-msgid "Use JWT authority?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:122
-msgid "If 'yes', get JWT token from authentication authority"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:127
-msgid "JWT authority location"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:128
-msgid "Base URL (protocol and hostname) or JWT authentication authority"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:132
-msgid "Token getter service"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:133
-msgid "Method and relative URL of REST API used to get access tokens"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:138
-msgid "JWT login attribute"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:139
-msgid "Name of the attribute containing principal ID sent to JWT authority"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:144
-msgid "JWT password attribute"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:145
-msgid ""
-"Name of the attribute containing principal password sent to JWT authority"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:150
-msgid "JWT token attribute"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:151
-msgid "Name of the attribute containing the access token in JSON response"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:156
-msgid "Use proxy settings for JWT API?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:157
-msgid ""
-"If 'yes', proxy settings defined above will also be used to get access to JWT"
-" authority"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:162
-msgid "Use API key?"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:163
-msgid "Check if an API key can be used for authentication"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:167
-msgid "API key header"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:168
-msgid "HTTP header used to send API key"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:172
-msgid "API key value"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/rest.py:173
-msgid "Provided API key"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:32
-msgid "Hostname or IP address"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:33
-msgid ""
-"Enter hostname or IP address of a remote host; keep empty for local server "
-"host"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:38
-msgid "If 'yes', connection will be opened event if server key is unknown"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:78
-msgid "SSH connection"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:83
-msgid "Enter command line, using absolute path names"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/task/ssh.py:87
-msgid ""
-"Comma-separated list of command exit codes which should be considered as "
-"success"
 msgstr ""

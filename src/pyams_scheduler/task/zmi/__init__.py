@@ -27,6 +27,7 @@ from pyams_layer.interfaces import IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import ITaskInfo
 from pyams_scheduler.zmi import SchedulerTasksTable
+from pyams_skin.interfaces.view import IModalAddForm
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_table.interfaces import IColumn
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
@@ -35,7 +36,8 @@ from pyams_utils.traversing import get_parent
 from pyams_zmi.form import AdminModalAddForm, AdminModalEditForm
 from pyams_zmi.helper.event import get_json_table_row_add_callback, \
     get_json_table_row_refresh_callback
-from pyams_zmi.interfaces import IAdminLayer, IObjectLabel
+from pyams_zmi.interfaces import IAdminLayer, IObjectLabel, TITLE_SPAN_BREAK
+from pyams_zmi.interfaces.form import IFormTitle
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.table import ActionColumn, TableElementEditor
 from pyams_zmi.utils import get_object_label
@@ -65,14 +67,7 @@ class TaskHistoryHelpMessage(AlertMessage):
 class BaseTaskAddForm(AdminModalAddForm):  # pylint: disable=abstract-method
     """Base task add form"""
 
-    @property
-    def title(self):
-        """Title getter"""
-        translate = self.request.localizer.translate
-        return '<small>{}</small><br />{}'.format(
-            get_object_label(self.context, self.request, self),
-            translate(_("New task: {}")).format(translate(self.content_label)))
-
+    subtitle = _("New task")
     legend = _("New task properties")
     content_label = '--'
 
@@ -103,6 +98,16 @@ class BaseTaskAddFormInfo(InnerAddForm):
             widget.prefix = TaskHistoryHelpMessage(self.context, self.request, self, None)
 
 
+@adapter_config(required=(IScheduler, IAdminLayer, IModalAddForm),
+                provides=IFormTitle)
+def scheduler_task_add_form_title(context, request, form):
+    """Scheduler task add form title"""
+    translate = request.localizer.translate
+    return TITLE_SPAN_BREAK.format(
+        get_object_label(context, request, form),
+        translate(form.content_label))
+
+
 @adapter_config(required=(IScheduler, IAdminLayer, BaseTaskAddForm),
                 provides=IAJAXFormRenderer)
 class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
@@ -131,6 +136,15 @@ def task_label(context, request, view):  # pylint: disable=unused-argument
     return context.name
 
 
+@adapter_config(name='form-title',
+                required=(ITask, IPyAMSLayer, Interface),
+                provides=IObjectLabel)
+def task_label(context, request, view):  # pylint: disable=unused-argument
+    """Task table element name factory"""
+    translate = request.localizer.translate
+    return translate(_("Task: {}")).format(context.name)
+
+
 @adapter_config(required=(ITask, IAdminLayer, Interface),
                 provides=ITableElementEditor)
 class TaskTableElementEditor(TableElementEditor):
@@ -141,14 +155,20 @@ class TaskBaseFormMixin:
     """Task base edit form mixin"""
 
     @property
-    def title(self):
-        """Title getter"""
-        translate = self.request.localizer.translate
-        scheduler = query_utility(IScheduler)
-        task = get_parent(self.context, ITask)
-        return '<small>{}</small><br />{}'.format(
-            get_object_label(scheduler, self.request, self),
-            translate(_("Task: {}")).format(task.name))
+    def subtitle(self):
+        return get_object_label(self.context, self.request, self, name='form-title')
+
+
+@adapter_config(required=(ITask, IAdminLayer, TaskBaseFormMixin),
+                provides=IFormTitle)
+def scheduler_task_edit_form_title(context, request, form):
+    """Scheduler task edit form title"""
+    translate = request.localizer.translate
+    scheduler = query_utility(IScheduler)
+    task = get_parent(context, ITask)
+    return TITLE_SPAN_BREAK.format(
+        get_object_label(scheduler, request, form),
+        translate(task.label))
 
 
 class BaseTaskEditForm(TaskBaseFormMixin, AdminModalEditForm):

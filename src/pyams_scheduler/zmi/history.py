@@ -28,19 +28,23 @@ from pyams_scheduler.interfaces import IScheduler, ITask, ITaskHistory, MANAGE_T
 from pyams_scheduler.interfaces.task import TASK_STATUS_STYLES
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import SchedulerTasksTable
+from pyams_skin.interfaces.view import IModalPage
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextAdapter, ContextRequestViewAdapter, adapter_config
 from pyams_utils.date import SH_DATETIME_FORMAT, get_duration
+from pyams_utils.registry import get_utility
 from pyams_utils.traversing import get_parent
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.form import AdminModalDisplayForm
-from pyams_zmi.interfaces import IAdminLayer
+from pyams_zmi.interfaces import IAdminLayer, TITLE_SPAN_BREAK
+from pyams_zmi.interfaces.form import IFormTitle
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.interfaces.viewlet import IPropertiesMenu
 from pyams_zmi.table import ActionColumn, DateColumn, I18nColumnMixin, InnerTableAdminView, \
     NameColumn, Table, TableAdminView, TableElementEditor
+from pyams_zmi.utils import get_object_label
 from pyams_zmi.zmi.viewlet.menu import NavigationMenuItem
 
 
@@ -180,7 +184,8 @@ class SchedulerTaskHistoryColumn(ActionColumn):
     weight = 70
 
 
-@pagelet_config(name='jobs-history.html', context=ITask, layer=IPyAMSLayer,
+@pagelet_config(name='jobs-history.html',
+                context=ITask, layer=IPyAMSLayer,
                 permission=MANAGE_TASKS_PERMISSION)
 class TaskHistoryView(TaskBaseFormMixin, AdminModalDisplayForm):
     """Task history view"""
@@ -209,7 +214,9 @@ class TaskHistoryTableValues(ContextRequestViewAdapter):
         yield from self.context.history.values()
 
 
-@adapter_config(name='history', required=ITask, provides=ITraversable)
+@adapter_config(name='history',
+                required=ITask,
+                provides=ITraversable)
 class TaskHistoryTraverser(ContextAdapter):
     """Task history traverser"""
 
@@ -226,17 +233,15 @@ class TaskHistoryElementEditor(TableElementEditor):
     view_name = 'history.html'
 
 
-@pagelet_config(name='history.html', context=ITaskHistory, layer=IPyAMSLayer)
+@pagelet_config(name='history.html',
+                context=ITaskHistory, layer=IPyAMSLayer)
 class JobHistoryView(AdminModalDisplayForm):
     """Job run history display form"""
 
-    @property
-    def title(self):
-        """Title getter"""
-        return get_parent(self.context, ITask).name
-
-    legend = _("Task run history")
     modal_class = 'modal-max'
+
+    subtitle = _("Task run history")
+    legend = _("Task execution log")
 
     label_css_class = 'col-sm-3 col-md-2'
     input_css_class = 'col-sm-9 col-md-10'
@@ -252,3 +257,14 @@ class JobHistoryView(AdminModalDisplayForm):
         if report is not None:
             report.rows = 15
             report.add_class('monospace')
+
+
+@adapter_config(required=(ITaskHistory, IAdminLayer, IModalPage),
+                provides=IFormTitle)
+def task_history_form_title(context, request, view):
+    """Task history form title"""
+    scheduler = get_utility(IScheduler)
+    task = get_parent(context, ITask)
+    return TITLE_SPAN_BREAK.format(
+        get_object_label(scheduler, request, view),
+        get_object_label(task, request, view, name='form-title'))
