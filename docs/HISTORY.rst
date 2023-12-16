@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.1.0
+-----
+ - added support for modal targets to notifications
+ - updated task label in tasks table view
+
 2.0.1
 -----
  - updated modal forms title
