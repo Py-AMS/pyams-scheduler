@@ -285,6 +285,7 @@ class Task(Persistent, Contained):
                                     duration = (end_date - start_date).total_seconds()
                                     report.write('\n\nTask duration: {0}'.format(
                                         get_duration(start_date, request=request)))
+                                    history_item = task.store_report(report, status, start_date, duration)
                                     if (ChatMessage is not None) and scheduler_util.notified_host:
                                         if status == TASK_STATUS_ERROR:
                                             message_text = translate(_("Task '{}' was executed "
@@ -303,15 +304,20 @@ class Task(Persistent, Contained):
                                             source=INTERNAL_USER_ID,
                                             title=translate(_("Task execution")),
                                             message=message_text,
-                                            url='/'.join(('', '++etc++site',
-                                                          scheduler_util.__name__, 'admin'))
-                                        )
-                                        message.send()
+                                            url='/'.join(('',
+                                                          '++etc++site',
+                                                          scheduler_util.__name__,
+                                                          task.__name__,
+                                                          '++history++',
+                                                          history_item.__name__,
+                                                          'history.html')),
+                                            modal=True)
                                 except FailedTaskRunException:  # pylint: disable=bare-except
                                     # pylint: disable=protected-access
                                     task._log_exception(report,
                                                         "An error occurred during execution of "
                                                         "task '{}'".format(task.name))
+                                    history_item = task.store_report(report, status, start_date, duration)
                                     if (ChatMessage is not None) and scheduler_util.notified_host:
                                         message = ChatMessage(
                                             request=request,
@@ -324,12 +330,16 @@ class Task(Persistent, Contained):
                                             message=translate(_("An error occurred during "
                                                                 "execution of task '{}'"
                                                                 "")).format(task.name),
-                                            url='/'.join(('', '++etc++site',
-                                                          scheduler_util.__name__, 'admin'))
-                                        )
-                                        message.send()
+                                            url='/'.join(('',
+                                                          '++etc++site',
+                                                          scheduler_util.__name__,
+                                                          task.__name__,
+                                                          '++history++',
+                                                          history_item.__name__,
+                                                          'history.html')),
+                                            modal=True)
+                                message.send()
                                 registry.notify(AfterRunJobEvent(task, status, result))
-                                task.store_report(report, status, start_date, duration)
                                 task.send_report(report, status, registry)
                             if t.status == COMMITTED_STATUS:
                                 break
@@ -381,6 +391,7 @@ class Task(Persistent, Contained):
                                report=report.getvalue())
         self.history[item.date.isoformat()] = item
         self.check_history()
+        return item
 
     def send_report(self, report, status, registry):
         """Execution report messaging"""

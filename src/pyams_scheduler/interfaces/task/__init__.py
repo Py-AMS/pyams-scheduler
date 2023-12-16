@@ -324,7 +324,7 @@ class ITask(ITaskInfo, IAttributeAnnotatable):
         """Launch job execution"""
 
     def store_report(self, report, status, start_date, duration):
-        """Store task execution report in task's history"""
+        """Store task execution report in task's history and return new item"""
 
     def send_report(self, report, status, target=None):
         """Send task execution report by mail"""
