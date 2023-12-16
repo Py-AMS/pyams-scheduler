@@ -139,7 +139,7 @@ def task_label(context, request, view):  # pylint: disable=unused-argument
 @adapter_config(name='form-title',
                 required=(ITask, IPyAMSLayer, Interface),
                 provides=IObjectLabel)
-def task_label(context, request, view):  # pylint: disable=unused-argument
+def task_form_label(context, request, view):  # pylint: disable=unused-argument
     """Task table element name factory"""
     translate = request.localizer.translate
     return translate(_("Task: {}")).format(context.name)
