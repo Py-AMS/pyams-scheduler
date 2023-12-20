@@ -57,7 +57,7 @@ class RESTTaskFormInfo(GroupManager):
 
     title = _("HTTP/REST API settings")
     fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'headers', 'params',
-                                                'content_type', 'verify_ssl',
+                                                'content_type', 'verify_ssl', 'ssl_certs',
                                                 'connection_timeout', 'ok_status',
                                                 'allow_redirects')
 

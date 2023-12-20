@@ -55,6 +55,7 @@ class RESTCallerTask(Task):
     params = FieldProperty(IRESTCallerTask['params'])
     content_type = FieldProperty(IRESTCallerTask['content_type'])
     verify_ssl = FieldProperty(IRESTCallerTask['verify_ssl'])
+    ssl_certs = FieldProperty(IRESTCallerTask['ssl_certs'])
     connection_timeout = FieldProperty(IRESTCallerTask['connection_timeout'])
     allow_redirects = FieldProperty(IRESTCallerTask['allow_redirects'])
     ok_status = FieldProperty(IRESTCallerTask['ok_status'])
@@ -203,7 +204,7 @@ class RESTCallerTask(Task):
             rest_request = requests.request(method, rest_service,
                                             auth=auth,
                                             headers=headers,
-                                            verify=self.verify_ssl,
+                                            verify=self.ssl_certs or self.verify_ssl,
                                             proxies=proxies,
                                             timeout=self.connection_timeout,
                                             allow_redirects=self.allow_redirects,

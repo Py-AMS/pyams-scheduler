@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2023-12-09 01:50+0100\n"
+"POT-Creation-Date: 2023-12-20 09:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,8 +52,8 @@ msgid "Run in debug mode"
 msgstr "Lancer en mode debug"
 
 #: src/pyams_scheduler/zmi/trigger.py:85
-#: src/pyams_scheduler/task/__init__.py:304
-#: src/pyams_scheduler/task/__init__.py:323
+#: src/pyams_scheduler/task/__init__.py:305
+#: src/pyams_scheduler/task/__init__.py:329
 msgid "Task execution"
 msgstr "Tâche planifiée"
 
@@ -245,17 +245,17 @@ msgstr "Synchronisation de répertoires"
 msgid "HTTP service"
 msgstr "Requête HTTP"
 
-#: src/pyams_scheduler/task/__init__.py:290
+#: src/pyams_scheduler/task/__init__.py:291
 #, python-format
 msgid "Task '{}' was executed with error"
 msgstr "Une erreur s'est produite pendant l'exécution de la tâche '{}'."
 
-#: src/pyams_scheduler/task/__init__.py:294
+#: src/pyams_scheduler/task/__init__.py:295
 #, python-format
 msgid "Task '{}' was executed without error"
 msgstr "La tâche '{}' a été exécutée sans erreur."
 
-#: src/pyams_scheduler/task/__init__.py:324
+#: src/pyams_scheduler/task/__init__.py:330
 #, python-format
 msgid "An error occurred during execution of task '{}'"
 msgstr "Une erreur s'est produite pendant l'exécution de la tâche '{}'."
@@ -396,22 +396,21 @@ msgid "New task properties"
 msgstr "Propriétés de la tâche"
 
 #: src/pyams_scheduler/task/zmi/__init__.py:87
-#: src/pyams_scheduler/task/zmi/__init__.py:195
+#: src/pyams_scheduler/task/zmi/__init__.py:194
 msgid "Task reports"
 msgstr "Rapports d'exécution"
 
 #: src/pyams_scheduler/task/zmi/__init__.py:145
-#: src/pyams_scheduler/task/zmi/__init__.py:160
 #, python-format
 msgid "Task: {}"
 msgstr "Tâche : {}"
 
-#: src/pyams_scheduler/task/zmi/__init__.py:178
+#: src/pyams_scheduler/task/zmi/__init__.py:177
 msgid "Task properties"
 msgstr "Propriétés de la tâche"
 
-#: src/pyams_scheduler/task/zmi/__init__.py:237
-#: src/pyams_scheduler/task/zmi/__init__.py:250
+#: src/pyams_scheduler/task/zmi/__init__.py:236
+#: src/pyams_scheduler/task/zmi/__init__.py:249
 msgid "Clone task"
 msgstr "Dupliquer la tâche"
 
@@ -521,7 +520,7 @@ msgstr "Numéro de port"
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:47
 #: src/pyams_scheduler/interfaces/task/sync.py:114
-#: src/pyams_scheduler/interfaces/task/rest.py:113
+#: src/pyams_scheduler/interfaces/task/rest.py:119
 msgid "User name"
 msgstr "Code utilisateur"
 
@@ -542,7 +541,7 @@ msgstr ""
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:56
 #: src/pyams_scheduler/interfaces/task/sync.py:123
-#: src/pyams_scheduler/interfaces/task/rest.py:117
+#: src/pyams_scheduler/interfaces/task/rest.py:123
 msgid "Password"
 msgstr "Mot de passe"
 
@@ -575,7 +574,7 @@ msgstr ""
 "chemins absolus pour les commandes et les noms de fichiers"
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:86
-#: src/pyams_scheduler/interfaces/task/rest.py:82
+#: src/pyams_scheduler/interfaces/task/rest.py:88
 msgid "OK status"
 msgstr "Statuts OK"
 
@@ -786,138 +785,150 @@ msgid "If 'no', SSL certificates will not be verified"
 msgstr "Si 'non', les certificats SSL ne seront pas vérifiés"
 
 #: src/pyams_scheduler/interfaces/task/rest.py:71
+msgid "SSL CA certificates"
+msgstr "Fichier des CA"
+
+#: src/pyams_scheduler/interfaces/task/rest.py:72
+msgid ""
+"If set, this is the path of the CA certificates file which will be used to "
+"verify certificates"
+msgstr ""
+"S'il est indiqué, ceci est le chemin d'accès du fichier des autorités de "
+"certification à utiliser pour vérifier le certificat du service appelé"
+
+#: src/pyams_scheduler/interfaces/task/rest.py:77
 msgid "Connection timeout"
 msgstr "Délai de réponse"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:72
+#: src/pyams_scheduler/interfaces/task/rest.py:78
 msgid ""
 "Connection timeout, in seconds; keep empty to use system's default, which is "
 "also none by default"
 msgstr "Délai de réponse, en secondes"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:77
+#: src/pyams_scheduler/interfaces/task/rest.py:83
 msgid "Allow redirects?"
 msgstr "Autoriser les redirections"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:78
+#: src/pyams_scheduler/interfaces/task/rest.py:84
 msgid "If disabled, redirections will now be handled"
 msgstr ""
 "Si cette option est désactivées, les redirections éventuelles ne seront pas "
 "prises en charge"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:83
+#: src/pyams_scheduler/interfaces/task/rest.py:89
 msgid "Comma-separated list of HTTP status which may be considered as success"
 msgstr "Liste de codes HTTP considérés comme \"OK\", séparés par des virgules"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:88
+#: src/pyams_scheduler/interfaces/task/rest.py:94
 msgid "Use proxy server?"
 msgstr "Utiliser un serveur proxy"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:89
+#: src/pyams_scheduler/interfaces/task/rest.py:95
 msgid "Check if an HTTP proxy is required"
 msgstr "Indique si l'utilisation d'un proxy HTTP(S) est nécessaire"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:93
+#: src/pyams_scheduler/interfaces/task/rest.py:99
 msgid "Proxy server"
 msgstr "Serveur proxy"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:94
+#: src/pyams_scheduler/interfaces/task/rest.py:100
 msgid "Proxy server name"
 msgstr "Nom du serveur du service proxy"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:97
+#: src/pyams_scheduler/interfaces/task/rest.py:103
 msgid "Proxy port"
 msgstr "Numéro de port"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:98
+#: src/pyams_scheduler/interfaces/task/rest.py:104
 msgid "Proxy server port"
 msgstr "Numéro de port du service proxy"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:102
+#: src/pyams_scheduler/interfaces/task/rest.py:108
 msgid "Proxy user name"
 msgstr "Code utilisateur"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:105
+#: src/pyams_scheduler/interfaces/task/rest.py:111
 msgid "Proxy password"
 msgstr "Mot de passe"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:108
+#: src/pyams_scheduler/interfaces/task/rest.py:114
 msgid "Required authentication?"
 msgstr "Authentification basique"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:114
+#: src/pyams_scheduler/interfaces/task/rest.py:120
 msgid "Service login"
 msgstr "Code utilisateur d'accès au service"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:118
+#: src/pyams_scheduler/interfaces/task/rest.py:124
 msgid "Service password"
 msgstr "Mot de passe d'accès au service"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:121
+#: src/pyams_scheduler/interfaces/task/rest.py:127
 msgid "Use JWT authority?"
 msgstr "Utiliser une autorité JWT"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:122
+#: src/pyams_scheduler/interfaces/task/rest.py:128
 msgid "If 'yes', get JWT token from authentication authority"
 msgstr ""
 "Si oui, des jetons d'authentification JWT seront acquis à partir d'une "
 "autorité d'authentification JWT"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:127
+#: src/pyams_scheduler/interfaces/task/rest.py:133
 msgid "JWT authority location"
 msgstr "Autorité d'authentification"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:128
+#: src/pyams_scheduler/interfaces/task/rest.py:134
 msgid "Base URL (protocol and hostname) or JWT authentication authority"
 msgstr ""
 "URL de base (protocole et nom d'hôte) de l'autorité d'authentification JWT"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:132
+#: src/pyams_scheduler/interfaces/task/rest.py:138
 msgid "Token getter service"
 msgstr "Service de gestion des jetons"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:133
+#: src/pyams_scheduler/interfaces/task/rest.py:139
 msgid "Method and relative URL of REST API used to get access tokens"
 msgstr ""
 "Méthode et URL relative de l'API REST utilisée pour l'acquisition des jetons "
 "JWT"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:138
+#: src/pyams_scheduler/interfaces/task/rest.py:144
 msgid "JWT login attribute"
 msgstr "Attribut de l'identifiant"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:139
+#: src/pyams_scheduler/interfaces/task/rest.py:145
 msgid "Name of the attribute containing principal ID sent to JWT authority"
 msgstr ""
 "Nom de l'attribut contenant l'identifiant du mandataire dans l'objet JSON "
 "envoyé au service d'authentification"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:144
+#: src/pyams_scheduler/interfaces/task/rest.py:150
 msgid "JWT password attribute"
 msgstr "Attribut du mot de passe"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:145
+#: src/pyams_scheduler/interfaces/task/rest.py:151
 msgid ""
 "Name of the attribute containing principal password sent to JWT authority"
 msgstr ""
 "Nom de l'attribut contenant le mot de passe du mandataire dans l'objet JSON "
 "envoyé au service d'authentification"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:150
+#: src/pyams_scheduler/interfaces/task/rest.py:156
 msgid "JWT token attribute"
 msgstr "Attribut du jeton d'accès"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:151
+#: src/pyams_scheduler/interfaces/task/rest.py:157
 msgid "Name of the attribute containing the access token in JSON response"
 msgstr ""
 "Nom de l'attribut contenant le jeton d'accès dans la réponse JSON renvoyée "
 "par le service d'authentification"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:156
+#: src/pyams_scheduler/interfaces/task/rest.py:162
 msgid "Use proxy settings for JWT API?"
 msgstr "Utiliser les paramètres du proxy pour accéder à l'API JWT ?"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:157
+#: src/pyams_scheduler/interfaces/task/rest.py:163
 msgid ""
 "If 'yes', proxy settings defined above will also be used to get access to "
 "JWT authority"
@@ -925,28 +936,28 @@ msgstr ""
 "Si 'oui', les paramètres du proxy indiqués ci-dessus seront également "
 "utilisés pour accéder à l'autorité d'authentification JWT"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:162
+#: src/pyams_scheduler/interfaces/task/rest.py:168
 msgid "Use API key?"
 msgstr "Utiliser une clé d'API"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:163
+#: src/pyams_scheduler/interfaces/task/rest.py:169
 msgid "Check if an API key can be used for authentication"
 msgstr ""
 "Sélectionner cette option pour permettre une authentification par clé d'API"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:167
+#: src/pyams_scheduler/interfaces/task/rest.py:173
 msgid "API key header"
 msgstr "En-tête HTTP"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:168
+#: src/pyams_scheduler/interfaces/task/rest.py:174
 msgid "HTTP header used to send API key"
 msgstr "Nom de l'en-tête HTTP utilisé pour transmettre la clé d'API"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:172
+#: src/pyams_scheduler/interfaces/task/rest.py:178
 msgid "API key value"
 msgstr "Clé d'API"
 
-#: src/pyams_scheduler/interfaces/task/rest.py:173
+#: src/pyams_scheduler/interfaces/task/rest.py:179
 msgid "Provided API key"
 msgstr "Valeur de la clé d'API à transmettre"
 

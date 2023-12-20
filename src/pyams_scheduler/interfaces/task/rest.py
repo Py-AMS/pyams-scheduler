@@ -68,6 +68,11 @@ class IRESTCallerTaskInfo(Interface):
                       required=False,
                       default=True)
 
+    ssl_certs = TextLine(title=_("SSL CA certificates"),
+                         description=_("If set, this is the path of the CA certificates file which will "
+                                       "be used to verify certificates"),
+                         required=False)
+
     connection_timeout = Int(title=_("Connection timeout"),
                              description=_("Connection timeout, in seconds; keep empty to use "
                                            "system's default, which is also none by default"),
