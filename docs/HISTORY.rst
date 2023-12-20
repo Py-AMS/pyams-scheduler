@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.2.0
+-----
+ - added property to REST API caller task to set a custom SSL CA bundle
+
 2.1.0
 -----
  - added support for modal targets to notifications
