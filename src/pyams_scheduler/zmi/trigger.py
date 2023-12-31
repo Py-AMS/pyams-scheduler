@@ -24,11 +24,11 @@ from pyams_form.button import Buttons, handler
 from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer, IGroup
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import ITask, ITaskContainer, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import ICronTask, ICronTaskScheduling, IDateTask, \
     IDateTaskScheduling, ILoopTask, ILoopTaskScheduling
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
-from pyams_scheduler.zmi import SchedulerTasksTable
+from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.schema.button import SubmitButton
 from pyams_skin.viewlet.help import AlertMessage
@@ -42,7 +42,6 @@ from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.form import IModalEditFormButtons
 from pyams_zmi.table import ActionColumn
 
-
 __docformat__ = 'restructuredtext'
 
 from pyams_scheduler import _  # pylint: disable=ungrouped-imports
@@ -53,7 +52,7 @@ from pyams_scheduler import _  # pylint: disable=ungrouped-imports
 #
 
 @adapter_config(name='run',
-                required=(IScheduler, IAdminLayer, SchedulerTasksTable),
+                required=(ITaskContainer, IAdminLayer, TaskContainerTable),
                 provides=IColumn)
 class SchedulerTaskRunColumn(ActionColumn):
     """Scheduler task run column"""
@@ -62,6 +61,7 @@ class SchedulerTaskRunColumn(ActionColumn):
     icon_class = 'far fa-play-circle'
     hint = _("Run task")
 
+    checker = ITask.providedBy
     permission = MANAGE_TASKS_PERMISSION
 
     weight = 40
@@ -77,7 +77,8 @@ class ITaskRunButtons(IModalEditFormButtons):
                        title=_("Run task"))
 
 
-@ajax_form_config(name='run.html', context=ITask, layer=IPyAMSLayer,
+@ajax_form_config(name='run.html',
+                  context=ITask, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class TaskRunEditForm(TaskBaseFormMixin, AdminModalEditForm):
     """Task run edit form"""
@@ -187,7 +188,7 @@ class TaskRunFormDebugTarget(EmptyViewlet):
 #
 
 @adapter_config(name='schedule',
-                required=(IScheduler, IAdminLayer, SchedulerTasksTable),
+                required=(ITaskContainer, IAdminLayer, TaskContainerTable),
                 provides=IColumn)
 class SchedulerTaskScheduleColumn(ActionColumn):
     """Scheduler task schedule column"""
@@ -196,12 +197,14 @@ class SchedulerTaskScheduleColumn(ActionColumn):
     icon_class = 'fas fa-clock'
     hint = _("Schedule task")
 
+    checker = ITask.providedBy
     permission = MANAGE_TASKS_PERMISSION
 
     weight = 50
 
 
-@ajax_form_config(name='schedule.html', context=ITask, layer=IPyAMSLayer,
+@ajax_form_config(name='schedule.html',
+                  context=ITask, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class TaskScheduleEditForm(TaskBaseFormMixin, AdminModalEditForm):
     """Task schedule edit form"""
@@ -225,11 +228,11 @@ class TaskEditFormAJAXRenderer(ContextRequestViewAdapter):
         """AJAX result renderer"""
         if not changes:
             return None
-        scheduler = get_parent(self.context, IScheduler)
+        container = get_parent(self.context, ITaskContainer)
         return {
             'callbacks': [
-                get_json_table_row_refresh_callback(scheduler, self.request,
-                                                    SchedulerTasksTable, self.context)
+                get_json_table_row_refresh_callback(container, self.request,
+                                                    TaskContainerTable, self.context)
             ]
         }
 

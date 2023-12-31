@@ -267,7 +267,7 @@ class ILoopTaskScheduling(IBaseTaskScheduling):
 class ITaskInfo(Interface):
     """Scheduler task interface"""
 
-    containers('.IScheduler')
+    containers('pyams_scheduler.interfaces.ITaskContainer')
 
     name = TextLine(title=_("Task name"),
                     description=_("Descriptive name given to this task"),
@@ -313,6 +313,9 @@ class ITask(ITaskInfo, IAttributeAnnotatable):
     runnable = Attribute("Is the task runnable?")
 
     internal_id = Attribute("Internal ID")
+
+    def get_path(self):
+        """Get task full path"""
 
     def get_trigger(self):
         """Get scheduler job trigger"""

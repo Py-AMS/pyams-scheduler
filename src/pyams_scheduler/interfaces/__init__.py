@@ -17,6 +17,7 @@ This module defines base package interfaces.
 
 from zope.annotation import IAttributeAnnotatable
 from zope.container.constraints import contains
+from zope.container.interfaces import IContainer
 from zope.interface import Attribute, Interface, implementer
 from zope.interface.interfaces import IObjectEvent, ObjectEvent
 from zope.schema import Bool, Choice, List, Object, TextLine
@@ -33,7 +34,7 @@ from pyams_scheduler import _  # pylint: disable=ungrouped-imports
 
 
 #
-# Scheduler events
+# Scheduler permissions and roles
 #
 
 MANAGE_SCHEDULER_PERMISSION = 'pyams.ManageScheduler'
@@ -42,12 +43,23 @@ MANAGE_SCHEDULER_PERMISSION = 'pyams.ManageScheduler'
 MANAGE_TASKS_PERMISSION = 'pyams.ManageSchedulerTasks'
 '''Permission used to manager scheduler tasks'''
 
+VIEW_HISTORY_PERMISSION = 'pyams.ViewTasksHistory'
+'''Permission used to view tasks execution history'''
+
+
 SCHEDULER_MANAGER_ROLE = 'pyams.SchedulerManager'
 '''Scheduler manager role'''
 
 TASKS_MANAGER_ROLE = 'pyams.TasksManager'
 '''Tasks scheduler manager role'''
 
+SCHEDULER_GUEST_ROLE = 'pyams.SchedulerGuest'
+'''Scheduler guest role'''
+
+
+#
+# Scheduler events
+#
 
 class IBeforeRunJobEvent(IObjectEvent):
     """Interface for events notified before a job is run"""
@@ -77,7 +89,35 @@ class AfterRunJobEvent(ObjectEvent):
 
 
 #
-# Scheduler interface
+# Scheduler tasks container interface
+#
+
+class ITaskContainer(IContainer):
+    """Generic task container interface"""
+
+    contains(ITask, 'pyams_scheduler.interfaces.ITaskContainer')
+
+    folders = List(title=_("Folder sub-folders"),
+                   description=_("List of sub-folders assigned to this container"),
+                   value_type=Object(schema=Interface),
+                   readonly=True)
+
+    tasks = List(title=_("Folder tasks"),
+                 description=_("List of tasks assigned to this container"),
+                 value_type=Object(schema=ITask),
+                 readonly=True)
+
+
+class ITaskFolder(ITaskContainer):
+    """Task folder interface"""
+
+    name = TextLine(title=_("Folder name"),
+                    description=_("Descriptive name given to this folder"),
+                    required=True)
+
+
+#
+# Scheduler interfaces
 #
 
 SCHEDULER_NAME = 'Tasks scheduler'
@@ -102,8 +142,6 @@ TASKS_SCHEDULER_LABEL = _("Tasks scheduler")
 
 class IScheduler(IAttributeAnnotatable):
     """Scheduler interface"""
-
-    contains(ITask)
 
     zodb_name = Choice(title=_("ZODB connection name"),
                        description=_("Name of ZODB defining scheduler connection"),
@@ -143,24 +181,29 @@ class IScheduler(IAttributeAnnotatable):
     def get_jobs(self):
         """Get text output of running jobs"""
 
-    tasks = List(title=_("Scheduler tasks"),
-                 description=_("List of tasks assigned to this scheduler"),
-                 value_type=Object(schema=ITask),
-                 readonly=True)
-
     history = List(title=_("History"),
                    description=_("Task history"),
                    value_type=Object(schema=ITaskHistory),
                    readonly=True)
 
 
-class ISchedulerRoles(IContentRoles):
+class ITaskContainerRoles(IContentRoles):
     """Scheduler roles"""
 
     scheduler_managers = PrincipalsSetField(title=_("Scheduler managers"),
+                                            description=_("Scheduler managers can handle all scheduler and tasks "
+                                                          "properties, including roles"),
                                             role_id=SCHEDULER_MANAGER_ROLE,
                                             required=False)
 
     tasks_managers = PrincipalsSetField(title=_("Tasks manager"),
+                                        description=_("Tasks managers can manage tasks properties and launch them; "
+                                                      "they can't manage scheduler or tasks roles"),
                                         role_id=TASKS_MANAGER_ROLE,
                                         required=False)
+
+    scheduler_guests = PrincipalsSetField(title=_("Guests"),
+                                          description=_("Guests are only allowed to display tasks properties "
+                                                        "and execution history"),
+                                          role_id=SCHEDULER_GUEST_ROLE,
+                                          required=False)

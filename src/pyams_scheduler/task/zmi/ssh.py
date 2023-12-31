@@ -27,19 +27,18 @@ from pyams_form.interfaces.widget import IObjectWidget
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_form.widget import FieldWidget
 from pyams_layer.interfaces import IFormLayer, IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import ITaskContainer, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.ssh import ISSHCallTaskInfo, ISSHCallerTask, \
     ISSHConnectionInfo
 from pyams_scheduler.task.ssh import SSHCallerTask, SSHConnectionInfo
-from pyams_scheduler.zmi import SchedulerTasksTable
 from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_utils.adapter import adapter_config
 from pyams_utils.factory import get_interface_name
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
-
 
 __docformat__ = 'restructuredtext'
 
@@ -95,7 +94,7 @@ class SSHTaskFormInfo(GroupManager):
 #
 
 @viewlet_config(name='add-ssh-task.menu',
-                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
+                context=ITaskContainer, layer=IAdminLayer, view=TaskContainerTable,
                 manager=IContextAddingsViewletManager, weight=10,
                 permission=MANAGE_TASKS_PERMISSION)
 class SSHTaskAddMenu(MenuItem):
@@ -106,7 +105,8 @@ class SSHTaskAddMenu(MenuItem):
     modal_target = True
 
 
-@ajax_form_config(name='add-ssh-task.html', context=IScheduler, layer=IPyAMSLayer,
+@ajax_form_config(name='add-ssh-task.html',
+                  context=ITaskContainer, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class SSHTaskAddForm(BaseTaskAddForm):
     """SSH task add form"""
@@ -116,7 +116,7 @@ class SSHTaskAddForm(BaseTaskAddForm):
 
 
 @adapter_config(name='ssh-task-info.form',
-                required=(IScheduler, IAdminLayer, SSHTaskAddForm),
+                required=(ITaskContainer, IAdminLayer, SSHTaskAddForm),
                 provides=IInnerTabForm)
 class SSHTaskAddFormInfo(SSHTaskFormInfo, InnerAddForm):
     """SSH task add form info"""
@@ -126,7 +126,8 @@ class SSHTaskAddFormInfo(SSHTaskFormInfo, InnerAddForm):
 # SSH task edit form
 #
 
-@ajax_form_config(name='properties.html', context=ISSHCallerTask, layer=IPyAMSLayer,
+@ajax_form_config(name='properties.html',
+                  context=ISSHCallerTask, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class SSHTaskEditForm(BaseTaskEditForm):
     """SSH task edit form"""

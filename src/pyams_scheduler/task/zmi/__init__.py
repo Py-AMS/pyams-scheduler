@@ -17,31 +17,28 @@ This module defines base tasks management forms.
 
 from zope.copy import copy
 from zope.interface import Interface
-from zope.intid import IIntIds
 
 from pyams_form.ajax import ajax_form_config
 from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer, IInnerTabForm
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import ITaskInfo
-from pyams_scheduler.zmi import SchedulerTasksTable
-from pyams_skin.interfaces.view import IModalAddForm
+from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.viewlet.help import AlertMessage
-from pyams_table.interfaces import IColumn
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
-from pyams_utils.registry import get_utility, query_utility
+from pyams_utils.intids import get_object_uid
+from pyams_utils.registry import query_utility
 from pyams_utils.traversing import get_parent
 from pyams_zmi.form import AdminModalAddForm, AdminModalEditForm
 from pyams_zmi.helper.event import get_json_table_row_add_callback, \
     get_json_table_row_refresh_callback
-from pyams_zmi.interfaces import IAdminLayer, IObjectLabel, TITLE_SPAN_BREAK
+from pyams_zmi.interfaces import IAdminLayer, IObjectHint, IObjectLabel, TITLE_SPAN_BREAK
 from pyams_zmi.interfaces.form import IFormTitle
 from pyams_zmi.interfaces.table import ITableElementEditor
-from pyams_zmi.table import ActionColumn, TableElementEditor
+from pyams_zmi.table import TableElementEditor
 from pyams_zmi.utils import get_object_label
-
 
 __docformat__ = 'restructuredtext'
 
@@ -64,6 +61,7 @@ class TaskHistoryHelpMessage(AlertMessage):
 # Base task add form
 #
 
+
 class BaseTaskAddForm(AdminModalAddForm):  # pylint: disable=abstract-method
     """Base task add form"""
 
@@ -74,12 +72,11 @@ class BaseTaskAddForm(AdminModalAddForm):  # pylint: disable=abstract-method
     fields = Fields(ITaskInfo).select('name', 'schedule_mode')
 
     def add(self, obj):
-        intids = get_utility(IIntIds)
-        self.context[hex(intids.register(obj))[2:]] = obj
+        self.context[get_object_uid(obj)] = obj
 
 
 @adapter_config(name='base-task-info',
-                required=(IScheduler, IAdminLayer, BaseTaskAddForm),
+                required=(ITaskContainer, IAdminLayer, BaseTaskAddForm),
                 provides=IInnerTabForm)
 class BaseTaskAddFormInfo(InnerAddForm):
     """Base task add form general information tab"""
@@ -98,7 +95,7 @@ class BaseTaskAddFormInfo(InnerAddForm):
             widget.prefix = TaskHistoryHelpMessage(self.context, self.request, self, None)
 
 
-@adapter_config(required=(IScheduler, IAdminLayer, IModalAddForm),
+@adapter_config(required=(ITaskContainer, IAdminLayer, BaseTaskAddForm),
                 provides=IFormTitle)
 def scheduler_task_add_form_title(context, request, form):
     """Scheduler task add form title"""
@@ -108,7 +105,7 @@ def scheduler_task_add_form_title(context, request, form):
         translate(form.content_label))
 
 
-@adapter_config(required=(IScheduler, IAdminLayer, BaseTaskAddForm),
+@adapter_config(required=(ITaskContainer, IAdminLayer, BaseTaskAddForm),
                 provides=IAJAXFormRenderer)
 class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
     """Base task add form AJAX renderer"""
@@ -120,7 +117,7 @@ class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
         return {
             'callbacks': [
                 get_json_table_row_add_callback(self.context, self.request,
-                                                SchedulerTasksTable, changes)
+                                                TaskContainerTable, changes)
             ]
         }
 
@@ -128,6 +125,16 @@ class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
 #
 # Base task edit form
 #
+
+@adapter_config(required=(ITask, IPyAMSLayer, Interface),
+                provides=IObjectHint)
+def task_hint(context, request, view):
+    """Task table element hint factory"""
+    if not context.label:
+        return None
+    translate = request.localizer.translate
+    return translate(context.label)
+
 
 @adapter_config(required=(ITask, IPyAMSLayer, Interface),
                 provides=IObjectLabel)
@@ -214,11 +221,11 @@ class TaskEditFormAJAXRenderer(ContextRequestViewAdapter):
         """AJAX result renderer"""
         if not changes:
             return None
-        scheduler = get_parent(self.context, IScheduler)
+        container = get_parent(self.context, ITaskContainer)
         return {
             'callbacks': [
-                get_json_table_row_refresh_callback(scheduler, self.request,
-                                                    SchedulerTasksTable, self.context)
+                get_json_table_row_refresh_callback(container, self.request,
+                                                    TaskContainerTable, self.context)
             ]
         }
 
@@ -227,22 +234,9 @@ class TaskEditFormAJAXRenderer(ContextRequestViewAdapter):
 # Task clone form
 #
 
-@adapter_config(name='clone',
-                required=(IScheduler, IAdminLayer, SchedulerTasksTable),
-                provides=IColumn)
-class TaskCloneColumn(ActionColumn):
-    """Task clone column"""
-
-    hint = _("Clone task")
-    icon_class = 'far fa-clone'
-
-    href = 'clone-task.html'
-
-    weight = 100
-
-
-@ajax_form_config(name='clone-task.html', context=ITask,
-                  layer=IPyAMSLayer, permission=MANAGE_TASKS_PERMISSION)
+@ajax_form_config(name='clone-task.html',
+                  context=ITask, layer=IPyAMSLayer,
+                  permission=MANAGE_TASKS_PERMISSION)
 class TaskCloneForm(TaskBaseFormMixin, AdminModalAddForm):
     """Task clone form"""
 
@@ -254,8 +248,7 @@ class TaskCloneForm(TaskBaseFormMixin, AdminModalAddForm):
         return copy(self.context)
 
     def add(self, obj):
-        intids = get_utility(IIntIds)
-        self.context.__parent__[hex(intids.register(obj))[2:]] = obj
+        self.context.__parent__[get_object_uid(obj)] = obj
 
 
 @adapter_config(required=(ITask, IAdminLayer, TaskCloneForm),
@@ -267,10 +260,10 @@ class TaskCloneFormAJAXRenderer(ContextRequestViewAdapter):
         """AJAX result renderer"""
         if not changes:
             return None
-        scheduler = get_parent(self.context, IScheduler)
+        container = get_parent(self.context, ITaskContainer)
         return {
             'callbacks': [
-                get_json_table_row_add_callback(scheduler, self.request,
-                                                SchedulerTasksTable, changes)
+                get_json_table_row_add_callback(container, self.request,
+                                                TaskContainerTable, changes)
             ]
         }

@@ -24,15 +24,17 @@ from zope.traversing.interfaces import ITraversable
 from pyams_form.field import Fields
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskHistory, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, ITaskHistory, \
+    VIEW_HISTORY_PERMISSION
 from pyams_scheduler.interfaces.task import TASK_STATUS_STYLES
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
-from pyams_scheduler.zmi import SchedulerTasksTable
+from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.interfaces.view import IModalPage
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextAdapter, ContextRequestViewAdapter, adapter_config
+from pyams_utils.container import find_objects_providing
 from pyams_utils.date import SH_DATETIME_FORMAT, get_duration
 from pyams_utils.registry import get_utility
 from pyams_utils.traversing import get_parent
@@ -47,7 +49,6 @@ from pyams_zmi.table import ActionColumn, DateColumn, I18nColumnMixin, InnerTabl
 from pyams_zmi.utils import get_object_label
 from pyams_zmi.zmi.viewlet.menu import NavigationMenuItem
 
-
 __docformat__ = 'restructuredtext'
 
 
@@ -55,9 +56,9 @@ from pyams_scheduler import _  # pylint: disable=ungrouped-imports
 
 
 @viewlet_config(name='jobs-history.menu',
-                context=IScheduler, layer=IAdminLayer,
+                context=ITaskContainer, layer=IAdminLayer,
                 manager=IPropertiesMenu, weight=30,
-                permission=MANAGE_TASKS_PERMISSION)
+                permission=VIEW_HISTORY_PERMISSION)
 class SchedulerHistoryMenu(NavigationMenuItem):
     """Scheduler history menu"""
 
@@ -84,7 +85,7 @@ class SchedulerHistoryTable(Table):
         return (css_class or '') + ' ' + TASK_STATUS_STYLES.get(item.status, 'table-warning')
 
 
-@adapter_config(required=(IScheduler, IAdminLayer, SchedulerHistoryTable),
+@adapter_config(required=(ITaskContainer, IAdminLayer, SchedulerHistoryTable),
                 provides=IValues)
 class SchedulerHistoryTableValues(ContextRequestViewAdapter):
     """Scheduler history table values adapter"""
@@ -92,7 +93,7 @@ class SchedulerHistoryTableValues(ContextRequestViewAdapter):
     @property
     def values(self):
         """Scheduler history table values getter"""
-        for task in self.context.values():
+        for task in find_objects_providing(self.context, ITask):
             yield from task.history.values()
 
 
@@ -155,8 +156,8 @@ class SchedulerHistoryStatusColumn(I18nColumnMixin, GetAttrColumn):
 
 
 @pagelet_config(name='jobs-history.html',
-                context=IScheduler, layer=IPyAMSLayer,
-                permission=MANAGE_TASKS_PERMISSION)
+                context=ITaskContainer, layer=IPyAMSLayer,
+                permission=VIEW_HISTORY_PERMISSION)
 class SchedulerHistoryView(TableAdminView):
     """Scheduler history view"""
 
@@ -170,7 +171,7 @@ class SchedulerHistoryView(TableAdminView):
 #
 
 @adapter_config(name='history',
-                required=(IScheduler, IAdminLayer, SchedulerTasksTable),
+                required=(ITaskContainer, IAdminLayer, TaskContainerTable),
                 provides=IColumn)
 class SchedulerTaskHistoryColumn(ActionColumn):
     """Scheduler task history column"""
@@ -179,14 +180,15 @@ class SchedulerTaskHistoryColumn(ActionColumn):
     icon_class = 'fas fa-history'
     hint = _("Task run history")
 
-    permission = MANAGE_TASKS_PERMISSION
+    checker = ITask.providedBy
+    permission = VIEW_HISTORY_PERMISSION
 
     weight = 70
 
 
 @pagelet_config(name='jobs-history.html',
                 context=ITask, layer=IPyAMSLayer,
-                permission=MANAGE_TASKS_PERMISSION)
+                permission=VIEW_HISTORY_PERMISSION)
 class TaskHistoryView(TaskBaseFormMixin, AdminModalDisplayForm):
     """Task history view"""
 

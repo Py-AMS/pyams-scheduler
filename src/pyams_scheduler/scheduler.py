@@ -17,17 +17,14 @@ This module defines the main persistent scheduler utility class.
 
 __docformat__ = 'restructuredtext'
 
-from zope.container.folder import Folder
 from zope.interface import implementer
 from zope.intid import IIntIds
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces import IScheduler, ISchedulerHandler, ISchedulerRoles, \
-    SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY
-from pyams_security.interfaces import IDefaultProtectionPolicy, IRolesPolicy
-from pyams_security.property import RolePrincipalsFieldProperty
-from pyams_security.security import ProtectedObjectMixin, ProtectedObjectRoles
-from pyams_utils.adapter import ContextAdapter, adapter_config
+from pyams_scheduler.interfaces import IScheduler, ISchedulerHandler, ITask, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY
+from pyams_scheduler.folder import TaskContainer, TaskFolder
+from pyams_utils.container import find_objects_providing
+from pyams_utils.factory import factory_config
 from pyams_utils.registry import get_pyramid_registry, query_utility
 from pyams_zmq.socket import zmq_response, zmq_socket
 
@@ -41,8 +38,8 @@ class SchedulerHandler:
     """
 
 
-@implementer(IScheduler, IDefaultProtectionPolicy)
-class Scheduler(ProtectedObjectMixin, Folder):
+@factory_config(IScheduler)
+class Scheduler(TaskContainer):
     """Scheduler utility"""
 
     zodb_name = FieldProperty(IScheduler['zodb_name'])
@@ -52,15 +49,10 @@ class Scheduler(ProtectedObjectMixin, Folder):
     show_home_menu = FieldProperty(IScheduler['show_home_menu'])
 
     @property
-    def tasks(self):
-        """Scheduler tasks getter"""
-        yield from self.values()
-
-    @property
     def history(self):
         """Scheduler full history getter"""
         result = []
-        for task in self.values():
+        for task in find_objects_providing(self, ITask):
             result.extend(task.history)
         result.sort(key=lambda x: x.date)
         return result
@@ -82,13 +74,12 @@ class Scheduler(ProtectedObjectMixin, Folder):
             return zmq_socket(handler, auth=registry.settings.get(SCHEDULER_AUTH_KEY))
         return None
 
-    @staticmethod
-    def get_task(task_id):
+    def get_task(self, task_id):
         """Get task matching given ID"""
         intids = query_utility(IIntIds)
-        if intids is not None:
-            return intids.queryObject(task_id)
-        return None
+        if intids is None:
+            intids = self.__parent__.getUtility(IIntIds)
+        return intids.queryObject(int(task_id, 16))
 
     def get_jobs(self):
         """Getter of scheduler scheduled jobs"""
@@ -105,29 +96,3 @@ class Scheduler(ProtectedObjectMixin, Folder):
             return [501, "No socket handler defined in configuration file"]
         socket.send_json(['test', {}])
         return zmq_response(socket)
-
-
-@implementer(ISchedulerRoles)
-class SchedulerRoles(ProtectedObjectRoles):
-    """Scheduler roles"""
-
-    scheduler_managers = RolePrincipalsFieldProperty(ISchedulerRoles['scheduler_managers'])
-
-    tasks_managers = RolePrincipalsFieldProperty(ISchedulerRoles['tasks_managers'])
-
-
-@adapter_config(required=IScheduler,
-                provides=ISchedulerRoles)
-def scheduler_roles_adapter(context):
-    """Scheduler roles adapter"""
-    return SchedulerRoles(context)
-
-
-@adapter_config(name='scheduler_roles',
-                required=IScheduler,
-                provides=IRolesPolicy)
-class SchedulerRolesPolicy(ContextAdapter):
-    """Scheduler roles policy"""
-
-    roles_interface = ISchedulerRoles
-    weight = 10

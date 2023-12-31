@@ -24,6 +24,7 @@ from persistent import Persistent
 from pyramid.config import Configurator
 from pyramid.events import subscriber
 from pyramid.threadlocal import RequestContext, manager
+from pyramid.traversal import lineage
 from transaction.interfaces import ITransactionManager
 from zope.component import queryUtility
 from zope.component.interfaces import ISite
@@ -36,14 +37,13 @@ from zope.lifecycleevent import IObjectAddedEvent, IObjectModifiedEvent, IObject
 from zope.location import locate
 from zope.schema.fieldproperty import FieldProperty
 
-
 try:
     from pyams_chat.message import ChatMessage
 except ImportError:
     ChatMessage = None
 
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
-    ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
+    ITaskFolder, ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
     SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
 from pyams_scheduler.interfaces.task import FailedTaskRunException, ITaskHistoryContainer, \
     ITaskInfo, ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_CLASS, \
@@ -61,6 +61,8 @@ from pyams_utils.timezone import tztime
 from pyams_utils.transaction import COMMITTED_STATUS, TransactionClient, transactional
 from pyams_utils.traversing import get_parent
 from pyams_utils.zodb import ZODBConnection
+from pyams_zmi.interfaces import IObjectLabel
+from pyams_zmi.utils import get_object_label
 from pyams_zmq.socket import zmq_response, zmq_socket
 
 
@@ -202,6 +204,15 @@ class Task(Persistent, Contained):
             if intids is not None:
                 self._internal_id = intids.register(self)
         return self._internal_id
+
+    def get_path(self):
+        """Task full path"""
+        request = check_request()
+        return ' / '.join((
+            get_object_label(parent, request)
+            for parent in reversed(list(lineage(self)))
+            if ITaskFolder.providedBy(parent) or ITask.providedBy(parent)
+        ))
 
     def get_trigger(self):
         """Task trigger getter"""
@@ -406,6 +417,13 @@ class Task(Persistent, Contained):
                 return
 
             handler.send_report(self, report, status, target, registry)
+
+
+@adapter_config(required=ITask,
+                provides=IObjectLabel)
+def task_label(context):
+    """Task label getter"""
+    return context.name
 
 
 @subscriber(IObjectAddedEvent, context_selector=ITask)

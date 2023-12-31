@@ -29,13 +29,14 @@ from pyramid.interfaces import IApplicationCreated
 from pyramid.settings import asbool
 from zope.interface.interfaces import ComponentLookupError
 
-from pyams_scheduler.interfaces import MANAGE_SCHEDULER_PERMISSION, MANAGE_TASKS_PERMISSION, \
-    SCHEDULER_AUTH_KEY, SCHEDULER_CLIENTS_KEY, SCHEDULER_HANDLER_KEY, SCHEDULER_MANAGER_ROLE, \
-    SCHEDULER_NAME, SCHEDULER_STARTER_KEY, TASKS_MANAGER_ROLE
+from pyams_scheduler.interfaces import ITask, MANAGE_SCHEDULER_PERMISSION, MANAGE_TASKS_PERMISSION, \
+    SCHEDULER_AUTH_KEY, SCHEDULER_CLIENTS_KEY, SCHEDULER_GUEST_ROLE, SCHEDULER_HANDLER_KEY, SCHEDULER_MANAGER_ROLE, \
+    SCHEDULER_NAME, SCHEDULER_STARTER_KEY, TASKS_MANAGER_ROLE, VIEW_HISTORY_PERMISSION
 from pyams_scheduler.process import SchedulerMessageHandler, SchedulerProcess
-from pyams_security.interfaces.base import MANAGE_ROLES_PERMISSION, ROLE_ID
+from pyams_security.interfaces.base import MANAGE_ROLES_PERMISSION, ROLE_ID, VIEW_SYSTEM_PERMISSION
 from pyams_security.interfaces.names import ADMIN_USER_ID, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
+from pyams_utils.container import find_objects_providing
 from pyams_utils.protocol.tcp import is_port_in_use
 from pyams_utils.registry import get_pyramid_registry, set_local_registry
 from pyams_utils.zodb import get_connection_from_settings
@@ -65,12 +66,17 @@ def include_package(config):
         'id': MANAGE_TASKS_PERMISSION,
         'title': _("Manage scheduler tasks")
     })
+    config.register_permission({
+        'id': VIEW_HISTORY_PERMISSION,
+        'title': _("View tasks execution history")
+    })
 
     # upgrade system manager roles
     config.upgrade_role(SYSTEM_ADMIN_ROLE,
                         permissions={
                             MANAGE_SCHEDULER_PERMISSION,
-                            MANAGE_TASKS_PERMISSION
+                            MANAGE_TASKS_PERMISSION,
+                            VIEW_HISTORY_PERMISSION
                         })
 
     # register new roles
@@ -78,9 +84,11 @@ def include_package(config):
         'id': SCHEDULER_MANAGER_ROLE,
         'title': _("Scheduler manager (role)"),
         'permissions': {
+            VIEW_SYSTEM_PERMISSION,
             MANAGE_ROLES_PERMISSION,
             MANAGE_SCHEDULER_PERMISSION,
-            MANAGE_TASKS_PERMISSION
+            MANAGE_TASKS_PERMISSION,
+            VIEW_HISTORY_PERMISSION
         },
         'managers': {
             ADMIN_USER_ID,
@@ -91,7 +99,22 @@ def include_package(config):
         'id': TASKS_MANAGER_ROLE,
         'title': _("Tasks manager (role)"),
         'permissions': {
-            MANAGE_TASKS_PERMISSION
+            VIEW_SYSTEM_PERMISSION,
+            MANAGE_TASKS_PERMISSION,
+            VIEW_HISTORY_PERMISSION
+        },
+        'managers': {
+            ADMIN_USER_ID,
+            ROLE_ID.format(SYSTEM_ADMIN_ROLE),
+            ROLE_ID.format(SCHEDULER_MANAGER_ROLE)
+        }
+    })
+    config.register_role({
+        'id': SCHEDULER_GUEST_ROLE,
+        'title': _("Guest (role)"),
+        'permissions': {
+            VIEW_SYSTEM_PERMISSION,
+            VIEW_HISTORY_PERMISSION
         },
         'managers': {
             ADMIN_USER_ID,
@@ -162,7 +185,7 @@ def handle_new_application(event):  # pylint: disable=unused-argument,too-many-l
                                        settings.get(SCHEDULER_CLIENTS_KEY),
                                        registry)
             # load tasks
-            for task in scheduler_util.values():
+            for task in find_objects_providing(scheduler_util, ITask):
                 if IBroken.providedBy(task):
                     continue
                 if not task.is_runnable():
@@ -171,7 +194,7 @@ def handle_new_application(event):  # pylint: disable=unused-argument,too-many-l
                 LOGGER.debug("Adding scheduler job for task '{0.name}'".format(task))
                 process.scheduler.add_job(task, trigger,
                                           id=str(task.internal_id),
-                                          name=task.name,
+                                          name=task.get_path(),
                                           kwargs={
                                               'zodb_name': zodb_name,
                                               'registry': registry

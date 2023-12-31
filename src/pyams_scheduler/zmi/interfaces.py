@@ -21,6 +21,7 @@ from pyams_form.interfaces.form import IForm
 from pyams_form.interfaces.widget import IWidget
 from pyams_form.template import widget_template_config
 from pyams_layer.interfaces import IPyAMSLayer
+from pyams_table.interfaces import ITable
 
 
 @widget_template_config(mode=INPUT_MODE,
@@ -33,3 +34,7 @@ class IDirectoryHandlerHostWidget(IWidget):
 
 class ITaskForm(IForm):
     """Base task form interface"""
+
+
+class ITaskContainerTable(ITable):
+    """Task container table marker interface"""

@@ -26,11 +26,11 @@ from pyams_form.group import GroupManager
 from pyams_form.interfaces.form import IDataExtractedEvent, IForm, IGroup, IInnerTabForm
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import ITaskContainer, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask, IRESTCallerTaskInfo
 from pyams_scheduler.task.rest import RESTCallerTask
 from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
-from pyams_scheduler.zmi import SchedulerTasksTable
+from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_skin.viewlet.menu import MenuItem
@@ -40,7 +40,6 @@ from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.form import FormGroupChecker
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
-
 
 __docformat__ = 'restructuredtext'
 
@@ -85,7 +84,7 @@ def extract_rest_task_info(event):
 
 
 @adapter_config(name='rest-proxy.group',
-                required=(IScheduler, IAdminLayer, IRESTTaskForm),
+                required=(ITaskContainer, IAdminLayer, IRESTTaskForm),
                 provides=IGroup)
 @adapter_config(name='rest-proxy.group',
                 required=(IRESTCallerTask, IAdminLayer, IRESTTaskForm),
@@ -116,7 +115,7 @@ def extract_rest_proxy_info(event):
 
 
 @adapter_config(name='rest-auth.group',
-                required=(IScheduler, IAdminLayer, IRESTTaskForm),
+                required=(ITaskContainer, IAdminLayer, IRESTTaskForm),
                 provides=IGroup)
 @adapter_config(name='rest-auth.group',
                 required=(IRESTCallerTask, IAdminLayer, IRESTTaskForm),
@@ -147,7 +146,7 @@ def extract_rest_auth_info(event):
 
 
 @adapter_config(name='rest-jwt-authority.group',
-                required=(IScheduler, IAdminLayer, IRESTTaskForm),
+                required=(ITaskContainer, IAdminLayer, IRESTTaskForm),
                 provides=IGroup)
 @adapter_config(name='rest-jwt-authority.group',
                 required=(IRESTCallerTask, IAdminLayer, IRESTTaskForm),
@@ -186,7 +185,7 @@ def extract_rest_jwt_info(event):
 
 
 @adapter_config(name='api-key.group',
-                required=(IScheduler, IAdminLayer, IRESTTaskForm),
+                required=(ITaskContainer, IAdminLayer, IRESTTaskForm),
                 provides=IGroup)
 @adapter_config(name='api-key.group',
                 required=(IRESTCallerTask, IAdminLayer, IRESTTaskForm),
@@ -214,7 +213,7 @@ def extract_api_key_info(event):
 #
 
 @viewlet_config(name='add-rest-task.menu',
-                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
+                context=ITaskContainer, layer=IAdminLayer, view=TaskContainerTable,
                 manager=IContextAddingsViewletManager, weight=30,
                 permission=MANAGE_TASKS_PERMISSION)
 class RESTTaskAddMenu(MenuItem):
@@ -225,7 +224,8 @@ class RESTTaskAddMenu(MenuItem):
     modal_target = True
 
 
-@ajax_form_config(name='add-rest-task.html', context=IScheduler, layer=IPyAMSLayer,
+@ajax_form_config(name='add-rest-task.html',
+                  context=ITaskContainer, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class RESTTaskAddForm(BaseTaskAddForm):
     """REST task add form"""
@@ -237,7 +237,7 @@ class RESTTaskAddForm(BaseTaskAddForm):
 
 
 @adapter_config(name='rest-task-info.form',
-                required=(IScheduler, IAdminLayer, RESTTaskAddForm),
+                required=(ITaskContainer, IAdminLayer, RESTTaskAddForm),
                 provides=IInnerTabForm)
 class RESTTaskAddFormInfo(RESTTaskFormInfo, InnerAddForm):
     """REST task add form info"""
@@ -247,7 +247,8 @@ class RESTTaskAddFormInfo(RESTTaskFormInfo, InnerAddForm):
 # REST task edit forms
 #
 
-@ajax_form_config(name='properties.html', context=IRESTCallerTask, layer=IPyAMSLayer,
+@ajax_form_config(name='properties.html',
+                  context=IRESTCallerTask, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class RESTTaskEditForm(BaseTaskEditForm):
     """REST task edit form"""

@@ -30,13 +30,13 @@ from pyams_form.interfaces.widget import IFieldWidget, IObjectWidget
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_form.widget import FieldWidget, Widget
 from pyams_layer.interfaces import IFormLayer, IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import ITaskContainer, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task.sync import IDirectoryHandler, IDirectoryHandlerHostField, \
     IDirectoryInfo, IDirectorySyncTask, IDirectorySyncTaskInfo
 from pyams_scheduler.task.sync import DirectoryInfo, DirectorySyncTask
-from pyams_scheduler.zmi import SchedulerTasksTable
-from pyams_scheduler.zmi.interfaces import IDirectoryHandlerHostWidget
 from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.zmi import TaskContainerTable
+from pyams_scheduler.zmi.interfaces import IDirectoryHandlerHostWidget
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_utils.adapter import adapter_config
 from pyams_utils.factory import get_interface_name
@@ -44,7 +44,6 @@ from pyams_utils.interfaces.form import NO_VALUE
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
-
 
 __docformat__ = 'restructuredtext'
 
@@ -129,7 +128,7 @@ class DirectorySyncTaskFormInfo(GroupManager):
 #
 
 @viewlet_config(name='add-sync-task.menu',
-                context=IScheduler, layer=IAdminLayer, view=SchedulerTasksTable,
+                context=ITaskContainer, layer=IAdminLayer, view=TaskContainerTable,
                 manager=IContextAddingsViewletManager, weight=20,
                 permission=MANAGE_TASKS_PERMISSION)
 class DirectorySyncTaskAddMenu(MenuItem):
@@ -140,7 +139,8 @@ class DirectorySyncTaskAddMenu(MenuItem):
     modal_target = True
 
 
-@ajax_form_config(name='add-sync-task.html', context=IScheduler, layer=IPyAMSLayer,
+@ajax_form_config(name='add-sync-task.html',
+                  context=ITaskContainer, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class DirectorySyncTaskAddForm(BaseTaskAddForm):
     """Directory synchronization task add form"""
@@ -150,7 +150,7 @@ class DirectorySyncTaskAddForm(BaseTaskAddForm):
 
 
 @adapter_config(name='sync-task-info.form',
-                required=(IScheduler, IAdminLayer, DirectorySyncTaskAddForm),
+                required=(ITaskContainer, IAdminLayer, DirectorySyncTaskAddForm),
                 provides=IInnerTabForm)
 class DirectorySyncTaskAddFormInfo(DirectorySyncTaskFormInfo, InnerAddForm):
     """Directory synchronization task add form info"""
@@ -160,7 +160,8 @@ class DirectorySyncTaskAddFormInfo(DirectorySyncTaskFormInfo, InnerAddForm):
 # Directory synchronization task edit form
 #
 
-@ajax_form_config(name='properties.html', context=IDirectorySyncTask, layer=IPyAMSLayer,
+@ajax_form_config(name='properties.html',
+                  context=IDirectorySyncTask, layer=IPyAMSLayer,
                   permission=MANAGE_TASKS_PERMISSION)
 class DirectorySyncTaskEditForm(BaseTaskEditForm):
     """Directory synchronization task edit form"""

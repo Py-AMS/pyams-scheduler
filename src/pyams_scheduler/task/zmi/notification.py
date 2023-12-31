@@ -25,11 +25,11 @@ from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import ITask, ITaskContainer, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import IMailNotification, ITaskNotification, \
     ITaskNotificationContainer
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
-from pyams_scheduler.zmi import SchedulerTasksTable
+from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_table.interfaces import IColumn, IValues
@@ -46,9 +46,7 @@ from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.interfaces.viewlet import IContextAddingsViewletManager
 from pyams_zmi.table import ActionColumn, AttributeSwitcherColumn, IconColumn, \
-    InnerTableAdminView, NameColumn, Table, \
-    TableElementEditor, TrashColumn
-
+    InnerTableAdminView, NameColumn, Table, TableElementEditor, TrashColumn
 
 __docformat__ = 'restructuredtext'
 
@@ -56,7 +54,7 @@ from pyams_scheduler import _  # pylint: disable=ungrouped-imports
 
 
 @adapter_config(name='notifications',
-                required=(IScheduler, IAdminLayer, SchedulerTasksTable),
+                required=(ITaskContainer, IAdminLayer, TaskContainerTable),
                 provides=IColumn)
 class TaskNotificationsColumn(ActionColumn):
     """Task notifications column"""
@@ -64,6 +62,7 @@ class TaskNotificationsColumn(ActionColumn):
     hint = _("Task notifications")
     icon_class = 'far fa-envelope'
 
+    checker = ITask.providedBy
     href = 'notifications.html'
 
     weight = 35

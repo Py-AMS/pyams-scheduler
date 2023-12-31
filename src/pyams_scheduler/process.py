@@ -107,7 +107,7 @@ class TaskResettingThread(BaseTaskThread):
                     scheduler.remove_job(job.id)
                 LOGGER.debug("Loading scheduler task '{0}'".format(
                     settings.get('task_name').lower()))
-                task = scheduler_util.get(settings.get('task_name').lower())
+                task = scheduler_util.get_task(settings.get('task_name').lower())
                 LOGGER.debug("Loaded scheduler task {0!r}".format(task))
                 if (task is not None) and task.is_runnable():
                     trigger = task.get_trigger()
@@ -115,7 +115,7 @@ class TaskResettingThread(BaseTaskThread):
                     LOGGER.debug("Adding new job to scheduler {0!r}".format(scheduler))
                     scheduler.add_job(task, trigger,
                                       id=str(task.internal_id),
-                                      name=task.name,
+                                      name=task.get_path(),
                                       kwargs={
                                           'zodb_name': scheduler_util.zodb_name,
                                           'registry': registry
@@ -184,7 +184,7 @@ class TaskRunnerThread(BaseTaskThread):
                 scheduler = self.process.scheduler
                 LOGGER.debug("Loading scheduler task '{0}'".format(
                     settings.get('task_name').lower()))
-                task = scheduler_util.get(settings.get('task_name').lower())
+                task = scheduler_util.get_task(settings.get('task_name').lower())
                 LOGGER.debug("Loaded scheduler task {0!r}".format(task))
                 if task is not None:
                     trigger = ImmediateTaskTrigger()
@@ -193,7 +193,7 @@ class TaskRunnerThread(BaseTaskThread):
                     scheduler.add_job(task, trigger,
                                       id='{0.internal_id}::{1}'.format(
                                           task, datetime.utcnow().isoformat()),
-                                      name=task.name,
+                                      name=task.get_path(),
                                       kwargs={
                                           'zodb_name': scheduler_util.zodb_name,
                                           'registry': self.process.registry,

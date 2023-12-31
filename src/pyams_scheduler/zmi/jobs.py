@@ -76,7 +76,7 @@ class JobsColumn(I18nColumnMixin, GetAttrColumn):
 class SchedulerJobsNameColumn(JobsColumn):
     """Scheduler jobs name column"""
 
-    i18n_header = _("Name")
+    i18n_header = _("Task name")
     attr_name = 'name'
     weight = 10
 
@@ -87,7 +87,7 @@ class SchedulerJobsNameColumn(JobsColumn):
 class SchedulerJobsIDColumn(JobsColumn):
     """Scheduler jobs ID column"""
 
-    i18n_header = _("ID")
+    i18n_header = _("Job ID")
     attr_name = 'id'
     weight = 20
 

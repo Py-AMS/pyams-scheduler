@@ -16,7 +16,6 @@ This module is checking for a registered tasks scheduler utility.
 """
 
 from pyams_scheduler.interfaces import IScheduler, SCHEDULER_NAME
-from pyams_scheduler.scheduler import Scheduler
 from pyams_site.generations import check_required_utilities
 from pyams_site.interfaces import ISiteGenerations
 from pyams_utils.registry import utility_config
@@ -41,7 +40,7 @@ RENAMED_CLASSES = {
 }
 
 
-REQUIRED_UTILITIES = ((IScheduler, '', Scheduler, SCHEDULER_NAME),)
+REQUIRED_UTILITIES = ((IScheduler, '', None, SCHEDULER_NAME),)
 
 
 @utility_config(name='PyAMS scheduler', provides=ISiteGenerations)
