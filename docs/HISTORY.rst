@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.3.0
+-----
+ - added task container interface, and task folder component
+
 2.2.0
 -----
  - added property to REST API caller task to set a custom SSL CA bundle
