@@ -1,2 +1,3 @@
 [run]
-source = src/pyams_scheduler
+source = pyams_scheduler
+omit = */pyams_scheduler/tests/*
