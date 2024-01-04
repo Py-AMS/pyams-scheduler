@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.4.0
+-----
+ - added folder properties edit form
+ - refactored task getters
+ - updated folder clone form to correctly handle folders with inner folders and tasks
+
 2.3.0
 -----
  - added task container interface, and task folder component
