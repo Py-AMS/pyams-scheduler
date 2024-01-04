@@ -43,7 +43,7 @@ except ImportError:
     ChatMessage = None
 
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
-    ITaskFolder, ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
+    ITaskContainer, ITaskFolder, ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
     SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
 from pyams_scheduler.interfaces.task import FailedTaskRunException, ITaskHistoryContainer, \
     ITaskInfo, ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_CLASS, \
@@ -214,6 +214,16 @@ class Task(Persistent, Contained):
             if ITaskFolder.providedBy(parent) or ITask.providedBy(parent)
         ))
 
+    def get_path_elements(self):
+        """Get path elements from task to scheduler"""
+        def get_elements():
+            yield self.__name__
+            for item in lineage(self):
+                if ITaskContainer.providedBy(item):
+                    yield item.__name__
+
+        yield from reversed(list(get_elements()))
+
     def get_trigger(self):
         """Task trigger getter"""
         mode = queryUtility(ITaskSchedulingMode, self.schedule_mode)
@@ -317,12 +327,9 @@ class Task(Persistent, Contained):
                                                 source=INTERNAL_USER_ID,
                                                 title=translate(_("Task execution")),
                                                 message=message_text,
-                                                url='/'.join(('',
-                                                              '++etc++site',
-                                                              scheduler_util.__name__,
-                                                              task.__name__,
-                                                              '++history++',
-                                                              history_item.__name__,
+                                                url='/'.join(('', '++etc++site') +
+                                                             tuple(self.get_path_elements()) +
+                                                             ('++history++', history_item.__name__,
                                                               'history.html')),
                                                 modal=True)
                                     except FailedTaskRunException:  # pylint: disable=bare-except
@@ -343,12 +350,9 @@ class Task(Persistent, Contained):
                                                 message=translate(_("An error occurred during "
                                                                     "execution of task '{}'"
                                                                     "")).format(task.name),
-                                                url='/'.join(('',
-                                                              '++etc++site',
-                                                              scheduler_util.__name__,
-                                                              task.__name__,
-                                                              '++history++',
-                                                              history_item.__name__,
+                                                url='/'.join(('', '++etc++site') +
+                                                             tuple(self.get_path_elements()) +
+                                                             ('++history++', history_item.__name__,
                                                               'history.html')),
                                                 modal=True)
                                     message.send()
