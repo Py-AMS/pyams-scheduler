@@ -32,8 +32,8 @@ from pyams_utils.container import find_objects_providing
 from pyams_utils.intids import get_object_uid
 from pyams_utils.traversing import get_parent
 from pyams_viewlet.viewlet import viewlet_config
-from pyams_zmi.form import AdminModalAddForm
-from pyams_zmi.helper.event import get_json_table_row_add_callback
+from pyams_zmi.form import AdminModalAddForm, AdminModalEditForm
+from pyams_zmi.helper.event import get_json_table_row_add_callback, get_json_table_row_refresh_callback
 from pyams_zmi.interfaces import IAdminLayer, IObjectHint, IObjectLabel, IPageTitle, TITLE_SPAN, TITLE_SPAN_BREAK
 from pyams_zmi.interfaces.form import IFormTitle
 from pyams_zmi.interfaces.table import ITableElementEditor
@@ -163,6 +163,34 @@ class TaskFolderBreadcrumbItem(AdminLayerBreadcrumbItem):
         return self.context.name
 
 
+@ajax_form_config(name='properties.html',
+                  context=ITaskFolder,
+                  permission=MANAGE_SCHEDULER_PERMISSION)
+class TaskFolderPropertiesEditForm(AdminModalEditForm):
+    """Task folder properties edit form"""
+
+    legend = _("Folder name")
+
+    fields = Fields(ITaskFolder).select('name')
+
+
+@adapter_config(required=(ITaskFolder, IAdminLayer, TaskFolderPropertiesEditForm),
+                provides=IAJAXFormRenderer)
+class TaskFolderPropertiesEditFormAJAXRenderer(ContextRequestViewAdapter):
+    """Task folder properties edit form AJAX renderer"""
+
+    def render(self, changes):
+        if not changes:
+            return None
+        container = get_parent(self.context, ITaskContainer, allow_context=False)
+        return {
+            'callbacks': [
+                get_json_table_row_refresh_callback(container, self.request,
+                                                    TaskContainerTable, self.context)
+            ]
+        }
+
+
 @ajax_form_config(name='clone-folder.html',
                   context=ITaskFolder,
                   permission=MANAGE_SCHEDULER_PERMISSION)
@@ -180,8 +208,9 @@ class TaskFolderCloneForm(AdminModalAddForm):
         self.context.__parent__[get_object_uid(obj)] = obj
         for task in list(find_objects_providing(obj, ITask)):
             name = task.__name__
-            obj[get_object_uid(task)] = task
-            del obj[name]
+            parent = task.__parent__
+            parent[get_object_uid(task)] = task
+            del parent[name]
 
 
 @adapter_config(required=(ITaskFolder, IAdminLayer, TaskFolderCloneForm),
@@ -191,7 +220,7 @@ class TaskFolderCloneFormAJAXRenderer(ContextRequestViewAdapter):
 
     def render(self, changes):
         """AJAX result renderer"""
-        if not changes:
+        if changes is None:
             return None
         container = get_parent(self.context, ITaskContainer, allow_context=False)
         return {

@@ -24,8 +24,8 @@ from zope.traversing.interfaces import ITraversable
 from pyams_form.field import Fields
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, ITaskHistory, \
-    VIEW_HISTORY_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, ITaskFolder, ITaskHistory, \
+    MANAGE_SCHEDULER_PERMISSION, VIEW_HISTORY_PERMISSION
 from pyams_scheduler.interfaces.task import TASK_STATUS_STYLES
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import TaskContainerTable
@@ -38,6 +38,7 @@ from pyams_utils.container import find_objects_providing
 from pyams_utils.date import SH_DATETIME_FORMAT, get_duration
 from pyams_utils.registry import get_utility
 from pyams_utils.traversing import get_parent
+from pyams_utils.url import absolute_url
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.form import AdminModalDisplayForm
 from pyams_zmi.interfaces import IAdminLayer, TITLE_SPAN_BREAK
@@ -176,14 +177,36 @@ class SchedulerHistoryView(TableAdminView):
 class SchedulerTaskHistoryColumn(ActionColumn):
     """Scheduler task history column"""
 
-    href = 'jobs-history.html'
-    icon_class = 'fas fa-history'
-    hint = _("Task run history")
+    folder_href = 'properties.html'
+    folder_icon_class = 'fas fa-edit'
 
-    checker = ITask.providedBy
-    permission = VIEW_HISTORY_PERMISSION
+    task_href = 'jobs-history.html'
+    task_icon_class = 'fas fa-history'
+
+    folder_hint = _("Rename folder")
+    task_hint = _("Task run history")
+
+    folder_permission = MANAGE_SCHEDULER_PERMISSION
+    task_permission = VIEW_HISTORY_PERMISSION
 
     weight = 70
+
+    def has_permission(self, item):
+        if ITaskFolder.providedBy(item):
+            permission = self.folder_permission
+        else:
+            permission = self.task_permission
+        return self.request.has_permission(permission, context=item)
+
+    def get_icon_class(self, item):
+        if ITaskFolder.providedBy(item):
+            return self.folder_icon_class
+        return self.task_icon_class
+
+    def get_url(self, item):
+        if ITaskFolder.providedBy(item):
+            return absolute_url(item, self.request, self.folder_href)
+        return absolute_url(item, self.request, self.task_href)
 
 
 @pagelet_config(name='jobs-history.html',
