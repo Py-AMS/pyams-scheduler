@@ -49,7 +49,7 @@ class BaseTaskThread(Thread):
             scheduler = settings.__parent__
             self.settings = {
                 'zodb_name': scheduler.zodb_name,
-                'task_name': settings.__name__,
+                'task_name': settings.internal_id,
                 'job_id': settings.internal_id
             }
         else:
@@ -106,8 +106,8 @@ class TaskResettingThread(BaseTaskThread):
                     LOGGER.debug("Loaded job {0!r} ({0.id!r})".format(job))
                     scheduler.remove_job(job.id)
                 LOGGER.debug("Loading scheduler task '{0}'".format(
-                    settings.get('task_name').lower()))
-                task = scheduler_util.get_task(settings.get('task_name').lower())
+                    settings.get('task_name')))
+                task = scheduler_util.get_task(settings.get('task_name'))
                 LOGGER.debug("Loaded scheduler task {0!r}".format(task))
                 if (task is not None) and task.is_runnable():
                     trigger = task.get_trigger()
@@ -183,8 +183,8 @@ class TaskRunnerThread(BaseTaskThread):
                 LOGGER.debug("Loaded scheduler utility {0!r}".format(scheduler_util))
                 scheduler = self.process.scheduler
                 LOGGER.debug("Loading scheduler task '{0}'".format(
-                    settings.get('task_name').lower()))
-                task = scheduler_util.get_task(settings.get('task_name').lower())
+                    settings.get('task_name')))
+                task = scheduler_util.get_task(settings.get('task_name'))
                 LOGGER.debug("Loaded scheduler task {0!r}".format(task))
                 if task is not None:
                     trigger = ImmediateTaskTrigger()

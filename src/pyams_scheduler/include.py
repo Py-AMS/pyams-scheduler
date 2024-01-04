@@ -192,7 +192,8 @@ def handle_new_application(event):  # pylint: disable=unused-argument,too-many-l
                     continue
                 trigger = task.get_trigger()
                 LOGGER.debug("Adding scheduler job for task '{0.name}'".format(task))
-                process.scheduler.add_job(task, trigger,
+                process.scheduler.add_job(task,
+                                          trigger,
                                           id=str(task.internal_id),
                                           name=task.get_path(),
                                           kwargs={

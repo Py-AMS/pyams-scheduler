@@ -54,7 +54,7 @@ from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICAT
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.date import get_duration
 from pyams_utils.interfaces.transaction import ITransactionClient
-from pyams_utils.registry import get_pyramid_registry, get_utility, query_utility, \
+from pyams_utils.registry import get_local_registry, get_pyramid_registry, get_utility, query_utility, \
     set_local_registry
 from pyams_utils.request import check_request
 from pyams_utils.timezone import tztime
@@ -119,7 +119,7 @@ class TaskHandler(TransactionClient):
             if handler:
                 zmq_settings = {
                     'zodb_name': scheduler.zodb_name,
-                    'task_name': task.__name__,
+                    'task_name': task.internal_id,
                     'job_id': job_id
                 }
                 LOGGER.debug(f"Starting '{action}' on task {task.name} with {zmq_settings!r}")
@@ -268,92 +268,96 @@ class Task(Persistent, Contained):
                 application_name = registry.settings.get(PYAMS_APPLICATION_SETTINGS_KEY,
                                                          PYAMS_APPLICATION_DEFAULT_NAME)
                 application = root.get(application_name)
-                sm = application.getSiteManager()  # pylint: disable=invalid-name
-                scheduler_util = sm.get(SCHEDULER_NAME)
-                task = scheduler_util.get(self.__name__)
-                if task is not None:
+                old_registry = get_local_registry()
+                try:
+                    sm = application.getSiteManager()  # pylint: disable=invalid-name
                     set_local_registry(sm)
-                    request = check_request(base_url=scheduler_util.notified_host,
-                                            registry=registry, principal_id=self.principal_id)
-                    request.root = application
-                    with RequestContext(request):
-                        if not (kwargs.get('run_immediate') or task.is_runnable()):
-                            LOGGER.debug("Skipping inactive task {0}".format(task.name))
-                            return status, result
-                        translate = request.localizer.translate
-                        tm = ITransactionManager(task)  # pylint: disable=invalid-name
-                        for attempt in tm.attempts():
-                            with attempt as t:  # pylint: disable=invalid-name
-                                status = TASK_STATUS_NONE
-                                start_date = datetime.utcnow()
-                                duration = 0.
-                                try:
-                                    registry.notify(BeforeRunJobEvent(task))
-                                    (status, result) = task.run(report, **kwargs)
-                                    if status == TASK_STATUS_FAIL:
-                                        raise FailedTaskRunException
-                                    end_date = datetime.utcnow()
-                                    duration = (end_date - start_date).total_seconds()
-                                    report.write('\n\nTask duration: {0}'.format(
-                                        get_duration(start_date, request=request)))
-                                    history_item = task.store_report(report, status, start_date, duration)
-                                    if (ChatMessage is not None) and scheduler_util.notified_host:
-                                        if status == TASK_STATUS_ERROR:
-                                            message_text = translate(_("Task '{}' was executed "
-                                                                       "with error")) \
-                                                .format(task.name)
-                                        else:
-                                            message_text = translate(_("Task '{}' was executed "
-                                                                       "without error")) \
-                                                .format(task.name)
-                                        message = ChatMessage(
-                                            request=request,
-                                            host=scheduler_util.notified_host,
-                                            action='notify',
-                                            category='scheduler.run',
-                                            status=TASK_STATUS_CLASS.get(status, 'info'),
-                                            source=INTERNAL_USER_ID,
-                                            title=translate(_("Task execution")),
-                                            message=message_text,
-                                            url='/'.join(('',
-                                                          '++etc++site',
-                                                          scheduler_util.__name__,
-                                                          task.__name__,
-                                                          '++history++',
-                                                          history_item.__name__,
-                                                          'history.html')),
-                                            modal=True)
-                                except FailedTaskRunException:  # pylint: disable=bare-except
-                                    # pylint: disable=protected-access
-                                    task._log_exception(report,
-                                                        "An error occurred during execution of "
-                                                        "task '{}'".format(task.name))
-                                    history_item = task.store_report(report, status, start_date, duration)
-                                    if (ChatMessage is not None) and scheduler_util.notified_host:
-                                        message = ChatMessage(
-                                            request=request,
-                                            host=scheduler_util.notified_host,
-                                            action='notify',
-                                            category='scheduler.run',
-                                            status=TASK_STATUS_CLASS.get(status, 'danger'),
-                                            source=INTERNAL_USER_ID,
-                                            title=translate(_("Task execution")),
-                                            message=translate(_("An error occurred during "
-                                                                "execution of task '{}'"
-                                                                "")).format(task.name),
-                                            url='/'.join(('',
-                                                          '++etc++site',
-                                                          scheduler_util.__name__,
-                                                          task.__name__,
-                                                          '++history++',
-                                                          history_item.__name__,
-                                                          'history.html')),
-                                            modal=True)
-                                message.send()
-                                registry.notify(AfterRunJobEvent(task, status, result))
-                                task.send_report(report, status, registry)
-                            if t.status == COMMITTED_STATUS:
-                                break
+                    scheduler_util = sm.get(SCHEDULER_NAME)
+                    task = scheduler_util.get_task(self.internal_id)
+                    if task is not None:
+                        request = check_request(base_url=scheduler_util.notified_host,
+                                                registry=registry, principal_id=self.principal_id)
+                        request.root = application
+                        with RequestContext(request):
+                            if not (kwargs.get('run_immediate') or task.is_runnable()):
+                                LOGGER.debug("Skipping inactive task {0}".format(task.name))
+                                return status, result
+                            translate = request.localizer.translate
+                            tm = ITransactionManager(task)  # pylint: disable=invalid-name
+                            for attempt in tm.attempts():
+                                with attempt as t:  # pylint: disable=invalid-name
+                                    status = TASK_STATUS_NONE
+                                    start_date = datetime.utcnow()
+                                    duration = 0.
+                                    try:
+                                        registry.notify(BeforeRunJobEvent(task))
+                                        (status, result) = task.run(report, **kwargs)
+                                        if status == TASK_STATUS_FAIL:
+                                            raise FailedTaskRunException
+                                        end_date = datetime.utcnow()
+                                        duration = (end_date - start_date).total_seconds()
+                                        report.write('\n\nTask duration: {0}'.format(
+                                            get_duration(start_date, request=request)))
+                                        history_item = task.store_report(report, status, start_date, duration)
+                                        if (ChatMessage is not None) and scheduler_util.notified_host:
+                                            if status == TASK_STATUS_ERROR:
+                                                message_text = translate(_("Task '{}' was executed "
+                                                                           "with error")) \
+                                                    .format(task.name)
+                                            else:
+                                                message_text = translate(_("Task '{}' was executed "
+                                                                           "without error")) \
+                                                    .format(task.name)
+                                            message = ChatMessage(
+                                                request=request,
+                                                host=scheduler_util.notified_host,
+                                                action='notify',
+                                                category='scheduler.run',
+                                                status=TASK_STATUS_CLASS.get(status, 'info'),
+                                                source=INTERNAL_USER_ID,
+                                                title=translate(_("Task execution")),
+                                                message=message_text,
+                                                url='/'.join(('',
+                                                              '++etc++site',
+                                                              scheduler_util.__name__,
+                                                              task.__name__,
+                                                              '++history++',
+                                                              history_item.__name__,
+                                                              'history.html')),
+                                                modal=True)
+                                    except FailedTaskRunException:  # pylint: disable=bare-except
+                                        # pylint: disable=protected-access
+                                        task._log_exception(report,
+                                                            "An error occurred during execution of "
+                                                            "task '{}'".format(task.name))
+                                        history_item = task.store_report(report, status, start_date, duration)
+                                        if (ChatMessage is not None) and scheduler_util.notified_host:
+                                            message = ChatMessage(
+                                                request=request,
+                                                host=scheduler_util.notified_host,
+                                                action='notify',
+                                                category='scheduler.run',
+                                                status=TASK_STATUS_CLASS.get(status, 'danger'),
+                                                source=INTERNAL_USER_ID,
+                                                title=translate(_("Task execution")),
+                                                message=translate(_("An error occurred during "
+                                                                    "execution of task '{}'"
+                                                                    "")).format(task.name),
+                                                url='/'.join(('',
+                                                              '++etc++site',
+                                                              scheduler_util.__name__,
+                                                              task.__name__,
+                                                              '++history++',
+                                                              history_item.__name__,
+                                                              'history.html')),
+                                                modal=True)
+                                    message.send()
+                                    registry.notify(AfterRunJobEvent(task, status, result))
+                                    task.send_report(report, status, registry)
+                                if t.status == COMMITTED_STATUS:
+                                    break
+                finally:
+                    set_local_registry(old_registry)
             except:  # pylint: disable=bare-except
                 self._log_exception(None, "Can't execute scheduled job {0}".format(self.name))
             tm = ITransactionManager(self, None)  # pylint: disable=invalid-name

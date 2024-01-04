@@ -79,7 +79,9 @@ class Scheduler(TaskContainer):
         intids = query_utility(IIntIds)
         if intids is None:
             intids = self.__parent__.getUtility(IIntIds)
-        return intids.queryObject(int(task_id, 16))
+        if isinstance(task_id, str):
+            task_id = int(task_id, 16)
+        return intids.queryObject(task_id)
 
     def get_jobs(self):
         """Getter of scheduler scheduled jobs"""
