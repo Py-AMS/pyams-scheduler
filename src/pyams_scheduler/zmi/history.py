@@ -109,7 +109,7 @@ class SchedulerHistoryNameColumn(NameColumn):
 
     def get_value(self, obj):
         task = get_parent(obj, ITask)
-        return task.name
+        return task.get_path()
 
 
 @adapter_config(name='date',
