@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.4.1
+-----
+ - updated history item path in notifications
+
 2.4.0
 -----
  - added folder properties edit form
