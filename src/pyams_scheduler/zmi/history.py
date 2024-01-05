@@ -203,6 +203,12 @@ class SchedulerTaskHistoryColumn(ActionColumn):
             return self.folder_icon_class
         return self.task_icon_class
 
+    def get_icon_hint(self, item):
+        translate = self.request.localizer.translate
+        if ITaskFolder.providedBy(item):
+            return translate(self.folder_hint)
+        return translate(self.task_hint)
+
     def get_url(self, item):
         if ITaskFolder.providedBy(item):
             return absolute_url(item, self.request, self.folder_href)
