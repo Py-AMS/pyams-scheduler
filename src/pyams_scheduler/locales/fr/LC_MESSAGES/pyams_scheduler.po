@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2023-12-22 23:22+0100\n"
+"POT-Creation-Date: 2024-01-05 13:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,8 +64,8 @@ msgid "Run in debug mode"
 msgstr "Lancer en mode debug"
 
 #: src/pyams_scheduler/zmi/trigger.py:86
-#: src/pyams_scheduler/task/__init__.py:316
-#: src/pyams_scheduler/task/__init__.py:340
+#: src/pyams_scheduler/task/__init__.py:328
+#: src/pyams_scheduler/task/__init__.py:349
 msgid "Task execution"
 msgstr "Tâche planifiée"
 
@@ -136,45 +136,49 @@ msgstr ""
 "(par exemple, tous les jours de la semaine ou toutes les heures) ; ATTENTION "
 "si vous appliquez cette valeur dans la zone des secondes !!"
 
-#: src/pyams_scheduler/zmi/history.py:65
+#: src/pyams_scheduler/zmi/history.py:66
 msgid "Jobs history"
 msgstr "Historique"
 
-#: src/pyams_scheduler/zmi/history.py:106 src/pyams_scheduler/zmi/jobs.py:79
+#: src/pyams_scheduler/zmi/history.py:107 src/pyams_scheduler/zmi/jobs.py:79
 #: src/pyams_scheduler/interfaces/task/__init__.py:272
 msgid "Task name"
 msgstr "Nom de la tâche"
 
-#: src/pyams_scheduler/zmi/history.py:121
+#: src/pyams_scheduler/zmi/history.py:122
 msgid "Run date"
 msgstr "Date d'exécution"
 
-#: src/pyams_scheduler/zmi/history.py:134
+#: src/pyams_scheduler/zmi/history.py:135
 msgid "Duration"
 msgstr "Durée d'exécution"
 
-#: src/pyams_scheduler/zmi/history.py:152
+#: src/pyams_scheduler/zmi/history.py:153
 msgid "Status"
 msgstr "Statut"
 
-#: src/pyams_scheduler/zmi/history.py:164
+#: src/pyams_scheduler/zmi/history.py:165
 msgid "Tasks execution history"
 msgstr "Historique des tâches exécutées"
 
-#: src/pyams_scheduler/zmi/history.py:166
+#: src/pyams_scheduler/zmi/history.py:167
 msgid "List of executed tasks"
 msgstr "Historique d'exécution des jobs"
 
-#: src/pyams_scheduler/zmi/history.py:181
-#: src/pyams_scheduler/zmi/history.py:245
+#: src/pyams_scheduler/zmi/history.py:186
+msgid "Rename folder"
+msgstr "Renommer le dossier"
+
+#: src/pyams_scheduler/zmi/history.py:187
+#: src/pyams_scheduler/zmi/history.py:274
 msgid "Task run history"
 msgstr "Historique"
 
-#: src/pyams_scheduler/zmi/history.py:205
+#: src/pyams_scheduler/zmi/history.py:234
 msgid "List of executed jobs"
 msgstr "Historique de la tâche"
 
-#: src/pyams_scheduler/zmi/history.py:246
+#: src/pyams_scheduler/zmi/history.py:275
 msgid "Task execution log"
 msgstr "Trace d'exécution de la tâche"
 
@@ -232,37 +236,52 @@ msgid "({} elements)"
 msgstr "({} éléments)"
 
 #: src/pyams_scheduler/zmi/__init__.py:217
+#: src/pyams_scheduler/zmi/folder.py:201
+msgid "Clone folder"
+msgstr "Dupliquer le dossier"
+
+#: src/pyams_scheduler/zmi/__init__.py:218
 #: src/pyams_scheduler/task/zmi/__init__.py:243
 msgid "Clone task"
 msgstr "Dupliquer la tâche"
 
-#: src/pyams_scheduler/zmi/__init__.py:242
+#: src/pyams_scheduler/zmi/__init__.py:250
 msgid "Scheduler tasks"
 msgstr "Tâches planifiées"
 
-#: src/pyams_scheduler/zmi/__init__.py:244
+#: src/pyams_scheduler/zmi/__init__.py:252
 msgid "List of scheduler tasks"
 msgstr "Définition des tâches"
 
-#: src/pyams_scheduler/zmi/folder.py:57
+#: src/pyams_scheduler/zmi/folder.py:58
 msgid "Add folder..."
 msgstr "Nouveau dossier..."
 
-#: src/pyams_scheduler/zmi/folder.py:68
+#: src/pyams_scheduler/zmi/folder.py:69
 msgid "New folder"
 msgstr "Nouveau dossier"
 
-#: src/pyams_scheduler/zmi/folder.py:69
+#: src/pyams_scheduler/zmi/folder.py:70
 msgid "New folder properties"
 msgstr "Propriétés du nouveau dossier"
 
-#: src/pyams_scheduler/zmi/folder.py:120
+#: src/pyams_scheduler/zmi/folder.py:121
 msgid "Task folder"
 msgstr "Dossier"
 
-#: src/pyams_scheduler/zmi/folder.py:172
-msgid "Clone folder"
-msgstr "Dupliquer le dossier"
+#: src/pyams_scheduler/zmi/folder.py:173
+#: src/pyams_scheduler/interfaces/__init__.py:114
+msgid "Folder name"
+msgstr "Nom du dossier"
+
+#: src/pyams_scheduler/zmi/folder.py:224
+msgid ""
+"WARNING: this will duplicate the folder and all it's content, including "
+"tasks and inner folders; copied tasks will be automatically disabled"
+msgstr ""
+"ATTENTION : ceci va dupliquer le dossier et tout son contenu, y compris les tâches et les "
+"sous-dossiers.\n"
+"Les tâches dupliquées seront automatiquement désactivées."
 
 #: src/pyams_scheduler/zmi/templates/directory-host-input.pt:10
 #: src/pyams_scheduler/zmi/templates/directory-host-display.pt:8
@@ -282,17 +301,17 @@ msgstr "Synchronisation de répertoires"
 msgid "HTTP service"
 msgstr "Requête HTTP"
 
-#: src/pyams_scheduler/task/__init__.py:302
+#: src/pyams_scheduler/task/__init__.py:314
 #, python-format
 msgid "Task '{}' was executed with error"
 msgstr "Une erreur s'est produite pendant l'exécution de la tâche '{}'."
 
-#: src/pyams_scheduler/task/__init__.py:306
+#: src/pyams_scheduler/task/__init__.py:318
 #, python-format
 msgid "Task '{}' was executed without error"
 msgstr "La tâche '{}' a été exécutée sans erreur."
 
-#: src/pyams_scheduler/task/__init__.py:341
+#: src/pyams_scheduler/task/__init__.py:350
 #, python-format
 msgid "An error occurred during execution of task '{}'"
 msgstr "Une erreur s'est produite pendant l'exécution de la tâche '{}'."
@@ -342,11 +361,11 @@ msgstr "Propriétés de la notification"
 msgid "Add mail notification..."
 msgstr "Notification par mail"
 
-#: src/pyams_scheduler/task/zmi/ssh.py:88
+#: src/pyams_scheduler/task/zmi/ssh.py:87
 msgid "Command settings"
 msgstr "Ligne de commande"
 
-#: src/pyams_scheduler/task/zmi/ssh.py:104
+#: src/pyams_scheduler/task/zmi/ssh.py:103
 msgid "Add local/remote command launcher..."
 msgstr "Commande locale ou distante"
 
@@ -462,10 +481,6 @@ msgstr "Tâches"
 msgid "List of tasks assigned to this container"
 msgstr "Liste des tâches"
 
-#: src/pyams_scheduler/interfaces/__init__.py:114
-msgid "Folder name"
-msgstr "Nom du dossier"
-
 #: src/pyams_scheduler/interfaces/__init__.py:115
 msgid "Descriptive name given to this folder"
 msgstr "Nom donné au dossier"
@@ -565,8 +580,8 @@ msgstr "Invités"
 msgid ""
 "Guests are only allowed to display tasks properties and execution history"
 msgstr ""
-"Les invités sont seulement autorisés à consulter les propriétés des tâches et "
-"leur historique d'exécution"
+"Les invités sont seulement autorisés à consulter les propriétés des tâches "
+"et leur historique d'exécution"
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:32
 msgid "Hostname or IP address"

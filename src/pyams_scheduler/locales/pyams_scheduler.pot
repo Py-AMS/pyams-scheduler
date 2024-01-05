@@ -1,12 +1,12 @@
 #
 # SOME DESCRIPTIVE TITLE
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2023-12-22 23:22+0100\n"
+"POT-Creation-Date: 2024-01-05 13:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,8 +66,8 @@ msgid "Run in debug mode"
 msgstr ""
 
 #: ./src/pyams_scheduler/zmi/trigger.py:86
-#: ./src/pyams_scheduler/task/__init__.py:316
-#: ./src/pyams_scheduler/task/__init__.py:340
+#: ./src/pyams_scheduler/task/__init__.py:328
+#: ./src/pyams_scheduler/task/__init__.py:349
 msgid "Task execution"
 msgstr ""
 
@@ -104,46 +104,50 @@ msgid ""
 "An asterisk means that all possible values are selected (warning when setting this value on seconds!!)"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:65
+#: ./src/pyams_scheduler/zmi/history.py:66
 msgid "Jobs history"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:106
+#: ./src/pyams_scheduler/zmi/history.py:107
 #: ./src/pyams_scheduler/zmi/jobs.py:79
 #: ./src/pyams_scheduler/interfaces/task/__init__.py:272
 msgid "Task name"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:121
+#: ./src/pyams_scheduler/zmi/history.py:122
 msgid "Run date"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:134
+#: ./src/pyams_scheduler/zmi/history.py:135
 msgid "Duration"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:152
+#: ./src/pyams_scheduler/zmi/history.py:153
 msgid "Status"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:164
+#: ./src/pyams_scheduler/zmi/history.py:165
 msgid "Tasks execution history"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:166
+#: ./src/pyams_scheduler/zmi/history.py:167
 msgid "List of executed tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:181
-#: ./src/pyams_scheduler/zmi/history.py:245
+#: ./src/pyams_scheduler/zmi/history.py:186
+msgid "Rename folder"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/history.py:187
+#: ./src/pyams_scheduler/zmi/history.py:274
 msgid "Task run history"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:205
+#: ./src/pyams_scheduler/zmi/history.py:234
 msgid "List of executed jobs"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/history.py:246
+#: ./src/pyams_scheduler/zmi/history.py:275
 msgid "Task execution log"
 msgstr ""
 
@@ -201,36 +205,48 @@ msgid "({} elements)"
 msgstr ""
 
 #: ./src/pyams_scheduler/zmi/__init__.py:217
+#: ./src/pyams_scheduler/zmi/folder.py:201
+msgid "Clone folder"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/__init__.py:218
 #: ./src/pyams_scheduler/task/zmi/__init__.py:243
 msgid "Clone task"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:242
+#: ./src/pyams_scheduler/zmi/__init__.py:250
 msgid "Scheduler tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/__init__.py:244
+#: ./src/pyams_scheduler/zmi/__init__.py:252
 msgid "List of scheduler tasks"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/folder.py:57
+#: ./src/pyams_scheduler/zmi/folder.py:58
 msgid "Add folder..."
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/folder.py:68
+#: ./src/pyams_scheduler/zmi/folder.py:69
 msgid "New folder"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/folder.py:69
+#: ./src/pyams_scheduler/zmi/folder.py:70
 msgid "New folder properties"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/folder.py:120
+#: ./src/pyams_scheduler/zmi/folder.py:121
 msgid "Task folder"
 msgstr ""
 
-#: ./src/pyams_scheduler/zmi/folder.py:172
-msgid "Clone folder"
+#: ./src/pyams_scheduler/zmi/folder.py:173
+#: ./src/pyams_scheduler/interfaces/__init__.py:114
+msgid "Folder name"
+msgstr ""
+
+#: ./src/pyams_scheduler/zmi/folder.py:224
+msgid ""
+"WARNING: this will duplicate the folder and all it's content, including tasks"
+" and inner folders; copied tasks will be automatically disabled"
 msgstr ""
 
 #: ./src/pyams_scheduler/zmi/templates/directory-host-input.pt:10
@@ -251,17 +267,17 @@ msgstr ""
 msgid "HTTP service"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/__init__.py:302
+#: ./src/pyams_scheduler/task/__init__.py:314
 #, python-format
 msgid "Task '{}' was executed with error"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/__init__.py:306
+#: ./src/pyams_scheduler/task/__init__.py:318
 #, python-format
 msgid "Task '{}' was executed without error"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/__init__.py:341
+#: ./src/pyams_scheduler/task/__init__.py:350
 #, python-format
 msgid "An error occurred during execution of task '{}'"
 msgstr ""
@@ -311,11 +327,11 @@ msgstr ""
 msgid "Add mail notification..."
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/ssh.py:88
+#: ./src/pyams_scheduler/task/zmi/ssh.py:87
 msgid "Command settings"
 msgstr ""
 
-#: ./src/pyams_scheduler/task/zmi/ssh.py:104
+#: ./src/pyams_scheduler/task/zmi/ssh.py:103
 msgid "Add local/remote command launcher..."
 msgstr ""
 
@@ -416,10 +432,6 @@ msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/__init__.py:106
 msgid "List of tasks assigned to this container"
-msgstr ""
-
-#: ./src/pyams_scheduler/interfaces/__init__.py:114
-msgid "Folder name"
 msgstr ""
 
 #: ./src/pyams_scheduler/interfaces/__init__.py:115

@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.4.2
+-----
+ - updated clone column hint
+ - added warning message in folder clone form
+
 2.4.1
 -----
  - updated history item path in notifications
