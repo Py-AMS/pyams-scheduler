@@ -25,7 +25,8 @@ from pyams_layer.interfaces import IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, ITaskFolder, MANAGE_SCHEDULER_PERMISSION
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_scheduler.zmi.interfaces import ITaskContainerTable
-from pyams_skin.interfaces.viewlet import IBreadcrumbItem
+from pyams_skin.interfaces.viewlet import IBreadcrumbItem, IFormHeaderViewletManager
+from pyams_skin.viewlet.help import AlertMessage
 from pyams_skin.viewlet.menu import MenuDivider, MenuItem
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
 from pyams_utils.container import find_objects_providing
@@ -211,6 +212,17 @@ class TaskFolderCloneForm(AdminModalAddForm):
             parent = task.__parent__
             parent[get_object_uid(task)] = task
             del parent[name]
+
+
+@viewlet_config(name='clone-folder.help',
+                context=ITaskFolder, layer=IAdminLayer, view=TaskFolderCloneForm,
+                manager=IFormHeaderViewletManager, weight=10)
+class TaskFolderCloneFormHelp(AlertMessage):
+    """Task folder clone form help"""
+
+    status = 'warning'
+    _message = _("WARNING: this will duplicate the folder and all it's content, including "
+                 "tasks and inner folders; copied tasks will be automatically disabled")
 
 
 @adapter_config(required=(ITaskFolder, IAdminLayer, TaskFolderCloneForm),
