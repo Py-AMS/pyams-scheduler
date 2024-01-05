@@ -214,8 +214,16 @@ class TaskContainerIdColumn(I18nColumnMixin, GetAttrColumn):
 class TaskContainerCloneColumn(ActionColumn):
     """Task container clone column"""
 
-    hint = _("Clone task")
+    folder_hint = _("Clone folder")
+    task_hint = _("Clone task")
+
     icon_class = 'far fa-clone'
+
+    def get_icon_hint(self, item):
+        translate = self.request.localizer.translate
+        if ITaskFolder.providedBy(item):
+            return translate(self.folder_hint)
+        return translate(self.task_hint)
 
     def get_url(self, item):
         href = 'clone-task.html' if ITask.providedBy(item) else 'clone-folder.html'
