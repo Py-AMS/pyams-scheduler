@@ -279,8 +279,8 @@ msgid ""
 "WARNING: this will duplicate the folder and all it's content, including "
 "tasks and inner folders; copied tasks will be automatically disabled"
 msgstr ""
-"ATTENTION : ceci va dupliquer le dossier et tout son contenu, y compris les tâches et les "
-"sous-dossiers.\n"
+"ATTENTION : ceci va dupliquer le dossier et tout son contenu, y compris les "
+"tâches et les sous-dossiers.\n"
 "Les tâches dupliquées seront automatiquement désactivées."
 
 #: src/pyams_scheduler/zmi/templates/directory-host-input.pt:10
