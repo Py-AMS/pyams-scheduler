@@ -21,10 +21,10 @@ from zope.interface import implementer
 from zope.intid import IIntIds
 from zope.schema.fieldproperty import FieldProperty
 
+from pyams_scheduler.folder import TaskContainer
 from pyams_scheduler.interfaces import IScheduler, ISchedulerHandler, ITask, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY
-from pyams_scheduler.folder import TaskContainer, TaskFolder
-from pyams_utils.container import find_objects_providing
 from pyams_utils.factory import factory_config
+from pyams_utils.finder import find_objects_providing
 from pyams_utils.registry import get_pyramid_registry, query_utility
 from pyams_zmq.socket import zmq_response, zmq_socket
 

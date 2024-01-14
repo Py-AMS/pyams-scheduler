@@ -29,7 +29,7 @@ from pyams_skin.interfaces.viewlet import IBreadcrumbItem, IFormHeaderViewletMan
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_skin.viewlet.menu import MenuDivider, MenuItem
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
-from pyams_utils.container import find_objects_providing
+from pyams_utils.finder import find_objects_providing
 from pyams_utils.intids import get_object_uid
 from pyams_utils.traversing import get_parent
 from pyams_viewlet.viewlet import viewlet_config

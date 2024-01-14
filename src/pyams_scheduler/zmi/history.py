@@ -34,8 +34,8 @@ from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextAdapter, ContextRequestViewAdapter, adapter_config
-from pyams_utils.container import find_objects_providing
 from pyams_utils.date import SH_DATETIME_FORMAT, get_duration
+from pyams_utils.finder import find_objects_providing
 from pyams_utils.registry import get_utility
 from pyams_utils.traversing import get_parent
 from pyams_utils.url import absolute_url

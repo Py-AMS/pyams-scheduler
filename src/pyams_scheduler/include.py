@@ -36,12 +36,11 @@ from pyams_scheduler.process import SchedulerMessageHandler, SchedulerProcess
 from pyams_security.interfaces.base import MANAGE_ROLES_PERMISSION, ROLE_ID, VIEW_SYSTEM_PERMISSION
 from pyams_security.interfaces.names import ADMIN_USER_ID, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
-from pyams_utils.container import find_objects_providing
+from pyams_utils.finder import find_objects_providing
 from pyams_utils.protocol.tcp import is_port_in_use
 from pyams_utils.registry import get_pyramid_registry, set_local_registry
 from pyams_utils.zodb import get_connection_from_settings
 from pyams_zmq.process import process_exit_func
-
 
 __docformat__ = 'restructuredtext'
 
