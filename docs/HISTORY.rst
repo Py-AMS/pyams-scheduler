@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.4.3
+-----
+ - moved PyAMS_utils finder helper to new module
+
 2.4.2
 -----
  - updated clone column hint
