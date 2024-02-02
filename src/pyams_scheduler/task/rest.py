@@ -24,7 +24,7 @@ from urllib import parse
 
 import chardet
 import requests
-from requests import ConnectionError
+from requests import RequestException
 from zope.schema.fieldproperty import FieldProperty
 
 from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_FAIL, TASK_STATUS_OK
@@ -170,7 +170,7 @@ class RESTCallerTask(Task):
                                                proxies=proxies if self.jwt_use_proxy else None,
                                                timeout=self.connection_timeout,
                                                allow_redirects=False)
-            except ConnectionError:
+            except RequestException:
                 etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
                 report.write('\n\n'
                              'An HTTP error occurred\n'
@@ -209,7 +209,7 @@ class RESTCallerTask(Task):
                                             timeout=self.connection_timeout,
                                             allow_redirects=self.allow_redirects,
                                             **self.get_request_params(method, params))
-        except ConnectionError:
+        except RequestException:
             etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
             report.write('\n\n'
                          'An HTTP error occurred\n'
