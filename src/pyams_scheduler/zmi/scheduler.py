@@ -22,6 +22,7 @@ from pyams_form.field import Fields
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_scheduler.interfaces import IScheduler, MANAGE_SCHEDULER_PERMISSION, \
     TASKS_SCHEDULER_LABEL
+from pyams_security.interfaces.base import VIEW_SYSTEM_PERMISSION
 from pyams_site.interfaces import ISiteRoot
 from pyams_skin.interfaces.viewlet import IBreadcrumbItem
 from pyams_utils.adapter import adapter_config
@@ -57,8 +58,7 @@ class SchedulerBreadcrumbItem(AdminLayerBreadcrumbItem):
 
 @viewlet_config(name='scheduler.menu',
                 context=ISiteRoot, layer=IAdminLayer,
-                manager=IControlPanelMenu, weight=25,
-                permission=MANAGE_SCHEDULER_PERMISSION)
+                manager=IControlPanelMenu, weight=25)
 class SchedulerMenu(NavigationMenuItem):
     """Scheduler root menu"""
 
@@ -68,6 +68,8 @@ class SchedulerMenu(NavigationMenuItem):
     def __new__(cls, context, request, view, manager):  # pylint: disable=unused-argument
         scheduler = query_utility(IScheduler)
         if (scheduler is None) or not scheduler.show_home_menu:
+            return None
+        if not request.has_permission(VIEW_SYSTEM_PERMISSION, context=scheduler):
             return None
         return NavigationMenuItem.__new__(cls)
 

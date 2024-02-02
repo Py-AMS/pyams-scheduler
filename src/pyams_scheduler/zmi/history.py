@@ -179,14 +179,12 @@ class SchedulerTaskHistoryColumn(ActionColumn):
 
     folder_href = 'properties.html'
     folder_icon_class = 'fas fa-edit'
+    folder_hint = _("Rename folder")
+    folder_permission = MANAGE_SCHEDULER_PERMISSION
 
     task_href = 'jobs-history.html'
     task_icon_class = 'fas fa-history'
-
-    folder_hint = _("Rename folder")
     task_hint = _("Task run history")
-
-    folder_permission = MANAGE_SCHEDULER_PERMISSION
     task_permission = VIEW_HISTORY_PERMISSION
 
     weight = 70

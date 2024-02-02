@@ -14,6 +14,7 @@
 
 This module defines base tasks management views.
 """
+
 import json
 
 from pyramid.decorator import reify
@@ -27,6 +28,7 @@ from pyams_pagelet.pagelet import pagelet_config
 from pyams_scheduler.interfaces import IBaseTaskScheduling, IScheduler, ITask, ITaskContainer, ITaskFolder, \
     MANAGE_TASKS_PERMISSION, TASKS_SCHEDULER_LABEL
 from pyams_scheduler.zmi.interfaces import ITaskContainerTable
+from pyams_security.interfaces.base import VIEW_SYSTEM_PERMISSION
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
@@ -65,7 +67,7 @@ class SchedulerElementEditor(TableElementEditor):
     modal_target = False
 
     def __new__(cls, context, request, view):  # pylint: disable=unused-argument
-        if not request.has_permission(MANAGE_TASKS_PERMISSION, context=context):
+        if not request.has_permission(VIEW_SYSTEM_PERMISSION, context=context):
             return None
         return TableElementEditor.__new__(cls)
 
@@ -77,7 +79,7 @@ class SchedulerElementEditor(TableElementEditor):
 @viewletmanager_config(name='tasks-list.menu',
                        context=ITaskContainer, layer=IAdminLayer,
                        manager=ISiteManagementMenu, weight=10,
-                       permission=MANAGE_TASKS_PERMISSION,
+                       permission=VIEW_SYSTEM_PERMISSION,
                        provides=IPropertiesMenu)
 class TaskContainerListMenu(NavigationMenuItem):
     """Task container list menu"""
