@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.4.4
+-----
+ - updated REST API caller task exceptions handler
+ - updated ZMI permissions
+
 2.4.3
 -----
  - moved PyAMS_utils finder helper to new module
