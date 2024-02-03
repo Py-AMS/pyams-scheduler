@@ -18,7 +18,7 @@ This module defines base tasks management views.
 import json
 
 from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPNotFound, HTTPBadRequest
+from pyramid.httpexceptions import HTTPBadRequest, HTTPNotFound
 from pyramid.view import view_config
 from zope.interface import Interface, implementer
 
@@ -35,7 +35,6 @@ from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
 from pyams_utils.url import absolute_url
 from pyams_viewlet.manager import viewletmanager_config
 from pyams_zmi.helper.container import delete_container_element
-from pyams_zmi.helper.event import get_json_table_row_refresh_callback
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.table import ITableElementEditor
 from pyams_zmi.interfaces.viewlet import IMenuHeader, IPropertiesMenu, ISiteManagementMenu
@@ -44,7 +43,6 @@ from pyams_zmi.table import ActionColumn, I18nColumnMixin, IconColumn, NameColum
     TableElementEditor, TrashColumn
 from pyams_zmi.utils import get_object_hint
 from pyams_zmi.zmi.viewlet.menu import NavigationMenuItem
-
 
 __docformat__ = 'restructuredtext'
 
@@ -221,6 +219,9 @@ class TaskContainerCloneColumn(ActionColumn):
 
     icon_class = 'far fa-clone'
 
+    def has_permission(self, item):
+        return self.request.has_permission(MANAGE_TASKS_PERMISSION, context=item)
+
     def get_icon_hint(self, item):
         translate = self.request.localizer.translate
         if ITaskFolder.providedBy(item):
@@ -245,7 +246,7 @@ class TaskContainerTrashColumn(TrashColumn):
 
 @pagelet_config(name='tasks-list.html',
                 context=ITaskContainer, layer=IPyAMSLayer,
-                permission=MANAGE_TASKS_PERMISSION)
+                permission=VIEW_SYSTEM_PERMISSION)
 class TaskContainerView(TableAdminView):
     """Task container view"""
 

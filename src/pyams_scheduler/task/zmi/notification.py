@@ -62,7 +62,9 @@ class TaskNotificationsColumn(ActionColumn):
     hint = _("Task notifications")
     icon_class = 'far fa-envelope'
 
+    permission = MANAGE_TASKS_PERMISSION
     checker = ITask.providedBy
+
     href = 'notifications.html'
 
     weight = 35

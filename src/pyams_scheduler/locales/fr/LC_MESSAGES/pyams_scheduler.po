@@ -580,8 +580,8 @@ msgstr "Invités"
 msgid ""
 "Guests are only allowed to display tasks properties and execution history"
 msgstr ""
-"Les invités sont seulement autorisés à consulter les propriétés des tâches "
-"et leur historique d'exécution"
+"Les invités sont seulement autorisés à consulter l'historique d'exécution "
+"des tâches "
 
 #: src/pyams_scheduler/interfaces/task/ssh.py:32
 msgid "Hostname or IP address"

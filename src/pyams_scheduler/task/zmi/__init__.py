@@ -157,6 +157,11 @@ def task_form_label(context, request, view):  # pylint: disable=unused-argument
 class TaskTableElementEditor(TableElementEditor):
     """Task table element editor"""
 
+    def __new__(cls, context, request, view):
+        if not request.has_permission(MANAGE_TASKS_PERMISSION, context=context):
+            return None
+        return TableElementEditor.__new__(cls)
+
 
 class TaskBaseFormMixin:
     """Task base edit form mixin"""
