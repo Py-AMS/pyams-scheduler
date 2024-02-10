@@ -43,8 +43,8 @@ except ImportError:
     ChatMessage = None
 
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
-    ITaskContainer, ITaskFolder, ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_HANDLER_KEY, \
-    SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
+    ITaskContainer, ITaskFolder, ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_GUEST_ROLE, \
+    SCHEDULER_HANDLER_KEY, SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
 from pyams_scheduler.interfaces.task import FailedTaskRunException, ITaskHistoryContainer, \
     ITaskInfo, ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_CLASS, \
     TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_FAIL, TASK_STATUS_NONE, TASK_STATUS_OK
@@ -59,7 +59,7 @@ from pyams_utils.registry import get_local_registry, get_pyramid_registry, get_u
 from pyams_utils.request import check_request
 from pyams_utils.timezone import tztime
 from pyams_utils.transaction import COMMITTED_STATUS, TransactionClient, transactional
-from pyams_utils.traversing import get_parent
+from pyams_utils.traversing import get_parent, get_parents_until
 from pyams_utils.zodb import ZODBConnection
 from pyams_zmi.interfaces import IObjectLabel
 from pyams_zmi.utils import get_object_label
@@ -331,7 +331,8 @@ class Task(Persistent, Contained):
                                                              tuple(self.get_path_elements()) +
                                                              ('++history++', history_item.__name__,
                                                               'history.html')),
-                                                modal=True)
+                                                modal=True,
+                                                task=task)
                                     except FailedTaskRunException:  # pylint: disable=bare-except
                                         # pylint: disable=protected-access
                                         task._log_exception(report,
@@ -354,7 +355,8 @@ class Task(Persistent, Contained):
                                                              tuple(self.get_path_elements()) +
                                                              ('++history++', history_item.__name__,
                                                               'history.html')),
-                                                modal=True)
+                                                modal=True,
+                                                task=task)
                                     message.send()
                                     registry.notify(AfterRunJobEvent(task, status, result))
                                     task.send_report(report, status, registry)
@@ -516,11 +518,14 @@ if ChatMessage is not None:
             protection = IProtectedObject(root, None)
             if protection is not None:
                 principals |= protection.get_principals(SYSTEM_ADMIN_ROLE)
-            scheduler = get_utility(IScheduler)
-            protection = IProtectedObject(scheduler, None)
-            if protection is not None:
-                principals |= protection.get_principals(SCHEDULER_MANAGER_ROLE)
-                principals |= protection.get_principals(TASKS_MANAGER_ROLE)
+            task = self.context.user_data.get('task')
+            if task is not None:
+                for parent in get_parents_until(task, IScheduler):
+                    protection = IProtectedObject(parent, None)
+                    if protection is not None:
+                        principals |= protection.get_principals(SCHEDULER_MANAGER_ROLE)
+                        principals |= protection.get_principals(TASKS_MANAGER_ROLE)
+                        principals |= protection.get_principals(SCHEDULER_GUEST_ROLE)
             return {
                 'principals': tuple(principals)
             }
