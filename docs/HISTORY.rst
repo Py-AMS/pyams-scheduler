@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.4.6
+-----
+ - added source task as chat message user attribute to correctly get message targets
+
 2.4.5
 -----
  - updated ZMI menus and views permissions for guests better access
