@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.4.7
+-----
+ - avoid exception after task execution when chat is disabled
+
 2.4.6
 -----
  - added source task as chat message user attribute to correctly get message targets
