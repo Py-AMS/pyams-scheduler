@@ -297,6 +297,7 @@ class Task(Persistent, Contained):
                             for attempt in tm.attempts():
                                 with attempt as t:  # pylint: disable=invalid-name
                                     status = TASK_STATUS_NONE
+                                    message = None
                                     start_date = datetime.utcnow()
                                     duration = 0.
                                     try:
@@ -357,7 +358,8 @@ class Task(Persistent, Contained):
                                                               'history.html')),
                                                 modal=True,
                                                 task=task)
-                                    message.send()
+                                    if message is not None:
+                                        message.send()
                                     registry.notify(AfterRunJobEvent(task, status, result))
                                     task.send_report(report, status, registry)
                                 if t.status == COMMITTED_STATUS:
