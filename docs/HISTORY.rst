@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.4.9
+-----
+ - updated Gitlab-CI
+ - added support for Python 3.12
+
 2.4.8
 -----
  - added new exception handler to catch invalid tasks triggers which can break scheduler process startup
