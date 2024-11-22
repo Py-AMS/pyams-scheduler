@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.4.8
+-----
+ - added new exception handler to catch invalid tasks triggers which can break scheduler process startup
+
 2.4.7
 -----
  - avoid exception after task execution when chat is disabled
