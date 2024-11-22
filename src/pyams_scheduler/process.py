@@ -16,10 +16,8 @@ This module defines the main scheduler base classes, to handle scheduler process
 tasks management threads.
 """
 
-__docformat__ = 'restructuredtext'
-
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from threading import Thread
 
 from apscheduler.jobstores.memory import MemoryJobStore
@@ -34,6 +32,8 @@ from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICAT
 from pyams_utils.zodb import ZODBConnection
 from pyams_zmq.handler import ZMQMessageHandler
 from pyams_zmq.process import ZMQProcess
+
+__docformat__ = 'restructuredtext'
 
 
 LOGGER = logging.getLogger('PyAMS (scheduler)')
@@ -89,38 +89,40 @@ class TaskResettingThread(BaseTaskThread):
         job_id = str(job_id)
         LOGGER.debug("Loading ZODB connection...")
         with self._get_connection() as root:
-            LOGGER.debug("Loaded ZODB root {0!r}".format(root))
+            LOGGER.debug(f"Loaded ZODB root {root!r}")
             try:
                 registry = self.process.registry
                 application_name = registry.settings.get(PYAMS_APPLICATION_SETTINGS_KEY,
                                                          PYAMS_APPLICATION_DEFAULT_NAME)
                 application = root.get(application_name)
-                LOGGER.debug("Loaded application {0!r}".format(application))
+                LOGGER.debug(f"Loaded application {application!r}")
                 sm = application.getSiteManager()  # pylint: disable=invalid-name
                 scheduler_util = sm.get(SCHEDULER_NAME)
-                LOGGER.debug("Loaded scheduler utility {0!r}".format(scheduler_util))
+                LOGGER.debug(f"Loaded scheduler utility {scheduler_util!r}")
                 scheduler = self.process.scheduler
-                LOGGER.debug("Removing job '{0}'".format(job_id))
+                LOGGER.debug(f"Removing job '{job_id}'")
                 job = scheduler.get_job(job_id)
                 if job is not None:
-                    LOGGER.debug("Loaded job {0!r} ({0.id!r})".format(job))
+                    LOGGER.debug(f"Loaded job {job!r} ({job.id!r})")
                     scheduler.remove_job(job.id)
-                LOGGER.debug("Loading scheduler task '{0}'".format(
-                    settings.get('task_name')))
+                LOGGER.debug(f"Loading scheduler task '{settings.get('task_name')}'")
                 task = scheduler_util.get_task(settings.get('task_name'))
-                LOGGER.debug("Loaded scheduler task {0!r}".format(task))
+                LOGGER.debug(f"Loaded scheduler task {task!r}")
                 if (task is not None) and task.is_runnable():
-                    trigger = task.get_trigger()
-                    LOGGER.debug("Getting task trigger {0!r}".format(trigger))
-                    LOGGER.debug("Adding new job to scheduler {0!r}".format(scheduler))
-                    scheduler.add_job(task, trigger,
-                                      id=str(task.internal_id),
-                                      name=task.get_path(),
-                                      kwargs={
-                                          'zodb_name': scheduler_util.zodb_name,
-                                          'registry': registry
-                                      })
-                    LOGGER.debug("Added job")
+                    try:
+                        trigger = task.get_trigger()
+                        LOGGER.debug(f"Getting task trigger {trigger!r}")
+                        LOGGER.debug(f"Adding new job to scheduler {scheduler!r}")
+                        scheduler.add_job(task, trigger,
+                                          id=str(task.internal_id),
+                                          name=task.get_path(),
+                                          kwargs={
+                                              'zodb_name': scheduler_util.zodb_name,
+                                              'registry': registry
+                                          })
+                        LOGGER.debug("Added job")
+                    except ValueError:
+                        LOGGER.warning(f"Invalid trigger data for task '{task.name}'!")
             except:  # pylint: disable=bare-except
                 LOGGER.exception("An exception occurred:")
 
@@ -138,21 +140,21 @@ class TaskRemoverThread(BaseTaskThread):
         job_id = str(job_id)
         LOGGER.debug("Loading ZODB connection...")
         with self._get_connection() as root:
-            LOGGER.debug("Loaded ZODB root {0!r}".format(root))
+            LOGGER.debug(f"Loaded ZODB root {root!r}")
             try:
                 registry = self.process.registry
                 application_name = registry.settings.get(PYAMS_APPLICATION_SETTINGS_KEY,
                                                          PYAMS_APPLICATION_DEFAULT_NAME)
                 application = root.get(application_name)
-                LOGGER.debug("Loaded application {0!r}".format(application))
+                LOGGER.debug(f"Loaded application {application!r}")
                 sm = application.getSiteManager()  # pylint: disable=invalid-name
                 scheduler_util = sm.get(SCHEDULER_NAME)
-                LOGGER.debug("Loaded scheduler utility {0!r}".format(scheduler_util))
+                LOGGER.debug(f"Loaded scheduler utility {scheduler_util!r}")
                 scheduler = self.process.scheduler
-                LOGGER.debug("Removing job '{0}'".format(job_id))
+                LOGGER.debug(f"Removing job '{job_id}'")
                 job = scheduler.get_job(job_id)
                 if job is not None:
-                    LOGGER.debug("Loaded job {0!r} ({0.id!r})".format(job))
+                    LOGGER.debug(f"Loaded job {job!r} ({job.id!r})")
                     scheduler.remove_job(job.id)
                 LOGGER.debug("Removed job")
             except:  # pylint: disable=bare-except
@@ -171,28 +173,26 @@ class TaskRunnerThread(BaseTaskThread):
             return
         LOGGER.debug("Loading ZODB connection...")
         with self._get_connection() as root:
-            LOGGER.debug("Loaded ZODB root {0!r}".format(root))
+            LOGGER.debug(f"Loaded ZODB root {root!r}")
             try:
                 registry = self.process.registry
                 application_name = registry.settings.get(PYAMS_APPLICATION_SETTINGS_KEY,
                                                          PYAMS_APPLICATION_DEFAULT_NAME)
                 application = root.get(application_name)
-                LOGGER.debug("Loaded application {0!r}".format(application))
+                LOGGER.debug(f"Loaded application {application!r}")
                 sm = application.getSiteManager()  # pylint: disable=invalid-name
                 scheduler_util = sm.get(SCHEDULER_NAME)
-                LOGGER.debug("Loaded scheduler utility {0!r}".format(scheduler_util))
+                LOGGER.debug(f"Loaded scheduler utility {scheduler_util!r}")
                 scheduler = self.process.scheduler
-                LOGGER.debug("Loading scheduler task '{0}'".format(
-                    settings.get('task_name')))
+                LOGGER.debug(f"Loading scheduler task '{settings.get('task_name')}'")
                 task = scheduler_util.get_task(settings.get('task_name'))
-                LOGGER.debug("Loaded scheduler task {0!r}".format(task))
+                LOGGER.debug(f"Loaded scheduler task {task!r}")
                 if task is not None:
                     trigger = ImmediateTaskTrigger()
-                    LOGGER.debug("Getting task trigger {0!r}".format(trigger))
-                    LOGGER.debug("Adding new job to scheduler {0!r}".format(scheduler))
+                    LOGGER.debug(f"Getting task trigger {trigger!r}")
+                    LOGGER.debug(f"Adding new job to scheduler {scheduler!r}")
                     scheduler.add_job(task, trigger,
-                                      id='{0.internal_id}::{1}'.format(
-                                          task, datetime.utcnow().isoformat()),
+                                      id=f'{task.internal_id}::{datetime.now(timezone.utc).isoformat()}',
                                       name=task.get_path(),
                                       kwargs={
                                           'zodb_name': scheduler_util.zodb_name,
@@ -217,7 +217,7 @@ class SchedulerHandler:
         """Scheduler handler test"""
         messages = [
             'OK - Tasks scheduler ready to handle requests.',
-            '{0} currently running jobs'.format(len(self.process.scheduler.get_jobs()))
+            f'{len(self.process.scheduler.get_jobs())} currently running jobs'
         ]
         return [200, '\n'.join(messages)]
 
@@ -227,7 +227,7 @@ class SchedulerHandler:
         return [200, [{
             'id': job.id,
             'name': job.name,
-            'trigger': '{0!s}'.format(job.trigger),
+            'trigger': f'{job.trigger!s}',
             'next_run': job.next_run_time.timestamp() if job.next_run_time else None
         } for job in scheduler.get_jobs()]]
 

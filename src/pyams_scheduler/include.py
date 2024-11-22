@@ -189,22 +189,25 @@ def handle_new_application(event):  # pylint: disable=unused-argument,too-many-l
                     continue
                 if not task.is_runnable():
                     continue
-                trigger = task.get_trigger()
-                LOGGER.debug("Adding scheduler job for task '{0.name}'".format(task))
-                process.scheduler.add_job(task,
-                                          trigger,
-                                          id=str(task.internal_id),
-                                          name=task.get_path(),
-                                          kwargs={
-                                              'zodb_name': zodb_name,
-                                              'registry': registry
-                                          })
+                try:
+                    trigger = task.get_trigger()
+                    LOGGER.debug(f"Adding scheduler job for task '{task.name}'")
+                    process.scheduler.add_job(task,
+                                              trigger,
+                                              id=str(task.internal_id),
+                                              name=task.get_path(),
+                                              kwargs={
+                                                  'zodb_name': zodb_name,
+                                                  'registry': registry
+                                              })
+                except ValueError:
+                    LOGGER.warning(f"Invalid trigger data for task '{task.name}'!")
             # start process
-            LOGGER.info("Starting tasks scheduler {0!r}...".format(process))
+            LOGGER.info(f"Starting tasks scheduler {process!r}...")
             process.start()
             if process.is_alive():
                 atexit.register(process_exit_func, process=process)
-                LOGGER.info("Started tasks scheduler with PID {0}.".format(process.pid))
+                LOGGER.info(f"Started tasks scheduler with PID {process.pid}.")
     finally:
         if process and not process.is_alive():
             process.terminate()
