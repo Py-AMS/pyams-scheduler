@@ -21,6 +21,7 @@ from zope.container.interfaces import IContainer
 from zope.interface import Attribute, Interface
 from zope.schema import Bool, Bytes, Choice, Datetime, Float, Int, List, Object, Text, TextLine
 
+from pyams_file.schema import FileField
 from pyams_utils.schema import TextLineListField
 
 
@@ -80,6 +81,9 @@ class ITaskHistory(Interface):
 
     report = Text(title=_("Execution report"),
                   required=True)
+
+    report_file = FileField(title=_("Execution report file"),
+                            required=False)
 
 
 #
@@ -294,6 +298,12 @@ class ITaskInfo(Interface):
                                        "to remove limit"),
                          required=False)
 
+    attach_reports = Bool(title=_("Attach reports?"),
+                          description=_("If 'Yes', reports will be attached to task history as "
+                                        "external files instead of simple text output"),
+                          required=True,
+                          default=False)
+
 
 class ITask(ITaskInfo, IAttributeAnnotatable):
     """Complete task interface"""
@@ -326,10 +336,16 @@ class ITask(ITaskInfo, IAttributeAnnotatable):
     def run(self, report, **kwargs):
         """Launch job execution"""
 
-    def store_report(self, report, status, start_date, duration):
+    def get_report_mimetype(self):
+        """Attached report MIME type getter"""
+
+    def get_report_filename(self):
+        """Attached report filename getter"""
+
+    def store_report(self, result, report, status, start_date, duration):
         """Store task execution report in task's history and return new item"""
 
-    def send_report(self, report, status, target=None):
+    def send_report(self, report, status, history_item, registry):
         """Send task execution report by mail"""
 
     def reset(self):
@@ -357,7 +373,7 @@ TASK_NOTIFICATION_MODES_VOCABULARY = 'PyAMS_scheduler.notifications.modes'
 class ITaskNotificationMode(Interface):
     """Task notification mode utility interface"""
 
-    def send_report(self, task, report, status, target, registry=None):  # pylint: disable=too-many-arguments
+    def send_report(self, task, result, report, status, target, registry=None):  # pylint: disable=too-many-arguments
         """Send report to given target"""
 
 

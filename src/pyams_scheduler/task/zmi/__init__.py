@@ -84,7 +84,7 @@ class BaseTaskAddFormInfo(InnerAddForm):
     title = _("Task reports")
 
     fields = Fields(ITaskInfo).select('keep_empty_reports', 'history_duration',
-                                      'history_length')
+                                      'history_length', 'attach_reports')
     weight = 100
 
     def update_widgets(self, prefix=None):
@@ -206,7 +206,7 @@ class BaseTaskEditFormInfo(InnerEditForm):
     title = _("Task reports")
 
     fields = Fields(ITaskInfo).select('keep_empty_reports', 'history_duration',
-                                      'history_length')
+                                      'history_length', 'attach_reports')
     weight = 100
 
     def update_widgets(self, prefix=None):

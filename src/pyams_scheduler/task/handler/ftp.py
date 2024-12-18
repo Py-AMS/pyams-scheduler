@@ -53,7 +53,7 @@ class FTPReader(FTPHelper):
     def __init__(self, ftp, name, mode):
         super().__init__(ftp, name, mode)
         try:
-            self.ftp.ftp_client.retrbinary('RETR {}'.format(self.ftp.get_path(self.name)),
+            self.ftp.ftp_client.retrbinary(f'RETR {self.ftp.get_path(self.name)}',
                                            self.file.write)
         except Error as exc:
             raise DirectoryReadError from exc
@@ -74,7 +74,7 @@ class FTPWriter(FTPHelper):
     def close(self):
         self.file.seek(0)
         try:
-            self.ftp.ftp_client.storbinary('STOR {}'.format(self.ftp.get_path(self.name)),
+            self.ftp.ftp_client.storbinary(f'STOR {self.ftp.get_path(self.name)}',
                                            self.file)
         except Error as exc:
             raise DirectoryWriteError from exc
@@ -136,7 +136,7 @@ class FTPDirectoryHandler(BaseDirectoryHandler):
         mode = 0
         entries = []
         try:
-            self.ftp_client.retrlines('LIST {}'.format(self.get_path(name)),
+            self.ftp_client.retrlines(f'LIST {self.get_path(name)}',
                                       entries.append)
         except Error as ex:
             raise FileNotFoundError(name) from ex
@@ -156,7 +156,7 @@ class FTPDirectoryHandler(BaseDirectoryHandler):
             size = 0
         # get time
         try:
-            _ret, mdtm = self.ftp_client.voidcmd('MDTM {}'.format(self.get_path(name))).split()
+            _ret, mdtm = self.ftp_client.voidcmd(f'MDTM {self.get_path(name)}').split()
             mtime = round(mktime(time.strptime(mdtm, '%Y%m%d%H%M%S')))
         except:  # pylint: disable=bare-except
             mtime = 0

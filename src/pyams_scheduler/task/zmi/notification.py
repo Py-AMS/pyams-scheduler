@@ -155,7 +155,7 @@ class TaskNotificationsTableErrorsColumn(IconColumn):
         """Icon class getter"""
         if item.report_errors_only:
             return self.icon_class
-        return '{} text-secondary'.format(self.icon_class)
+        return f'{self.icon_class} text-secondary'
 
     def get_icon_hint(self, item):
         """Icon hint getter"""
@@ -178,7 +178,7 @@ class TaskNotificationsTableEmptyColumn(IconColumn):
         """Icon class getter"""
         if item.send_empty_reports:
             return self.icon_class
-        return '{} text-secondary'.format(self.icon_class)
+        return f'{self.icon_class} text-secondary'
 
     def get_icon_hint(self, item):
         """Icon hint getter"""

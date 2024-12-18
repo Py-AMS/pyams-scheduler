@@ -58,7 +58,7 @@ class SSHConnectionInfo(Persistent):
 
     def __repr__(self):
         if self.hostname:
-            return '{}@{}:{}'.format(self.username, self.hostname, self.port)
+            return f'{self.username}@{self.hostname}:{self.port}'
         return gethostname()
 
     @property
@@ -114,9 +114,9 @@ class SSHCallerTask(Task):
         return map(int, self.ok_status.split(','))
 
     def run(self, report, **kwargs):  # pylint: disable=unused-argument
-        report.write('Shell command output\n'
-                     '====================\n'
-                     'Shell command: \n    {!r}: {}\n\n'.format(self.connection, self.cmdline))
+        report.write(f'Shell command output\n'
+                     f'====================\n'
+                     f'Shell command: \n    {self.connection!r}: {self.cmdline}\n\n')
         if self.connection:
             return self._run_remote(report, **kwargs)
         return self._run_local(report, **kwargs)

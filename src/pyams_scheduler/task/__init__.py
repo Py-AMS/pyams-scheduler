@@ -17,7 +17,7 @@ This module defines base tasks classes.
 
 import logging
 import traceback
-from datetime import datetime
+from datetime import datetime, timezone
 from io import StringIO
 
 from persistent import Persistent
@@ -36,6 +36,8 @@ from zope.intid import IIntIds
 from zope.lifecycleevent import IObjectAddedEvent, IObjectModifiedEvent, IObjectRemovedEvent
 from zope.location import locate
 from zope.schema.fieldproperty import FieldProperty
+
+from pyams_file.property import FileProperty
 
 try:
     from pyams_chat.message import ChatMessage
@@ -82,6 +84,7 @@ class TaskHistoryItem(Persistent, Contained):
     date = FieldProperty(ITaskHistory['date'])
     duration = FieldProperty(ITaskHistory['duration'])
     report = FieldProperty(ITaskHistory['report'])
+    report_file = FileProperty(ITaskHistory['report_file'])
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -140,6 +143,8 @@ class Task(Persistent, Contained):
     keep_empty_reports = FieldProperty(ITask['keep_empty_reports'])
     _history_duration = FieldProperty(ITask['history_duration'])
     _history_length = FieldProperty(ITask['history_length'])
+
+    attach_reports = FieldProperty(ITask['attach_reports'])
 
     settings_view_name = FieldProperty(ITask['settings_view_name'])
     principal_id = None
@@ -290,7 +295,7 @@ class Task(Persistent, Contained):
                         request.root = application
                         with RequestContext(request):
                             if not (kwargs.get('run_immediate') or task.is_runnable()):
-                                LOGGER.debug("Skipping inactive task {0}".format(task.name))
+                                LOGGER.debug(f"Skipping inactive task {task.name}")
                                 return status, result
                             translate = request.localizer.translate
                             tm = ITransactionManager(task)  # pylint: disable=invalid-name
@@ -307,18 +312,16 @@ class Task(Persistent, Contained):
                                             raise FailedTaskRunException
                                         end_date = datetime.utcnow()
                                         duration = (end_date - start_date).total_seconds()
-                                        report.write('\n\nTask duration: {0}'.format(
-                                            get_duration(start_date, request=request)))
-                                        history_item = task.store_report(report, status, start_date, duration)
+                                        report.write(f'\n\nTask duration: '
+                                                     f'{get_duration(start_date, request=request)}')
+                                        history_item = task.store_report(result, report, status, start_date, duration)
                                         if (ChatMessage is not None) and scheduler_util.notified_host:
                                             if status == TASK_STATUS_ERROR:
                                                 message_text = translate(_("Task '{}' was executed "
-                                                                           "with error")) \
-                                                    .format(task.name)
+                                                                           "with error")).format(task.name)
                                             else:
                                                 message_text = translate(_("Task '{}' was executed "
-                                                                           "without error")) \
-                                                    .format(task.name)
+                                                                           "without error")).format(task.name)
                                             message = ChatMessage(
                                                 request=request,
                                                 host=scheduler_util.notified_host,
@@ -337,9 +340,9 @@ class Task(Persistent, Contained):
                                     except FailedTaskRunException:  # pylint: disable=bare-except
                                         # pylint: disable=protected-access
                                         task._log_exception(report,
-                                                            "An error occurred during execution of "
-                                                            "task '{}'".format(task.name))
-                                        history_item = task.store_report(report, status, start_date, duration)
+                                                            f"An error occurred during execution of "
+                                                            f"task '{task.name}'")
+                                        history_item = task.store_report(result, report, status, start_date, duration)
                                         if (ChatMessage is not None) and scheduler_util.notified_host:
                                             message = ChatMessage(
                                                 request=request,
@@ -361,13 +364,13 @@ class Task(Persistent, Contained):
                                     if message is not None:
                                         message.send()
                                     registry.notify(AfterRunJobEvent(task, status, result))
-                                    task.send_report(report, status, registry)
+                                    task.send_report(report, status, history_item, registry)
                                 if t.status == COMMITTED_STATUS:
                                     break
                 finally:
                     set_local_registry(old_registry)
             except:  # pylint: disable=bare-except
-                self._log_exception(None, "Can't execute scheduled job {0}".format(self.name))
+                self._log_exception(None, f"Can't execute scheduled job {self.name}")
             tm = ITransactionManager(self, None)  # pylint: disable=invalid-name
             if tm is not None:
                 tm.abort()
@@ -386,7 +389,7 @@ class Task(Persistent, Contained):
         if isinstance(message, bytes):
             message = message.decode()
         if add_timestamp:
-            message = '{0} - {1}'.format(tztime(datetime.utcnow()).strftime('%c'), message)
+            message = f"{tztime(datetime.now(timezone.utc)).strftime('%c')} - {message}"
         if report is not None:
             report.write(message + '\n')
         LOGGER.log(level, message)
@@ -396,14 +399,22 @@ class Task(Persistent, Contained):
         """Exception log report"""
         if isinstance(message, bytes):
             message = message.decode()
-        message = '{0} - {1}'.format(tztime(datetime.utcnow()).strftime('%c'),
-                                     message or 'An error occurred') + '\n\n'
+        message = f"{tztime(datetime.now(timezone.utc)).strftime('%c')} - {message or 'An error occurred'}\n\n"
         if report is not None:
             report.write(message)
             report.write(traceback.format_exc() + '\n')
         LOGGER.exception(message)
 
-    def store_report(self, report, status, start_date, duration):
+    def get_report_mimetype(self):
+        """Report MIME type getter"""
+        return 'text/plain; charset=utf-8'
+
+    def get_report_filename(self):
+        """Report filename getter"""
+        now = tztime(datetime.now(timezone.utc))
+        return f'report-{now:%Y%m%d}-{now:%H%M}.txt'
+
+    def store_report(self, result, report, status, start_date, duration):
         """Execution report store"""
         if (status in (TASK_STATUS_NONE, TASK_STATUS_EMPTY)) and \
                 not self.keep_empty_reports:
@@ -413,10 +424,12 @@ class Task(Persistent, Contained):
                                duration=duration,
                                report=report.getvalue())
         self.history[item.date.isoformat()] = item
+        if (result is not None) and self.attach_reports:
+            item.report_file = (f'{self.get_report_filename()};{self.get_report_mimetype()}', result)
         self.check_history()
         return item
 
-    def send_report(self, report, status, registry):
+    def send_report(self, report, status, history_item, registry):
         """Execution report messaging"""
         notifications = ITaskNotificationContainer(self)
         for target in notifications.get_enabled_items():
@@ -427,8 +440,7 @@ class Task(Persistent, Contained):
                 not target.send_empty_reports) or \
                     ((status == TASK_STATUS_OK) and target.report_errors_only):
                 return
-
-            handler.send_report(self, report, status, target, registry)
+            handler.send_report(self, report, status, history_item, target, registry)
 
 
 @adapter_config(required=ITask,
@@ -469,7 +481,7 @@ def handle_removed_task(event):
                 'task_name': task.__name__,
                 'job_id': task.internal_id
             }
-            LOGGER.debug("Removing task {0.name} with {1!r}".format(task, zmq_settings))
+            LOGGER.debug(f"Removing task {task.name} with {zmq_settings!r}")
             socket = zmq_socket(handler, auth=request.registry.settings.get(SCHEDULER_AUTH_KEY))
             socket.send_json(['remove_task', zmq_settings])
             zmq_response(socket)

@@ -17,7 +17,7 @@ This module defines mail notification for scheduler tasks.
 
 from persistent import Persistent
 from pyramid_mailer import IMailer
-from pyramid_mailer.message import Message
+from pyramid_mailer.message import Attachment, Message
 from zope.component import queryUtility
 from zope.container.contained import Contained
 from zope.container.folder import Folder
@@ -26,6 +26,7 @@ from zope.interface.interfaces import ComponentLookupError
 from zope.schema.fieldproperty import FieldProperty
 from zope.traversing.interfaces import ITraversable
 
+from pyams_mail.message import HTMLMessage
 from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
 from pyams_scheduler.interfaces.task import IMailNotification, ITaskNotification, \
     ITaskNotificationContainer, ITaskNotificationMode, SCHEDULER_TASK_NOTIFICATIONS_KEY, \
@@ -36,7 +37,6 @@ from pyams_utils.factory import factory_config
 from pyams_utils.registry import utility_config
 from pyams_utils.traversing import get_parent
 from pyams_zmi.interfaces import IObjectLabel
-
 
 __docformat__ = 'restructuredtext'
 
@@ -51,7 +51,7 @@ class TaskNotificationContainer(Folder):
 
     def get_enabled_items(self):
         """Get iterator over enabled notifications"""
-        yield from (notification for notification in self.values() if notification.enabled)
+        yield from filter(lambda x: x.enabled, self.values())
 
 
 @adapter_config(required=ITask,
@@ -131,7 +131,7 @@ class MailNotificationMode:
     """Scheduler task mail notification mode"""
 
     @staticmethod
-    def send_report(task, report, status, target, registry=None):
+    def send_report(task, report, status, history_item, target, registry=None):
         # pylint: disable=unused-argument
         """Send mail report to given target"""
         if not IMailNotification.providedBy(target):
@@ -145,14 +145,19 @@ class MailNotificationMode:
         if mailer is not None:
             report_source = scheduler.report_source
             if status == TASK_STATUS_ERROR:
-                subject = "[SCHEDULER !ERROR!] {}".format(task.name)
+                subject = f"[SCHEDULER !ERROR!] {task.name}"
             elif status == TASK_STATUS_WARNING:
-                subject = "[SCHEDULER WARNING] {}".format(task.name)
+                subject = f"[SCHEDULER WARNING] {task.name}"
             else:
-                subject = "[scheduler] {}".format(task.name)
+                subject = f"[scheduler] {task.name}"
             for email in target.target_email or ():
                 message = Message(subject=subject,
                                   sender=report_source,
                                   recipients=(email,),
                                   body=report.getvalue())
+                report_file = history_item.report_file
+                if report_file:
+                    message.attach(Attachment(content_type=report_file.content_type,
+                                              data=report_file.data,
+                                              filename=report_file.filename))
                 mailer.send(message)

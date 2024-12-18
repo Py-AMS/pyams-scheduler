@@ -130,7 +130,7 @@ class TaskRunFormDebugActionRenderer(ContextRequestViewAdapter):
             'status': 'success',
             'message': self.request.localizer.translate(_("Task has been executed!")),
             'content': {
-                'target': '#{}-debug-target'.format(self.view.id),
+                'target': f'#{self.view.id}-debug-target',
                 'text': self.view.finished_state.get('changes', '-- NO OUTPUT --')
             },
             'closeForm': False
@@ -178,9 +178,9 @@ class TaskRunFormDebugTarget(EmptyViewlet):
 
     def render(self):
         """Viewlet renderer"""
-        return '<textarea id="{}-debug-target" ' \
-               ' class="alert alert-secondary border-secondary text-monospace ' \
-               '        w-100 height-300px p-2 hidden"></textarea>'.format(self.view.id)
+        return f'<textarea id="{self.view.id}-debug-target" ' \
+               f' class="alert alert-secondary border-secondary text-monospace ' \
+               f'        w-100 height-300px p-2 hidden"></textarea>'
 
 
 #

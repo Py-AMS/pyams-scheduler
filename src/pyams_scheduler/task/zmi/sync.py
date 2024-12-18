@@ -85,10 +85,10 @@ class DirectoryHandlerHostWidget(HTMLFormElement, Widget):
 
     def extract(self, default=NO_VALUE):
         params = self.request.params
-        marker = params.get('{}-empty-marker'.format(self.name), default)
+        marker = params.get(f'{self.name}-empty-marker', default)
         if marker is not default:
-            protocol = params.get('{}-protocol'.format(self.name))
-            hostname = params.get('{}-hostname'.format(self.name))
+            protocol = params.get(f'{self.name}-protocol')
+            hostname = params.get(f'{self.name}-hostname')
             return (protocol, hostname) if protocol else default
         return default
 
