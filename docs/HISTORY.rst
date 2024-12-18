@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.0
+-----
+ - allow storage of task execution report as attachment
+
 2.4.9
 -----
  - updated Gitlab-CI
