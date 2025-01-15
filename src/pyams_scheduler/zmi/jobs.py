@@ -15,7 +15,7 @@
 This module defines components used to display scheduled jobs.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
@@ -24,6 +24,8 @@ from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
 from pyams_utils.date import format_datetime
+from pyams_utils.interfaces import MISSING_INFO
+from pyams_utils.timezone import tztime
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.interfaces import IAdminLayer
 from pyams_zmi.interfaces.viewlet import IPropertiesMenu
@@ -67,7 +69,7 @@ class JobsColumn(I18nColumnMixin, GetAttrColumn):
     """Base jobs column"""
 
     def get_value(self, obj):
-        return obj.get(self.attr_name, '--')
+        return obj.get(self.attr_name, MISSING_INFO)
 
 
 @adapter_config(name='name',
@@ -116,8 +118,9 @@ class SchedulerJobsNextRunColumn(JobsColumn):
     def get_value(self, obj):
         value = super().get_value(obj)
         if not value:
-            return '--'
-        return format_datetime(datetime.utcfromtimestamp(value), request=self.request)
+            return MISSING_INFO
+        return format_datetime(tztime(datetime.fromtimestamp(value, timezone.utc)),
+                               request=self.request)
 
 
 @pagelet_config(name='jobs-list.html', context=IScheduler, layer=IPyAMSLayer,
