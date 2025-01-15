@@ -151,6 +151,8 @@ class Task(Persistent, Contained):
 
     _internal_id = None
 
+    is_zodb_task = False
+
     def __init__(self):
         history = self.history = TaskHistoryContainer()
         locate(history, self, '++history++')
@@ -297,76 +299,12 @@ class Task(Persistent, Contained):
                             if not (kwargs.get('run_immediate') or task.is_runnable()):
                                 LOGGER.debug(f"Skipping inactive task {task.name}")
                                 return status, result
-                            translate = request.localizer.translate
-                            tm = ITransactionManager(task)  # pylint: disable=invalid-name
-                            for attempt in tm.attempts():
-                                with attempt as t:  # pylint: disable=invalid-name
-                                    status = TASK_STATUS_NONE
-                                    message = None
-                                    start_date = datetime.utcnow()
-                                    duration = 0.
-                                    try:
-                                        registry.notify(BeforeRunJobEvent(task))
-                                        (status, result) = task.run(report, **kwargs)
-                                        if status == TASK_STATUS_FAIL:
-                                            raise FailedTaskRunException
-                                        end_date = datetime.utcnow()
-                                        duration = (end_date - start_date).total_seconds()
-                                        report.write(f'\n\nTask duration: '
-                                                     f'{get_duration(start_date, request=request)}')
-                                        history_item = task.store_report(result, report, status, start_date, duration)
-                                        if (ChatMessage is not None) and scheduler_util.notified_host:
-                                            if status == TASK_STATUS_ERROR:
-                                                message_text = translate(_("Task '{}' was executed "
-                                                                           "with error")).format(task.name)
-                                            else:
-                                                message_text = translate(_("Task '{}' was executed "
-                                                                           "without error")).format(task.name)
-                                            message = ChatMessage(
-                                                request=request,
-                                                host=scheduler_util.notified_host,
-                                                action='notify',
-                                                category='scheduler.run',
-                                                status=TASK_STATUS_CLASS.get(status, 'info'),
-                                                source=INTERNAL_USER_ID,
-                                                title=translate(_("Task execution")),
-                                                message=message_text,
-                                                url='/'.join(('', '++etc++site') +
-                                                             tuple(self.get_path_elements()) +
-                                                             ('++history++', history_item.__name__,
-                                                              'history.html')),
-                                                modal=True,
-                                                task=task)
-                                    except FailedTaskRunException:  # pylint: disable=bare-except
-                                        # pylint: disable=protected-access
-                                        task._log_exception(report,
-                                                            f"An error occurred during execution of "
-                                                            f"task '{task.name}'")
-                                        history_item = task.store_report(result, report, status, start_date, duration)
-                                        if (ChatMessage is not None) and scheduler_util.notified_host:
-                                            message = ChatMessage(
-                                                request=request,
-                                                host=scheduler_util.notified_host,
-                                                action='notify',
-                                                category='scheduler.run',
-                                                status=TASK_STATUS_CLASS.get(status, 'danger'),
-                                                source=INTERNAL_USER_ID,
-                                                title=translate(_("Task execution")),
-                                                message=translate(_("An error occurred during "
-                                                                    "execution of task '{}'"
-                                                                    "")).format(task.name),
-                                                url='/'.join(('', '++etc++site') +
-                                                             tuple(self.get_path_elements()) +
-                                                             ('++history++', history_item.__name__,
-                                                              'history.html')),
-                                                modal=True,
-                                                task=task)
-                                    if message is not None:
-                                        message.send()
-                                    registry.notify(AfterRunJobEvent(task, status, result))
-                                    task.send_report(report, status, history_item, registry)
-                                if t.status == COMMITTED_STATUS:
-                                    break
+                            if task.is_zodb_task:
+                                (status, result) = task.run_zodb_task(request, registry, scheduler_util,
+                                                                      report, **kwargs)
+                            else:
+                                (status, result) = task.run_external_task(request, registry, scheduler_util,
+                                                                          report, **kwargs)
                 finally:
                     set_local_registry(old_registry)
             except:  # pylint: disable=bare-except
@@ -375,13 +313,142 @@ class Task(Persistent, Contained):
             if tm is not None:
                 tm.abort()
         return status, result
-
+    
+    def run_zodb_task(self, request, registry, scheduler, report, **kwargs):
+        """Run a ZODB-based task
+        
+        ZODB-based tasks are tasks that update the ZODB; they use transaction attempts
+        to handle conflicts errors
+        """
+        translate = request.localizer.translate
+        status = TASK_STATUS_NONE
+        result = None
+        tm = ITransactionManager(self)  # pylint: disable=invalid-name
+        for attempt in tm.attempts():
+            with attempt as t:  # pylint: disable=invalid-name
+                message = None
+                start_date = datetime.now(timezone.utc)
+                duration = 0.
+                try:
+                    registry.notify(BeforeRunJobEvent(self))
+                    (status, result) = self.run(report, **kwargs)
+                    if status == TASK_STATUS_FAIL:
+                        raise FailedTaskRunException
+                    end_date = datetime.now(timezone.utc)
+                    duration = (end_date - start_date).total_seconds()
+                    report.write(f'\n\nTask duration: '
+                                 f'{get_duration(start_date, request=request)}')
+                    history_item = self.store_report(result, report, status, start_date, duration)
+                    if (ChatMessage is not None) and scheduler.notified_host:
+                        if status == TASK_STATUS_ERROR:
+                            message_text = translate(_("Task '{}' was executed "
+                                                       "with error")).format(self.name)
+                        else:
+                            message_text = translate(_("Task '{}' was executed "
+                                                       "without error")).format(self.name)
+                        message = self.get_chat_message(request, scheduler, status,
+                                                        message_text, history_item)
+                except FailedTaskRunException:  # pylint: disable=bare-except
+                    # pylint: disable=protected-access
+                    self._log_exception(report,
+                                        f"An error occurred during execution of "
+                                        f"task '{self.name}'")
+                    history_item = self.store_report(result, report, status, start_date, duration)
+                    if (ChatMessage is not None) and scheduler.notified_host:
+                        message_text = translate(_("An error occurred during execution of task "
+                                                   "'{}'")).format(self.name)
+                        message = self.get_chat_message(request, scheduler, TASK_STATUS_FAIL,
+                                                        message_text, history_item)
+                if message is not None:
+                    message.send()
+                registry.notify(AfterRunJobEvent(self, status, result))
+                self.send_report(report, status, history_item, registry)
+            if t.status == COMMITTED_STATUS:
+                break
+        return status, result
+    
+    def run_external_task(self, request, registry, scheduler, report, **kwargs):
+        """Run an external task
+        
+        External tasks are tasks that run outside of the ZODB; transaction attempts are
+        only used to handle conflicts errors when storing the execution report.
+        """
+        translate = request.localizer.translate
+        status = TASK_STATUS_NONE
+        result = None
+        message = None
+        start_date = datetime.now(timezone.utc)
+        duration = 0.
+        try:
+            registry.notify(BeforeRunJobEvent(self))
+            (status, result) = self.run(report, **kwargs)
+            if status == TASK_STATUS_FAIL:
+                raise FailedTaskRunException
+            end_date = datetime.now(timezone.utc)
+            duration = (end_date - start_date).total_seconds()
+            report.write(f'\n\nTask duration: '
+                         f'{get_duration(start_date, request=request)}')
+            tm = ITransactionManager(self)  # pylint: disable=invalid-name
+            for attempt in tm.attempts():
+                with attempt as t:  # pylint: disable=invalid-name
+                    history_item = self.store_report(result, report, status, start_date, duration)
+                    if status == TASK_STATUS_ERROR:
+                        message_text = translate(_("Task '{}' was executed "
+                                                   "with error")).format(self.name)
+                    else:
+                        message_text = translate(_("Task '{}' was executed "
+                                                   "without error")).format(self.name)
+                    message = self.get_chat_message(request, scheduler, status,
+                                                    message_text, history_item)
+                if t.status == COMMITTED_STATUS:
+                    break
+        except FailedTaskRunException:  # pylint: disable=bare-except
+            # pylint: disable=protected-access
+            self._log_exception(report,
+                                f"An error occurred during execution of "
+                                f"task '{self.name}'")
+            for attempt in tm.attempts():
+                with attempt as t:  # pylint: disable=invalid-name
+                    history_item = self.store_report(result, report, status, start_date, duration)
+                    message_text = translate(_("An error occurred during execution of task "
+                                               "'{}'")).format(self.name),
+                    message = self.get_chat_message(request, scheduler, TASK_STATUS_FAIL,
+                                                    message_text, history_item)
+                if t.status == COMMITTED_STATUS:
+                    break
+        if message is not None:
+            message.send()
+        registry.notify(AfterRunJobEvent(self, status, result))
+        self.send_report(report, status, history_item, registry)
+        return status, result
+        
     def run(self, report, **kwargs):  # pylint: disable=no-self-use
         """Task run implementation
 
         May result a tuple containing a status code and a result (which can be empty).
         """
         raise NotImplementedError("The 'run' method must be implemented by Task subclasses!")
+
+    def get_chat_message(self, request, scheduler, status, message, history_item):
+        """Chat message getter"""
+        if (ChatMessage is None) or not scheduler.notified_host:
+            return None
+        translate = request.localizer.translate
+        return ChatMessage(
+                request=request,
+                host=scheduler.notified_host,
+                action='notify',
+                category='scheduler.run',
+                status=TASK_STATUS_CLASS.get(status, 'info'),
+                source=INTERNAL_USER_ID,
+                title=translate(_("Task execution")),
+                message=message,
+                url='/'.join(('', '++etc++site') +
+                             tuple(self.get_path_elements()) +
+                             ('++history++', history_item.__name__,
+                              'history.html')),
+                modal=True,
+                task=self)
 
     @staticmethod
     def _log_report(report, message, add_timestamp=True, level=logging.INFO):

@@ -323,6 +323,8 @@ class ITask(ITaskInfo, IAttributeAnnotatable):
     runnable = Attribute("Is the task runnable?")
 
     internal_id = Attribute("Internal ID")
+    
+    is_zodb_task = Attribute("Boolean marker used to flag task using ZODB")
 
     def get_path(self):
         """Get task full path"""
