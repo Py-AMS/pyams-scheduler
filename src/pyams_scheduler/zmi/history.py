@@ -147,8 +147,8 @@ class SchedulerHistoryDurationColumn(I18nColumnMixin, GetAttrColumn):
 
     def get_value(self, obj):
         duration = super().get_value(obj)
-        if duration == 0.:
-            return '--'
+        if math.isclose(duration, 0.):
+            return MISSING_INFO
         return get_duration(timedelta(seconds=duration), request=self.request)
 
 
