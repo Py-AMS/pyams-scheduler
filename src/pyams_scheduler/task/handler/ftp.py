@@ -24,8 +24,7 @@ from tempfile import SpooledTemporaryFile
 from time import mktime
 
 from pyams_scheduler.interfaces.task.sync import DirectoryReadError, DirectoryWriteError, \
-    IDirectoryHandler, \
-    IDirectoryInfo
+    IDirectoryHandler, IDirectoryInfo
 from pyams_scheduler.task.handler import BaseDirectoryHandler
 from pyams_utils.adapter import adapter_config
 
@@ -141,11 +140,11 @@ class FTPDirectoryHandler(BaseDirectoryHandler):
         except Error as ex:
             raise FileNotFoundError(name) from ex
         if len(entries) == 1:
-            mode, ignore, user, group, size, month, day, year, name = entries[0].split()  # pylint: disable=unused-variable
+            mode, _ignore, _user, _group, _size, _month, _day, _year, name = entries[0].split()  # pylint: disable=unused-variable
             mode = self.get_mode(mode)
         else:
             for entry in entries:
-                mode, ignore, user, group, size, month, day, year, name = entry.split()  # pylint: disable=unused-variable
+                mode, _ignore, _user, _group, _size, _month, _day, _year, name = entry.split()  # pylint: disable=unused-variable
                 if name == '.':
                     mode = self.get_mode(mode)
                     break
@@ -174,10 +173,10 @@ class FTPDirectoryHandler(BaseDirectoryHandler):
         ))
 
     def set_time(self, name, atime, mtime):
-        pass
+        """Can't set time with FTP handler"""
 
     def set_mode(self, name, mode=0x400):
-        pass
+        """Can't set mode with FTP handler"""
 
     def unlink(self, name):
         self.ftp_client.delete(self.get_path(name))

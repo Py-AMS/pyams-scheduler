@@ -133,7 +133,7 @@ class TaskContainerTable(Table):
         return attributes
 
     def render_row(self, row, css_class=None):
-        item, col, colspan = row[0]
+        item, _col, _colspan = row[0]
         return super().render_row(row, css_class='droppable' if ITaskFolder.providedBy(item) else None)
 
 
