@@ -14,7 +14,8 @@
 
 This module defines views which are used to display content history.
 """
-
+import heapq
+import math
 from datetime import timedelta
 
 from pyramid.decorator import reify
@@ -29,14 +30,18 @@ from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, ITaskF
 from pyams_scheduler.interfaces.task import TASK_STATUS_STYLES
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import TaskContainerTable
+from pyams_scheduler.zmi.interfaces import ISchedulerHistoryTable
 from pyams_skin.interfaces.view import IModalPage
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextAdapter, ContextRequestViewAdapter, adapter_config
 from pyams_utils.date import SH_DATETIME_FORMAT, get_duration
+from pyams_utils.factory import factory_config
 from pyams_utils.finder import find_objects_providing
+from pyams_utils.interfaces import MISSING_INFO
 from pyams_utils.registry import get_utility
+from pyams_utils.timezone import tztime
 from pyams_utils.traversing import get_parent
 from pyams_utils.url import absolute_url
 from pyams_viewlet.viewlet import viewlet_config
@@ -67,6 +72,7 @@ class SchedulerHistoryMenu(NavigationMenuItem):
     href = '#jobs-history.html'
 
 
+@factory_config(ISchedulerHistoryTable)
 class SchedulerHistoryTable(Table):
     """Scheduler history table"""
 
@@ -86,7 +92,7 @@ class SchedulerHistoryTable(Table):
         return (css_class or '') + ' ' + TASK_STATUS_STYLES.get(item.status, 'table-warning')
 
 
-@adapter_config(required=(ITaskContainer, IAdminLayer, SchedulerHistoryTable),
+@adapter_config(required=(ITaskContainer, IAdminLayer, ISchedulerHistoryTable),
                 provides=IValues)
 class SchedulerHistoryTableValues(ContextRequestViewAdapter):
     """Scheduler history table values adapter"""
@@ -94,12 +100,14 @@ class SchedulerHistoryTableValues(ContextRequestViewAdapter):
     @property
     def values(self):
         """Scheduler history table values getter"""
-        for task in find_objects_providing(self.context, ITask):
-            yield from task.history.values()
+        yield from heapq.merge(*(
+            task.history.values()
+            for task in find_objects_providing(self.context, ITask)
+        ), key=lambda x: tztime(x.date))
 
 
 @adapter_config(name='name',
-                required=(Interface, IAdminLayer, SchedulerHistoryTable),
+                required=(Interface, IAdminLayer, ISchedulerHistoryTable),
                 provides=IColumn)
 class SchedulerHistoryNameColumn(NameColumn):
     """Scheduler history name column"""
@@ -114,7 +122,7 @@ class SchedulerHistoryNameColumn(NameColumn):
 
 
 @adapter_config(name='date',
-                required=(Interface, IAdminLayer, SchedulerHistoryTable),
+                required=(Interface, IAdminLayer, ISchedulerHistoryTable),
                 provides=IColumn)
 class SchedulerHistoryDateColumn(I18nColumnMixin, DateColumn):
     """Scheduler history date column"""
@@ -127,7 +135,7 @@ class SchedulerHistoryDateColumn(I18nColumnMixin, DateColumn):
 
 
 @adapter_config(name='duration',
-                required=(Interface, IAdminLayer, SchedulerHistoryTable),
+                required=(Interface, IAdminLayer, ISchedulerHistoryTable),
                 provides=IColumn)
 class SchedulerHistoryDurationColumn(I18nColumnMixin, GetAttrColumn):
     """Scheduler history duration column"""
@@ -145,7 +153,7 @@ class SchedulerHistoryDurationColumn(I18nColumnMixin, GetAttrColumn):
 
 
 @adapter_config(name='status',
-                required=(Interface, IAdminLayer, SchedulerHistoryTable),
+                required=(Interface, IAdminLayer, ISchedulerHistoryTable),
                 provides=IColumn)
 class SchedulerHistoryStatusColumn(I18nColumnMixin, GetAttrColumn):
     """Scheduler history status column"""
@@ -163,7 +171,8 @@ class SchedulerHistoryView(TableAdminView):
     """Scheduler history view"""
 
     title = _("Tasks execution history")
-    table_class = SchedulerHistoryTable
+
+    table_class = ISchedulerHistoryTable
     table_label = _("List of executed tasks")
 
 
@@ -228,11 +237,11 @@ class TaskHistoryView(TaskBaseFormMixin, AdminModalDisplayForm):
 class TaskHistoryTableView(InnerTableAdminView):
     """Task history table view"""
 
-    table_class = SchedulerHistoryTable
+    table_class = ISchedulerHistoryTable
     table_label = _("List of executed jobs")
 
 
-@adapter_config(required=(ITask, IAdminLayer, SchedulerHistoryTable),
+@adapter_config(required=(ITask, IAdminLayer, ISchedulerHistoryTable),
                 provides=IValues)
 class TaskHistoryTableValues(ContextRequestViewAdapter):
     """Task history table values adapter"""
