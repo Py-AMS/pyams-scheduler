@@ -37,13 +37,12 @@ from zope.lifecycleevent import IObjectAddedEvent, IObjectModifiedEvent, IObject
 from zope.location import locate
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_file.property import FileProperty
-
 try:
     from pyams_chat.message import ChatMessage
 except ImportError:
     ChatMessage = None
 
+from pyams_file.property import FileProperty
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
     ITaskContainer, ITaskFolder, ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_GUEST_ROLE, \
     SCHEDULER_HANDLER_KEY, SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
@@ -98,7 +97,7 @@ class TaskHistoryContainer(Folder):
     def check_history(self, duration, length):
         """Check history container contents"""
         if duration:
-            now = tztime(datetime.utcnow())
+            now = tztime(datetime.now(timezone.utc))
             for key in list(self.keys()):
                 if (now - tztime(self[key].date)).days > duration:
                     del self[key]
