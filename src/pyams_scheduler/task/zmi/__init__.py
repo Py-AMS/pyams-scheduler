@@ -28,6 +28,7 @@ from pyams_scheduler.interfaces.task import ITaskInfo
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
+from pyams_utils.interfaces import MISSING_INFO
 from pyams_utils.intids import get_object_uid
 from pyams_utils.registry import query_utility
 from pyams_utils.traversing import get_parent
@@ -67,7 +68,7 @@ class BaseTaskAddForm(AdminModalAddForm):  # pylint: disable=abstract-method
 
     subtitle = _("New task")
     legend = _("New task properties")
-    content_label = '--'
+    content_label = MISSING_INFO
 
     fields = Fields(ITaskInfo).select('name', 'schedule_mode')
 
