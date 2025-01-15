@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.6.0
+-----
+ - added task attribute to separate ZODB-based tasks (using classic transactions attempts) from other "external"
+   tasks (using attempts only to store execution reports)
+ - code cleanup...
+
 2.5.0
 -----
  - allow storage of task execution report as attachment
