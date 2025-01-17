@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.6.1
+-----
+ - added commit on external tasks run to activate transactional chat messages
+ - updated history table sort
+
 2.6.0
 -----
  - added task attribute to separate ZODB-based tasks (using classic transactions attempts) from other "external"
