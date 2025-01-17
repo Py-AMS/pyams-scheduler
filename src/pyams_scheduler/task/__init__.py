@@ -54,6 +54,7 @@ from pyams_security.interfaces.names import ADMIN_USER_ID, INTERNAL_USER_ID, SYS
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
 from pyams_utils.adapter import ContextAdapter, adapter_config
 from pyams_utils.date import get_duration
+from pyams_utils.factory import create_object, factory_config
 from pyams_utils.interfaces.transaction import ITransactionClient
 from pyams_utils.registry import get_local_registry, get_pyramid_registry, get_utility, query_utility, \
     set_local_registry
@@ -75,7 +76,7 @@ from pyams_scheduler import _
 LOGGER = logging.getLogger('PyAMS (scheduler)')
 
 
-@implementer(ITaskHistory)
+@factory_config(ITaskHistory)
 class TaskHistoryItem(Persistent, Contained):
     """Task history item"""
 
@@ -322,10 +323,13 @@ class Task(Persistent, Contained):
         translate = request.localizer.translate
         status = TASK_STATUS_NONE
         result = None
+        position = report.tell()
         tm = ITransactionManager(self)  # pylint: disable=invalid-name
-        for attempt in tm.attempts():
+        for index, attempt in enumerate(tm.attempts()):
             with attempt as t:  # pylint: disable=invalid-name
                 message = None
+                report.seek(position)
+                report.truncate()
                 start_date = datetime.now(timezone.utc)
                 duration = 0.
                 try:
@@ -337,6 +341,8 @@ class Task(Persistent, Contained):
                     duration = (end_date - start_date).total_seconds()
                     report.write(f'\n\nTask duration: '
                                  f'{get_duration(start_date, request=request)}')
+                    if index > 0:
+                        report.write(f' (on attempt #{index+1})')
                     history_item = self.store_report(result, report, status, start_date, duration)
                     if (ChatMessage is not None) and scheduler.notified_host:
                         if status == TASK_STATUS_ERROR:
@@ -378,6 +384,7 @@ class Task(Persistent, Contained):
         message = None
         start_date = datetime.now(timezone.utc)
         duration = 0.
+        tm = ITransactionManager(self)  # pylint: disable=invalid-name
         try:
             registry.notify(BeforeRunJobEvent(self))
             (status, result) = self.run(report, **kwargs)
@@ -387,9 +394,11 @@ class Task(Persistent, Contained):
             duration = (end_date - start_date).total_seconds()
             report.write(f'\n\nTask duration: '
                          f'{get_duration(start_date, request=request)}')
-            tm = ITransactionManager(self)  # pylint: disable=invalid-name
+            position = report.tell()
             for attempt in tm.attempts():
                 with attempt as t:  # pylint: disable=invalid-name
+                    report.seek(position)
+                    report.truncate()
                     history_item = self.store_report(result, report, status, start_date, duration)
                     if status == TASK_STATUS_ERROR:
                         message_text = translate(_("Task '{}' was executed "
@@ -419,6 +428,7 @@ class Task(Persistent, Contained):
             message.send()
         registry.notify(AfterRunJobEvent(self, status, result))
         self.send_report(report, status, history_item, registry)
+        tm.commit()  # required to send transactional chat message!
         return status, result
         
     def run(self, report, **kwargs):  # pylint: disable=no-self-use
@@ -433,21 +443,19 @@ class Task(Persistent, Contained):
         if (ChatMessage is None) or not scheduler.notified_host:
             return None
         translate = request.localizer.translate
-        return ChatMessage(
-                request=request,
-                host=scheduler.notified_host,
-                action='notify',
-                category='scheduler.run',
-                status=TASK_STATUS_CLASS.get(status, 'info'),
-                source=INTERNAL_USER_ID,
-                title=translate(_("Task execution")),
-                message=message,
-                url='/'.join(('', '++etc++site') +
-                             tuple(self.get_path_elements()) +
-                             ('++history++', history_item.__name__,
-                              'history.html')),
-                modal=True,
-                task=self)
+        return ChatMessage(request=request,
+                           host=scheduler.notified_host,
+                           action='notify',
+                           category='scheduler.run',
+                           status=TASK_STATUS_CLASS.get(status, 'info'),
+                           source=INTERNAL_USER_ID,
+                           title=translate(_("Task execution")),
+                           message=message,
+                           url='/'.join(('', '++etc++site') +
+                                        tuple(self.get_path_elements()) +
+                                        ('++history++', history_item.__name__, 'history.html')),
+                           modal=True,
+                           task=self)
 
     @staticmethod
     def _log_report(report, message, add_timestamp=True, level=logging.INFO):
@@ -457,7 +465,7 @@ class Task(Persistent, Contained):
         if add_timestamp:
             message = f"{tztime(datetime.now(timezone.utc)).strftime('%c')} - {message}"
         if report is not None:
-            report.write(message + '\n')
+            report.write(f'{message}\n')
         LOGGER.log(level, message)
 
     @staticmethod
@@ -485,10 +493,11 @@ class Task(Persistent, Contained):
         if (status in (TASK_STATUS_NONE, TASK_STATUS_EMPTY)) and \
                 not self.keep_empty_reports:
             return
-        item = TaskHistoryItem(status=str(status),
-                               date=start_date,
-                               duration=duration,
-                               report=report.getvalue())
+        item = create_object(ITaskHistory,
+                             status=str(status),
+                             date=start_date,
+                             duration=duration,
+                             report=report.getvalue())
         self.history[item.date.isoformat()] = item
         if (result is not None) and self.attach_reports:
             item.report_file = (f'{self.get_report_filename()};{self.get_report_mimetype()}', result)
