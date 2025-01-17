@@ -76,6 +76,9 @@ class SchedulerHistoryMenu(NavigationMenuItem):
 class SchedulerHistoryTable(Table):
     """Scheduler history table"""
 
+    sort_on = 'table-date-1'
+    sort_order = 'descending'
+    
     css_classes = {
         'table': 'table table-striped table-hover table-xs datatable'
     }
@@ -90,7 +93,7 @@ class SchedulerHistoryTable(Table):
 
     def get_css_highlight_class(self, column, item, css_class):
         return (css_class or '') + ' ' + TASK_STATUS_STYLES.get(item.status, 'table-warning')
-
+    
 
 @adapter_config(required=(ITaskContainer, IAdminLayer, ISchedulerHistoryTable),
                 provides=IValues)
@@ -101,9 +104,9 @@ class SchedulerHistoryTableValues(ContextRequestViewAdapter):
     def values(self):
         """Scheduler history table values getter"""
         yield from heapq.merge(*(
-            task.history.values()
+            reversed(task.history.values())
             for task in find_objects_providing(self.context, ITask)
-        ), key=lambda x: tztime(x.date))
+        ), key=lambda x: tztime(x.date), reverse=True)
 
 
 @adapter_config(name='name',
@@ -132,6 +135,9 @@ class SchedulerHistoryDateColumn(I18nColumnMixin, DateColumn):
     formatter = SH_DATETIME_FORMAT
 
     weight = 20
+    
+    def get_sort_key(self, item):
+        return tztime(item.date)
 
 
 @adapter_config(name='duration',
