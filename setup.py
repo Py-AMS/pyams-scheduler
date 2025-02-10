@@ -27,7 +27,7 @@ version = '2.6.1'
 long_description = open(README).read() + '\n\n' + open(HISTORY).read()
 
 tests_require = [
-    'pyams_zmi',
+    'pyams_zmi >= 2.5.0',
     'pyramid_zcml',
     'zope.exceptions'
 ]
