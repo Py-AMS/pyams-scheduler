@@ -17,6 +17,9 @@ This module defines components used to display scheduled jobs.
 
 from datetime import datetime, timezone
 
+from pyramid.decorator import reify
+from zope.interface import implementer
+
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
 from pyams_scheduler.interfaces import IScheduler, MANAGE_TASKS_PERMISSION
@@ -28,6 +31,7 @@ from pyams_utils.interfaces import MISSING_INFO
 from pyams_utils.timezone import tztime
 from pyams_viewlet.viewlet import viewlet_config
 from pyams_zmi.interfaces import IAdminLayer
+from pyams_zmi.interfaces.table import IColumnSortData
 from pyams_zmi.interfaces.viewlet import IPropertiesMenu
 from pyams_zmi.table import I18nColumnMixin, Table, TableAdminView
 from pyams_zmi.zmi.viewlet.menu import NavigationMenuItem
@@ -50,7 +54,7 @@ class SchedulerJobsMenu(NavigationMenuItem):
 
 class SchedulerJobsTable(Table):
     """Scheduler jobs table"""
-
+    
 
 @adapter_config(required=(IScheduler, IAdminLayer, SchedulerJobsTable),
                 provides=IValues)
@@ -108,6 +112,7 @@ class SchedulerJobsTriggerColumn(JobsColumn):
 @adapter_config(name='next_run',
                 required=(IScheduler, IAdminLayer, SchedulerJobsTable),
                 provides=IColumn)
+@implementer(IColumnSortData)
 class SchedulerJobsNextRunColumn(JobsColumn):
     """Scheduler jobs next run column"""
 
@@ -121,6 +126,10 @@ class SchedulerJobsNextRunColumn(JobsColumn):
             return MISSING_INFO
         return format_datetime(tztime(datetime.fromtimestamp(value, timezone.utc)),
                                request=self.request)
+    
+    @staticmethod
+    def get_sort_value(value):
+        return datetime.fromtimestamp(value['next_run'], timezone.utc).isoformat()
 
 
 @pagelet_config(name='jobs-list.html', context=IScheduler, layer=IPyAMSLayer,
