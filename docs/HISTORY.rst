@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.6.2
+-----
+ - added sort order data attribute to jobs table
+
 2.6.1
 -----
  - added commit on external tasks run to activate transactional chat messages
