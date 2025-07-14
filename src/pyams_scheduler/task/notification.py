@@ -31,6 +31,7 @@ from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSIO
 from pyams_scheduler.interfaces.task import IMailNotification, ITaskNotification, \
     ITaskNotificationContainer, ITaskNotificationMode, SCHEDULER_TASK_NOTIFICATIONS_KEY, \
     TASK_STATUS_ERROR, TASK_STATUS_WARNING
+from pyams_scheduler.interfaces.task.pipeline import IPipelineTask
 from pyams_security.interfaces import IViewContextPermissionChecker
 from pyams_utils.adapter import ContextAdapter, adapter_config, get_annotation_adapter
 from pyams_utils.factory import factory_config
@@ -55,6 +56,8 @@ class TaskNotificationContainer(Folder):
 
 
 @adapter_config(required=ITask,
+                provides=ITaskNotificationContainer)
+@adapter_config(required=IPipelineTask,
                 provides=ITaskNotificationContainer)
 def task_notifications_container_factory(context):
     """Task notifications container factory"""
@@ -151,10 +154,11 @@ class MailNotificationMode:
             else:
                 subject = f"[scheduler] {task.name}"
             for email in target.target_email or ():
-                message = Message(subject=subject,
-                                  sender=report_source,
-                                  recipients=(email,),
-                                  body=report.getvalue())
+                message = HTMLMessage(subject=subject,
+                                      from_addr=report_source,
+                                      to_addr=(email,),
+                                      text=report.report.getvalue(),
+                                      html=report.getvalue())
                 report_file = history_item.report_file
                 if report_file:
                     message.attach(Attachment(content_type=report_file.content_type,

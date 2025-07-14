@@ -25,9 +25,11 @@ from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import ITask, ITaskContainer, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import ITask, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer
 from pyams_scheduler.interfaces.task import IMailNotification, ITaskNotification, \
     ITaskNotificationContainer
+from pyams_scheduler.interfaces.task.pipeline import IPipelineTask
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
@@ -98,6 +100,8 @@ class TaskNotificationsTable(Table):
 
 
 @adapter_config(required=(ITask, IAdminLayer, TaskNotificationsTable),
+                provides=IValues)
+@adapter_config(required=(IPipelineTask, IAdminLayer, TaskNotificationsTable),
                 provides=IValues)
 class TaskNotificationsTableValues(ContextRequestViewAdapter):
     """Task notifications table values adapter"""

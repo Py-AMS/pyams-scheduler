@@ -18,7 +18,6 @@ This module defines base tasks classes.
 import logging
 import traceback
 from datetime import datetime, timezone
-from io import StringIO
 
 from persistent import Persistent
 from pyramid.config import Configurator
@@ -43,16 +42,19 @@ except ImportError:
     ChatMessage = None
 
 from pyams_file.property import FileProperty
-from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, ITask, \
-    ITaskContainer, ITaskFolder, ITaskHistory, MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_GUEST_ROLE, \
+from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, IScheduler, \
+    MANAGE_TASKS_PERMISSION, SCHEDULER_AUTH_KEY, SCHEDULER_GUEST_ROLE, \
     SCHEDULER_HANDLER_KEY, SCHEDULER_MANAGER_ROLE, SCHEDULER_NAME, TASKS_MANAGER_ROLE
+from pyams_scheduler.interfaces.folder import ITaskContainer, ITaskFolder
 from pyams_scheduler.interfaces.task import FailedTaskRunException, ITaskHistoryContainer, \
-    ITaskInfo, ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_CLASS, \
+    ITask, ITaskHistory, ITaskInfo, ITaskNotificationContainer, ITaskSchedulingMode, TASK_STATUS_CLASS, \
     TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_FAIL, TASK_STATUS_NONE, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task.report import IReport, ITaskResultReportInfo
+from pyams_scheduler.task.report import Report
 from pyams_security.interfaces import IProtectedObject, IViewContextPermissionChecker
 from pyams_security.interfaces.names import ADMIN_USER_ID, INTERNAL_USER_ID, SYSTEM_ADMIN_ROLE
 from pyams_site.interfaces import PYAMS_APPLICATION_DEFAULT_NAME, PYAMS_APPLICATION_SETTINGS_KEY
-from pyams_utils.adapter import ContextAdapter, adapter_config
+from pyams_utils.adapter import ContextAdapter, adapter_config, query_adapter
 from pyams_utils.date import get_duration
 from pyams_utils.factory import create_object, factory_config
 from pyams_utils.interfaces.transaction import ITransactionClient
@@ -132,7 +134,7 @@ class TaskHandler(TransactionClient):
 
 
 @implementer(ITask, ITransactionClient)
-class Task(Persistent, Contained):
+class BaseTaskMixin:
     """Task definition persistent class"""
 
     label = None
@@ -256,7 +258,9 @@ class Task(Persistent, Contained):
         handler.execute(self, 'run_task', self.internal_id)
 
     def __call__(self, *args, **kwargs):
-        report = StringIO()
+        report = create_object(IReport)
+        if report is None:
+            report = Report()
         return self._run(report, **kwargs)
 
     def is_runnable(self):
@@ -268,6 +272,12 @@ class Task(Persistent, Contained):
         if info is None:
             return False
         return info.active
+
+    def get_param_value(self, input, **params):
+        """Apply incoming params to input string"""
+        if not input:
+            return input
+        return input.format(**params)
 
     def _run(self, report, **kwargs):  # pylint: disable=too-many-locals
         """Task execution wrapper"""
@@ -314,11 +324,11 @@ class Task(Persistent, Contained):
                 tm.abort()
         return status, result
     
-    def run_zodb_task(self, request, registry, scheduler, report, **kwargs):
+    def run_zodb_task(self, request, registry, scheduler, report, notify=True, **kwargs):
         """Run a ZODB-based task
         
         ZODB-based tasks are tasks that update the ZODB; they use transaction attempts
-        to handle conflicts errors
+        to handle conflict errors
         """
         translate = request.localizer.translate
         status = TASK_STATUS_NONE
@@ -339,44 +349,48 @@ class Task(Persistent, Contained):
                         raise FailedTaskRunException
                     end_date = datetime.now(timezone.utc)
                     duration = (end_date - start_date).total_seconds()
-                    report.write(f'\n\nTask duration: '
-                                 f'{get_duration(start_date, request=request)}')
+                    report.write(f'Task duration: '
+                                   f'{get_duration(start_date, end_date, request=request)}')
                     if index > 0:
                         report.write(f' (on attempt #{index+1})')
-                    history_item = self.store_report(result, report, status, start_date, duration)
-                    if (ChatMessage is not None) and scheduler.notified_host:
-                        if status == TASK_STATUS_ERROR:
-                            message_text = translate(_("Task '{}' was executed "
-                                                       "with error")).format(self.name)
-                        else:
-                            message_text = translate(_("Task '{}' was executed "
-                                                       "without error")).format(self.name)
-                        message = self.get_chat_message(request, scheduler, status,
-                                                        message_text, history_item)
+                    report.writeln('\n')
+                    if notify:
+                        history_item = self.store_report(result, report, status, start_date, duration)
+                        if (ChatMessage is not None) and scheduler.notified_host:
+                            if status == TASK_STATUS_ERROR:
+                                message_text = translate(_("Task '{}' was executed "
+                                                           "with error")).format(self.name)
+                            else:
+                                message_text = translate(_("Task '{}' was executed "
+                                                           "without error")).format(self.name)
+                            message = self.get_chat_message(request, scheduler, status,
+                                                            message_text, history_item)
                 except FailedTaskRunException:  # pylint: disable=bare-except
                     # pylint: disable=protected-access
                     self._log_exception(report,
                                         f"An error occurred during execution of "
                                         f"task '{self.name}'")
-                    history_item = self.store_report(result, report, status, start_date, duration)
-                    if (ChatMessage is not None) and scheduler.notified_host:
-                        message_text = translate(_("An error occurred during execution of task "
-                                                   "'{}'")).format(self.name)
-                        message = self.get_chat_message(request, scheduler, TASK_STATUS_FAIL,
-                                                        message_text, history_item)
-                if message is not None:
+                    if notify:
+                        history_item = self.store_report(result, report, status, start_date, duration)
+                        if (ChatMessage is not None) and scheduler.notified_host:
+                            message_text = translate(_("An error occurred during execution of task "
+                                                       "'{}'")).format(self.name)
+                            message = self.get_chat_message(request, scheduler, TASK_STATUS_FAIL,
+                                                            message_text, history_item)
+                if notify and (message is not None):
                     message.send()
                 registry.notify(AfterRunJobEvent(self, status, result))
-                self.send_report(report, status, history_item, registry)
+                if notify:
+                    self.send_report(report, status, history_item, registry)
             if t.status == COMMITTED_STATUS:
                 break
         return status, result
     
-    def run_external_task(self, request, registry, scheduler, report, **kwargs):
+    def run_external_task(self, request, registry, scheduler, report, notify=True, **kwargs):
         """Run an external task
         
-        External tasks are tasks that run outside of the ZODB; transaction attempts are
-        only used to handle conflicts errors when storing the execution report.
+        External tasks are tasks that run outside the ZODB; transaction attempts are
+        only used to handle conflict errors when storing the execution report.
         """
         translate = request.localizer.translate
         status = TASK_STATUS_NONE
@@ -392,22 +406,23 @@ class Task(Persistent, Contained):
                 raise FailedTaskRunException
             end_date = datetime.now(timezone.utc)
             duration = (end_date - start_date).total_seconds()
-            report.write(f'\n\nTask duration: '
-                         f'{get_duration(start_date, request=request)}')
+            report.writeln(f'Task duration: '
+                           f'{get_duration(start_date, end_date, request=request)}', suffix='\n')
             position = report.tell()
             for attempt in tm.attempts():
                 with attempt as t:  # pylint: disable=invalid-name
                     report.seek(position)
                     report.truncate()
-                    history_item = self.store_report(result, report, status, start_date, duration)
-                    if status == TASK_STATUS_ERROR:
-                        message_text = translate(_("Task '{}' was executed "
-                                                   "with error")).format(self.name)
-                    else:
-                        message_text = translate(_("Task '{}' was executed "
-                                                   "without error")).format(self.name)
-                    message = self.get_chat_message(request, scheduler, status,
-                                                    message_text, history_item)
+                    if notify:
+                        history_item = self.store_report(result, report, status, start_date, duration)
+                        if status == TASK_STATUS_ERROR:
+                            message_text = translate(_("Task '{}' was executed "
+                                                       "with error")).format(self.name)
+                        else:
+                            message_text = translate(_("Task '{}' was executed "
+                                                       "without error")).format(self.name)
+                        message = self.get_chat_message(request, scheduler, status,
+                                                        message_text, history_item)
                 if t.status == COMMITTED_STATUS:
                     break
         except FailedTaskRunException:  # pylint: disable=bare-except
@@ -417,18 +432,20 @@ class Task(Persistent, Contained):
                                 f"task '{self.name}'")
             for attempt in tm.attempts():
                 with attempt as t:  # pylint: disable=invalid-name
-                    history_item = self.store_report(result, report, status, start_date, duration)
-                    message_text = translate(_("An error occurred during execution of task "
-                                               "'{}'")).format(self.name),
-                    message = self.get_chat_message(request, scheduler, TASK_STATUS_FAIL,
-                                                    message_text, history_item)
+                    if notify:
+                        history_item = self.store_report(result, report, status, start_date, duration)
+                        message_text = translate(_("An error occurred during execution of task "
+                                                   "'{}'")).format(self.name),
+                        message = self.get_chat_message(request, scheduler, TASK_STATUS_FAIL,
+                                                        message_text, history_item)
                 if t.status == COMMITTED_STATUS:
                     break
-        if message is not None:
+        if notify and (message is not None):
             message.send()
         registry.notify(AfterRunJobEvent(self, status, result))
-        self.send_report(report, status, history_item, registry)
-        tm.commit()  # required to send transactional chat message!
+        if notify:
+            self.send_report(report, status, history_item, registry)
+        tm.commit()  # required to send a transactional chat message!
         return status, result
         
     def run(self, report, **kwargs):  # pylint: disable=no-self-use
@@ -479,15 +496,33 @@ class Task(Persistent, Contained):
             report.write(traceback.format_exc() + '\n')
         LOGGER.exception(message)
 
-    def get_report_mimetype(self):
-        """Report MIME type getter"""
-        return 'text/plain; charset=utf-8'
+    @staticmethod
+    def get_report_mimetype(result=None):
+        if not result:
+            return None
+        if isinstance(result, (list, tuple)):
+            result = result[-1]
+        report_info = ITaskResultReportInfo(result, None)
+        return report_info.mimetype if report_info is not None else None
 
-    def get_report_filename(self):
-        """Report filename getter"""
-        now = tztime(datetime.now(timezone.utc))
-        return f'report-{now:%Y%m%d}-{now:%H%M}.txt'
-
+    @staticmethod
+    def get_report_filename(result=None):
+        if not result:
+            return None
+        if isinstance(result, (list, tuple)):
+            result = result[-1]
+        report_info = ITaskResultReportInfo(result, None)
+        return report_info.filename if report_info is not None else None
+    
+    @staticmethod
+    def get_report_content(result):
+        if not result:
+            return None
+        if isinstance(result, (list, tuple)):
+            result = result[-1]
+        report_info = ITaskResultReportInfo(result, None)
+        return report_info.content if report_info is not None else None
+    
     def store_report(self, result, report, status, start_date, duration):
         """Execution report store"""
         if (status in (TASK_STATUS_NONE, TASK_STATUS_EMPTY)) and \
@@ -497,10 +532,18 @@ class Task(Persistent, Contained):
                              status=str(status),
                              date=start_date,
                              duration=duration,
-                             report=report.getvalue())
+                             report=report.report.getvalue())
         self.history[item.date.isoformat()] = item
-        if (result is not None) and self.attach_reports:
-            item.report_file = (f'{self.get_report_filename()};{self.get_report_mimetype()}', result)
+        if result and self.attach_reports:
+            registry = get_pyramid_registry()
+            report_info = registry.queryMultiAdapter((self, result), ITaskResultReportInfo)
+            if report_info is None:
+                report_info = ITaskResultReportInfo(result, None)
+            if report_info is not None:
+                filename = report_info.filename
+                mimetype = report_info.mimetype
+                if filename and mimetype:
+                    item.report_file = (f'{filename};{mimetype}', report_info.content)
         self.check_history()
         return item
 
@@ -511,12 +554,15 @@ class Task(Persistent, Contained):
             handler = target.get_handler()
             if handler is None:
                 continue
-            if ((status in (TASK_STATUS_NONE, TASK_STATUS_EMPTY)) and
-                not target.send_empty_reports) or \
+            if ((status in (TASK_STATUS_NONE, TASK_STATUS_EMPTY)) and not target.send_empty_reports) or \
                     ((status == TASK_STATUS_OK) and target.report_errors_only):
-                return
+                continue
             handler.send_report(self, report, status, history_item, target, registry)
 
+
+class Task(BaseTaskMixin, Persistent, Contained):
+    """Task persistent class"""
+    
 
 @adapter_config(required=ITask,
                 provides=IObjectLabel)

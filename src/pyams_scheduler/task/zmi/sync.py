@@ -30,11 +30,13 @@ from pyams_form.interfaces.widget import IFieldWidget, IObjectWidget
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_form.widget import FieldWidget, Widget
 from pyams_layer.interfaces import IFormLayer, IPyAMSLayer
-from pyams_scheduler.interfaces import ITaskContainer, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer
 from pyams_scheduler.interfaces.task.sync import IDirectoryHandler, IDirectoryHandlerHostField, \
     IDirectoryInfo, IDirectorySyncTask, IDirectorySyncTaskInfo
 from pyams_scheduler.task.sync import DirectoryInfo, DirectorySyncTask
 from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.task.zmi.interfaces import ITaskInnerEditForm
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_scheduler.zmi.interfaces import IDirectoryHandlerHostWidget
 from pyams_skin.viewlet.menu import MenuItem
@@ -170,5 +172,6 @@ class DirectorySyncTaskEditForm(BaseTaskEditForm):
 @adapter_config(name='sync-task-info.form',
                 required=(IDirectorySyncTask, IAdminLayer, DirectorySyncTaskEditForm),
                 provides=IInnerTabForm)
+@implementer(ITaskInnerEditForm)
 class DirectorySyncTaskEditFormInfo(DirectorySyncTaskFormInfo, InnerEditForm):
     """Directory synchronization task edit form info"""

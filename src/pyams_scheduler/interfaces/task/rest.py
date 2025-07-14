@@ -56,7 +56,7 @@ class IRESTCallerTaskInfo(Interface):
                                 "include dynamic fragments into your JSON code using PyAMS "
                                 "text renderers rules (see documentation)"),
                   required=False)
-
+    
     content_type = Choice(title=_("POST content type"),
                           description=_("Content type used to send POST parameters"),
                           values=(JSON_CONTENT_TYPE, FORM_CONTENT_TYPE),

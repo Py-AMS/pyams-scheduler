@@ -16,8 +16,6 @@ This module defines base package interfaces.
 """
 
 from zope.annotation import IAttributeAnnotatable
-from zope.container.constraints import contains
-from zope.container.interfaces import IContainer
 from zope.interface import Attribute, Interface, implementer
 from zope.interface.interfaces import IObjectEvent, ObjectEvent
 from zope.schema import Bool, Choice, List, Object, TextLine
@@ -86,34 +84,6 @@ class AfterRunJobEvent(ObjectEvent):
         super().__init__(obj)
         self.status = status
         self.result = result
-
-
-#
-# Scheduler tasks container interface
-#
-
-class ITaskContainer(IContainer):
-    """Generic task container interface"""
-
-    contains(ITask, 'pyams_scheduler.interfaces.ITaskContainer')
-
-    folders = List(title=_("Folder sub-folders"),
-                   description=_("List of sub-folders assigned to this container"),
-                   value_type=Object(schema=Interface),
-                   readonly=True)
-
-    tasks = List(title=_("Folder tasks"),
-                 description=_("List of tasks assigned to this container"),
-                 value_type=Object(schema=ITask),
-                 readonly=True)
-
-
-class ITaskFolder(ITaskContainer):
-    """Task folder interface"""
-
-    name = TextLine(title=_("Folder name"),
-                    description=_("Descriptive name given to this folder"),
-                    required=True)
 
 
 #

@@ -25,14 +25,18 @@ from zope.traversing.interfaces import ITraversable
 from pyams_form.field import Fields
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, ITaskFolder, ITaskHistory, \
+from pyams_scheduler.interfaces import IScheduler, ITask, ITaskHistory, \
     MANAGE_SCHEDULER_PERMISSION, VIEW_HISTORY_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer, ITaskFolder
 from pyams_scheduler.interfaces.task import TASK_STATUS_STYLES
+from pyams_scheduler.interfaces.task.pipeline import IPipelineTask
+from pyams_scheduler.task.report import Report
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_scheduler.zmi.interfaces import ISchedulerHistoryTable
 from pyams_skin.interfaces.view import IModalPage
 from pyams_skin.interfaces.viewlet import IContentPrefixViewletManager
+from pyams_skin.widget.html import HTMLFieldWidget
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextAdapter, ContextRequestViewAdapter, adapter_config
@@ -205,10 +209,10 @@ class SchedulerTaskHistoryColumn(ActionColumn):
     weight = 70
 
     def has_permission(self, item):
-        if ITaskFolder.providedBy(item):
-            permission = self.folder_permission
-        else:
+        if ITask.providedBy(item):
             permission = self.task_permission
+        else:
+            permission = self.folder_permission
         return self.request.has_permission(permission, context=item)
 
     def get_icon_class(self, item):
@@ -218,9 +222,11 @@ class SchedulerTaskHistoryColumn(ActionColumn):
 
     def get_icon_hint(self, item):
         translate = self.request.localizer.translate
-        if ITaskFolder.providedBy(item):
-            return translate(self.folder_hint)
-        return translate(self.task_hint)
+        if IPipelineTask.providedBy(item):
+            return translate(_("Task properties"))
+        if ITask.providedBy(item):
+            return translate(self.task_hint)
+        return translate(self.folder_hint)
 
     def get_url(self, item):
         if ITaskFolder.providedBy(item):
@@ -291,6 +297,7 @@ class JobHistoryView(AdminModalDisplayForm):
     input_css_class = 'col-sm-9 col-md-10'
 
     fields = Fields(ITaskHistory).omit('__parent__', '__name__')
+    fields['report'].widget_factory = HTMLFieldWidget
 
     def update_widgets(self, prefix=None):
         super().update_widgets(prefix)
@@ -299,8 +306,10 @@ class JobHistoryView(AdminModalDisplayForm):
             duration.value = get_duration(timedelta(seconds=self.context.duration))
         report = self.widgets.get('report')
         if report is not None:
-            report.rows = 15
-            report.add_class('monospace')
+            report_value = Report()
+            report_value.write(self.context.report)
+            report.value = report_value.getvalue()
+            report.add_class('bg-light')
 
 
 @adapter_config(required=(ITaskHistory, IAdminLayer, IModalPage),

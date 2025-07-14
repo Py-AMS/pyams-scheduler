@@ -16,6 +16,7 @@ This module defines base tasks management views.
 """
 
 import json
+from itertools import chain
 
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPBadRequest, HTTPNotFound
@@ -25,13 +26,16 @@ from zope.interface import Interface, implementer
 from pyams_layer.interfaces import IPyAMSLayer
 from pyams_layer.skin import apply_skin
 from pyams_pagelet.pagelet import pagelet_config
-from pyams_scheduler.interfaces import IBaseTaskScheduling, IScheduler, ITask, ITaskContainer, ITaskFolder, \
-    MANAGE_TASKS_PERMISSION, TASKS_SCHEDULER_LABEL
+from pyams_scheduler.interfaces import IBaseTaskScheduling, IScheduler, ITask, MANAGE_TASKS_PERMISSION, TASKS_SCHEDULER_LABEL
+from pyams_scheduler.interfaces.folder import ITaskContainer, ITaskFolder
+from pyams_scheduler.interfaces.task.pipeline import IPipelineTask
 from pyams_scheduler.zmi.interfaces import ITaskContainerTable
 from pyams_security.interfaces.base import VIEW_SYSTEM_PERMISSION
 from pyams_table.column import GetAttrColumn
 from pyams_table.interfaces import IColumn, IValues
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
+from pyams_utils.factory import factory_config
+from pyams_utils.list import unique_iter
 from pyams_utils.url import absolute_url
 from pyams_viewlet.manager import viewletmanager_config
 from pyams_zmi.helper.container import delete_container_element
@@ -87,10 +91,11 @@ class TaskContainerListMenu(NavigationMenuItem):
     href = '#tasks-list.html'
 
 
-@implementer(ITaskContainerTable)
+@factory_config(ITaskContainerTable)
 class TaskContainerTable(Table):
     """Scheduler tasks table"""
 
+    sort_on = 'table-name-2'
     display_if_empty = True
 
     @property
@@ -145,8 +150,7 @@ class TaskContainerTableValues(ContextRequestViewAdapter):
     @property
     def values(self):
         """Scheduler tasks table values getter"""
-        yield from self.context.folders
-        yield from self.context.tasks
+        yield from unique_iter(chain(self.context.folders, self.context.tasks))
 
 
 @adapter_config(name='active',
@@ -155,6 +159,11 @@ class TaskContainerTableValues(ContextRequestViewAdapter):
 class TaskContainerActiveColumn(IconColumn):
     """Scheduler task active column"""
 
+    def __new__(cls, context, request, table):
+        if IPipelineTask.providedBy(context):
+            return None
+        return IconColumn.__new__(cls)
+    
     weight = 1
 
     checker = ITask.providedBy
@@ -251,7 +260,7 @@ class TaskContainerView(TableAdminView):
     """Task container view"""
 
     title = _("Scheduler tasks")
-    table_class = TaskContainerTable
+    table_class = ITaskContainerTable
     table_label = _("List of scheduler tasks")
 
     @property

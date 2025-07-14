@@ -22,7 +22,10 @@ from pyams_form.ajax import ajax_form_config
 from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, ITaskFolder, MANAGE_SCHEDULER_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, MANAGE_SCHEDULER_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer, ITaskFolder
+from pyams_scheduler.interfaces.task import ITask
+from pyams_scheduler.interfaces.task.pipeline import IPipelineTask
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_scheduler.zmi.interfaces import ITaskContainerTable
 from pyams_skin.interfaces.viewlet import IBreadcrumbItem, IFormHeaderViewletManager
@@ -58,6 +61,11 @@ class TaskFolderAddMenu(MenuItem):
     label = _("Add folder...")
     href = 'add-folder.html'
     modal_target = True
+    
+    def __new__(cls, context, request, view, manager):
+        if IPipelineTask.providedBy(context):
+            return None
+        return MenuItem.__new__(cls)
 
 
 @ajax_form_config(name='add-folder.html',
@@ -111,6 +119,11 @@ class TaskFolderAddFormAJAXRenderer(ContextRequestViewAdapter):
                 permission=MANAGE_SCHEDULER_PERMISSION)
 class TaskFolderAddMenuDivider(MenuDivider):
     """Task folder add menu divider"""
+    
+    def __new__(cls, context, request, view, manager):
+        if IPipelineTask.providedBy(context):
+            return None
+        return MenuDivider.__new__(cls)
 
 
 @adapter_config(required=(ITaskFolder, IAdminLayer, Interface),

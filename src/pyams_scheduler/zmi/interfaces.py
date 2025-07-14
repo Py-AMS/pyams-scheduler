@@ -40,5 +40,9 @@ class ITaskContainerTable(ITable):
     """Task container table marker interface"""
 
 
+class IPipelineTaskContainerTable(ITaskContainerTable):
+    """Pipeline task container table marker interface"""
+
+
 class ISchedulerHistoryTable(ITable):
     """Scheduler history table marker interface"""

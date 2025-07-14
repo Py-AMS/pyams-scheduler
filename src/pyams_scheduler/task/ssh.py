@@ -19,7 +19,6 @@ remote commands.
 import os
 import subprocess
 import sys
-import traceback
 from contextlib import contextmanager
 from socket import gethostname
 
@@ -32,7 +31,6 @@ from pyams_scheduler.interfaces.task.ssh import ISSHCallerTask, ISSHConnectionIn
 from pyams_scheduler.task import Task
 from pyams_security.interfaces.names import UNCHANGED_PASSWORD
 from pyams_utils.factory import factory_config
-
 
 __docformat__ = 'restructuredtext'
 
@@ -114,9 +112,8 @@ class SSHCallerTask(Task):
         return map(int, self.ok_status.split(','))
 
     def run(self, report, **kwargs):  # pylint: disable=unused-argument
-        report.write(f'Shell command output\n'
-                     f'====================\n'
-                     f'Shell command: \n    {self.connection!r}: {self.cmdline}\n\n')
+        report.writeln(f'Shell command output', prefix='### ')
+        report.writeln(f'Shell command: ```{self.connection!r}:{self.cmdline}```')
         if self.connection:
             return self._run_remote(report, **kwargs)
         return self._run_local(report, **kwargs)
@@ -127,24 +124,19 @@ class SSHCallerTask(Task):
             with self.connection.get_connection() as ssh_client:
                 stdin, stdout, stderr = ssh_client.exec_command(self.cmdline)
                 stdin.close()
-                report.write(stdout.read().decode())
+                report.write_code(stdout.read().decode())
                 errors = stderr.read()
                 if errors:
-                    report.write('\n\n'
-                                 'Some errors occurred\n'
-                                 '====================\n')
-                    report.write(errors.decode())
+                    report.writeln('**Some errors occurred**')
+                    report.write_code(errors.decode())
                 return (
                     TASK_STATUS_OK if stdout.channel.exit_status in self.ok_status_list
                         else stdout.channel.exit_status,
                     stdout
                 )
         except (OSError, SSHException):
-            etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
-            report.write('\n\n'
-                         'A system error occurred\n'
-                         '=======================\n')
-            report.write(''.join(traceback.format_exception(etype, value, tb)))
+            report.writeln('**A system error occurred**', suffix='\n')
+            report.write_exception(*sys.exc_info())
             return TASK_STATUS_FAIL, None
 
     def _run_local(self, report, **kwargs):  # pylint: disable=unused-argument
@@ -154,19 +146,14 @@ class SSHCallerTask(Task):
                                      stderr=subprocess.PIPE)
             stdout, stderr = shell.communicate()
         except:  # pylint: disable=bare-except
-            etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
-            report.write('\n\n'
-                         'A system error occurred\n'
-                         '=======================\n')
-            report.write(''.join(traceback.format_exception(etype, value, tb)))
+            report.writeln('**A system error occurred**', suffix='\n')
+            report.write_exception(*sys.exc_info())
             return TASK_STATUS_FAIL, None
         else:
-            report.write(stdout.decode())
+            report.write_shell(stdout.decode())
             if stderr:
-                report.write('\n\n'
-                             'Some errors occurred\n'
-                             '====================\n')
-                report.write(stderr.decode())
+                report.writeln('**Some errors occurred**', suffix='\n')
+                report.write_code(stderr.decode())
             return (
                 TASK_STATUS_OK if shell.returncode in self.ok_status_list else shell.returncode,
                 stdout

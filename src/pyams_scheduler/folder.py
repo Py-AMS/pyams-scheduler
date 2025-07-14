@@ -19,8 +19,8 @@ from zope.container.folder import Folder
 from zope.interface import implementer
 from zope.schema.fieldproperty import FieldProperty
 
-from pyams_scheduler.interfaces import ITask, ITaskContainer, ITaskContainerRoles, ITaskFolder, \
-    MANAGE_SCHEDULER_PERMISSION
+from pyams_scheduler.interfaces import ITask, ITaskContainerRoles, MANAGE_SCHEDULER_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer, ITaskFolder
 from pyams_security.interfaces import IDefaultProtectionPolicy, IRolesPolicy, IViewContextPermissionChecker
 from pyams_security.property import RolePrincipalsFieldProperty
 from pyams_security.security import ProtectedObjectMixin, ProtectedObjectRoles
@@ -32,9 +32,9 @@ __docformat__ = 'restructuredtext'
 from pyams_scheduler import _
 
 
-@implementer(ITaskContainer, IDefaultProtectionPolicy)
-class TaskContainer(ProtectedObjectMixin, Folder):
-    """Task container persistent class"""
+@implementer(ITaskContainer)
+class BaseTaskContainerMixin:
+    """Base task container persistent class"""
 
     @property
     def folders(self):
@@ -46,6 +46,11 @@ class TaskContainer(ProtectedObjectMixin, Folder):
         """Container tasks getter"""
         yield from filter(ITask.providedBy, self.values())
 
+
+@implementer(IDefaultProtectionPolicy)
+class TaskContainer(BaseTaskContainerMixin, ProtectedObjectMixin, Folder):
+    """Task container persistent class"""
+    
 
 @factory_config(ITaskContainerRoles)
 class TaskContainerRoles(ProtectedObjectRoles):

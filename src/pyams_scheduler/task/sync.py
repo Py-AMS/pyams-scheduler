@@ -133,17 +133,17 @@ class DirectorySyncTask(Task):
                         if self.use_datetime:
                             dst.set_time(name, src_stat.st_atime, src_stat.st_mtime)
                         dst.set_mode(name, src_stat.st_mode)
-                        report.write(f'   ++ {src.directory}: {name} ({get_human_size(size)})\n')
+                        report.writeln(f'     * {src.directory}: {name} ({get_human_size(size)})')
                         copied['files'].append((src.directory, name))
                         copied['size'] += size
                     except PermissionError:
                         if not self.ignore_write_errors:
                             raise
-                        report.write(f'   ** {src.directory}: {name} (WRITE ERROR)\n')
+                        report.writeln(f'   + {src.directory}: **{name}** (WRITE ERROR)')
             except PermissionError:
                 if not self.ignore_read_errors:
                     raise
-                report.write(f'   ** {src.directory}: {name} (READ ERROR)\n')
+                report.writeln(f'   + {src.directory}: **{name}** (READ ERROR)')
 
         def synchronize_files(src, dst):  # pylint: disable=too-many-branches,too-many-statements
             """Synchronize source directory and destination"""
@@ -151,7 +151,7 @@ class DirectorySyncTask(Task):
                 try:
                     src_stat = src.stat(name)
                 except (DirectorySyncError, PermissionError, FileNotFoundError):
-                    report.write(f'   ** {src.directory}: {name} (SRC STAT ERROR)\n')
+                    report.writeln(f'   + {src.directory}: **{name}** (SRC STAT ERROR)')
                     if not self.ignore_read_errors:
                         raise
                     continue
@@ -165,7 +165,7 @@ class DirectorySyncTask(Task):
                 try:
                     dst_stat = dst.stat(name)
                 except (DirectorySyncError, PermissionError):
-                    report.write(f'   ** {src.directory}: {name} (DST STAT ERROR)\n')
+                    report.writeln(f'   + {src.directory}: **{name}** (DST STAT ERROR)')
                     if not self.ignore_write_errors:
                         raise
                     continue
@@ -174,7 +174,7 @@ class DirectorySyncTask(Task):
                         try:
                             dst.mkdir(name, src_stat.st_mode)
                         except (DirectorySyncError, PermissionError):
-                            report.write(f'   ** {src.directory}: {name} (CREATE ERROR)\n')
+                            report.writeln(f'   + {src.directory}: **{name}** (CREATE ERROR)')
                             if not self.ignore_write_errors:
                                 raise
                             continue
@@ -188,12 +188,12 @@ class DirectorySyncTask(Task):
                                     with dst.chdir(name):
                                         synchronize_files(src, dst)
                                 except (DirectorySyncError, PermissionError):
-                                    report.write(f'   ** {src.directory}: {name} (SYNC ERROR)\n')
+                                    report.writeln(f'   + {src.directory}: **{name}** (SYNC ERROR)')
                                     if not self.ignore_write_errors:
                                         raise
                                     continue
                         except (DirectorySyncError, PermissionError):
-                            report.write(f'   ** {src.directory}: {name} (READ ERROR)\n')
+                            report.writeln(f'   + {src.directory}: **{name}** (READ ERROR)')
                             if not self.ignore_read_errors:
                                 raise
                             continue
@@ -209,40 +209,36 @@ class DirectorySyncTask(Task):
                         try:
                             copy_file(src, dst, name, src_stat)
                         except (DirectorySyncError, PermissionError):
-                            report.write(f'   ** {src.directory}: {name} (WRITE ERROR)\n')
+                            report.writeln(f'   + {src.directory}: **{name}** (WRITE ERROR)')
                             if not self.ignore_write_errors:
                                 raise
                             continue
                     else:
-                        report.write(f'    = {src.directory}: {name} (unchanged)\n')
+                        report.writeln(f'   + {src.directory}: {name} (unchanged)')
                     if self.delete_source:
                         try:
                             src.unlink(name)
                         except (DirectorySyncError, PermissionError):
-                            report.write(f'   ** {src.directory}: {name} (DELETE ERROR)\n')
+                            report.writeln(f'   + {src.directory}: **{name}** (DELETE ERROR)')
                             if not self.ignore_delete_errors:
                                 raise
                             continue
 
         try:
-            report.write(f'Directories synchronization output\n'
-                         f'==================================\n'
-                         f' - source: {self.source!r}\n'
-                         f' - target: {self.target!r}\n'
-                         f' - copied files:\n')
+            report.writeln(f'Directories synchronization output', prefix='### ')
+            report.writeln(f' - source: {self.source!r}')
+            report.writeln(f' - target: {self.target!r}')
+            report.writeln(f' - copied files:')
             with self.source.get_handler() as source:
                 with self.target.get_handler() as target:
                     synchronize_files(source, target)
             if copied['files']:
-                report.write(f"   >> {len(copied['files'])} files ({get_human_size(copied['size'])}) copied\n")
+                report.writeln(f"   >> {len(copied['files'])} files ({get_human_size(copied['size'])}) copied")
             else:
-                report.write('   >> no copied file\n')
+                report.writeln('   >> no copied file')
             return (TASK_STATUS_OK, copied) if copied['files'] else (TASK_STATUS_EMPTY, None)
 
         except:  # pylint: disable=bare-except
-            etype, value, tb = sys.exc_info()  # pylint: disable=invalid-name
-            report.write('\n\n'
-                         'An error occurred\n'
-                         '=================\n')
-            report.write(''.join(traceback.format_exception(etype, value, tb)))
+            report.writeln('**An SQL error occurred**', suffix='\n')
+            report.write_exception(*sys.exc_info())
             return TASK_STATUS_FAIL, None

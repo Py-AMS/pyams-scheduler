@@ -27,11 +27,13 @@ from pyams_form.interfaces.widget import IObjectWidget
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_form.widget import FieldWidget
 from pyams_layer.interfaces import IFormLayer, IPyAMSLayer
-from pyams_scheduler.interfaces import ITaskContainer, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer
 from pyams_scheduler.interfaces.task.ssh import ISSHCallTaskInfo, ISSHCallerTask, \
     ISSHConnectionInfo
 from pyams_scheduler.task.ssh import SSHCallerTask, SSHConnectionInfo
 from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.task.zmi.interfaces import ITaskInnerEditForm
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.viewlet.menu import MenuItem
 from pyams_utils.adapter import adapter_config
@@ -136,5 +138,6 @@ class SSHTaskEditForm(BaseTaskEditForm):
 @adapter_config(name='ssh-task-info.form',
                 required=(ISSHCallerTask, IAdminLayer, SSHTaskEditForm),
                 provides=IInnerTabForm)
+@implementer(ITaskInnerEditForm)
 class SSHTaskEditFormInfo(SSHTaskFormInfo, InnerEditForm):
     """SSH task edit form info"""

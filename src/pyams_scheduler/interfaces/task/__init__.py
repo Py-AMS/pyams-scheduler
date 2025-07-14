@@ -24,7 +24,6 @@ from zope.schema import Bool, Bytes, Choice, Datetime, Float, Int, List, Object,
 from pyams_file.schema import FileField
 from pyams_utils.schema import TextLineListField
 
-
 __docformat__ = 'restructuredtext'
 
 from pyams_scheduler import _
@@ -338,17 +337,20 @@ class ITask(ITaskInfo, IAttributeAnnotatable):
     def run(self, report, **kwargs):
         """Launch job execution"""
 
-    def get_report_mimetype(self):
+    def get_report_mimetype(self, result=None):
         """Attached report MIME type getter"""
 
-    def get_report_filename(self):
+    def get_report_filename(self, result=None):
         """Attached report filename getter"""
+        
+    def get_report_content(self, result):
+        """Attached report content getter"""
 
     def store_report(self, result, report, status, start_date, duration):
-        """Store task execution report in task's history and return new item"""
+        """Store the task execution report in history and return new item"""
 
     def send_report(self, report, status, history_item, registry):
-        """Send task execution report by mail"""
+        """Send the task execution report by mail"""
 
     def reset(self):
         """Re-schedule job execution"""

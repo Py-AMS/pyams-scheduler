@@ -23,9 +23,11 @@ from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer, IInnerTabForm
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import IScheduler, ITask, ITaskContainer, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import IScheduler, ITask, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer
 from pyams_scheduler.interfaces.task import ITaskInfo
-from pyams_scheduler.zmi import TaskContainerTable
+from pyams_scheduler.interfaces.task.pipeline import IPipelineTask
+from pyams_scheduler.zmi.interfaces import IPipelineTaskContainerTable, ITaskContainerTable
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
 from pyams_utils.interfaces import MISSING_INFO
@@ -117,8 +119,10 @@ class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
             return None
         return {
             'callbacks': [
-                get_json_table_row_add_callback(self.context, self.request,
-                                                TaskContainerTable, changes)
+                get_json_table_row_add_callback(
+                        self.context, self.request,
+                        IPipelineTaskContainerTable if IPipelineTask.providedBy(self.context) else ITaskContainerTable,
+                        changes)
             ]
         }
 
@@ -128,6 +132,8 @@ class TaskAddFormAJAXRenderer(ContextRequestViewAdapter):
 #
 
 @adapter_config(required=(ITask, IPyAMSLayer, Interface),
+                provides=IObjectHint)
+@adapter_config(required=(IPipelineTask, IPyAMSLayer, Interface),
                 provides=IObjectHint)
 def task_hint(context, request, view):
     """Task table element hint factory"""
@@ -227,11 +233,13 @@ class TaskEditFormAJAXRenderer(ContextRequestViewAdapter):
         """AJAX result renderer"""
         if not changes:
             return None
-        container = get_parent(self.context, ITaskContainer)
+        container = get_parent(self.context, ITaskContainer, allow_context=False)
         return {
             'callbacks': [
-                get_json_table_row_refresh_callback(container, self.request,
-                                                    TaskContainerTable, self.context)
+                get_json_table_row_refresh_callback(
+                        container, self.request,
+                        IPipelineTaskContainerTable if IPipelineTask.providedBy(container) else ITaskContainerTable,
+                        self.context)
             ]
         }
 
@@ -266,10 +274,12 @@ class TaskCloneFormAJAXRenderer(ContextRequestViewAdapter):
         """AJAX result renderer"""
         if not changes:
             return None
-        container = get_parent(self.context, ITaskContainer)
+        container = get_parent(self.context, ITaskContainer, allow_context=False)
         return {
             'callbacks': [
-                get_json_table_row_add_callback(container, self.request,
-                                                TaskContainerTable, changes)
+                get_json_table_row_add_callback(
+                        container, self.request,
+                        IPipelineTaskContainerTable if IPipelineTask.providedBy(container) else ITaskContainerTable,
+                        changes)
             ]
         }

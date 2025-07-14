@@ -15,8 +15,6 @@
 This module defines views used for tasks triggers management.
 """
 
-from io import StringIO
-
 from zope.interface import Interface
 
 from pyams_form.ajax import ajax_form_config
@@ -24,9 +22,12 @@ from pyams_form.button import Buttons, handler
 from pyams_form.field import Fields
 from pyams_form.interfaces.form import IAJAXFormRenderer, IGroup
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import ITask, ITaskContainer, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer
 from pyams_scheduler.interfaces.task import ICronTask, ICronTaskScheduling, IDateTask, \
-    IDateTaskScheduling, ILoopTask, ILoopTaskScheduling
+    IDateTaskScheduling, ILoopTask, ILoopTaskScheduling, ITask
+from pyams_scheduler.interfaces.task.pipeline import IPipelineTask
+from pyams_scheduler.interfaces.task.report import IReport
 from pyams_scheduler.task.zmi import TaskBaseFormMixin
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
@@ -34,6 +35,8 @@ from pyams_skin.schema.button import SubmitButton
 from pyams_skin.viewlet.help import AlertMessage
 from pyams_table.interfaces import IColumn
 from pyams_utils.adapter import ContextRequestViewAdapter, adapter_config
+from pyams_utils.factory import create_object
+from pyams_utils.text import text_to_html
 from pyams_utils.traversing import get_parent
 from pyams_viewlet.viewlet import EmptyViewlet, viewlet_config
 from pyams_zmi.form import AdminModalEditForm, FormGroupChecker
@@ -99,7 +102,7 @@ class TaskRunEditForm(TaskBaseFormMixin, AdminModalEditForm):
     @handler(ITaskRunButtons['debug'])
     def handle_debug(self, action):
         """Debug button handler"""
-        report = StringIO()
+        report = create_object(IReport)
         self.context.run(report)
         self.finished_state.update({
             'action': action,
@@ -131,7 +134,8 @@ class TaskRunFormDebugActionRenderer(ContextRequestViewAdapter):
             'message': self.request.localizer.translate(_("Task has been executed!")),
             'content': {
                 'target': f'#{self.view.id}-debug-target',
-                'text': self.view.finished_state.get('changes', '-- NO OUTPUT --')
+                'html': text_to_html(self.view.finished_state.get('changes', '-- NO OUTPUT --'),
+                                     'markdown')
             },
             'closeForm': False
         }
@@ -178,9 +182,9 @@ class TaskRunFormDebugTarget(EmptyViewlet):
 
     def render(self):
         """Viewlet renderer"""
-        return f'<textarea id="{self.view.id}-debug-target" ' \
-               f' class="alert alert-secondary border-secondary text-monospace ' \
-               f'        w-100 height-300px p-2 hidden"></textarea>'
+        return f'<div id="{self.view.id}-debug-target" ' \
+               f' class="alert alert-secondary border-secondary overflow-auto ' \
+               f'        w-100 height-400px p-2 hidden"></div>'
 
 
 #
@@ -197,11 +201,15 @@ class SchedulerTaskScheduleColumn(ActionColumn):
     icon_class = 'fas fa-clock'
     hint = _("Schedule task")
 
-    checker = ITask.providedBy
     permission = MANAGE_TASKS_PERMISSION
 
     weight = 50
 
+    def checker(self, task):
+        if not ITask.providedBy(task):
+            return False
+        parent = get_parent(task, ITaskContainer, allow_context=False)
+        return not IPipelineTask.providedBy(parent)
 
 @ajax_form_config(name='schedule.html',
                   context=ITask, layer=IPyAMSLayer,

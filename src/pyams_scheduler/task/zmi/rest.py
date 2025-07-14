@@ -26,10 +26,12 @@ from pyams_form.group import GroupManager
 from pyams_form.interfaces.form import IDataExtractedEvent, IForm, IGroup, IInnerTabForm
 from pyams_form.subform import InnerAddForm, InnerEditForm
 from pyams_layer.interfaces import IPyAMSLayer
-from pyams_scheduler.interfaces import ITaskContainer, MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces import MANAGE_TASKS_PERMISSION
+from pyams_scheduler.interfaces.folder import ITaskContainer
 from pyams_scheduler.interfaces.task.rest import IRESTCallerTask, IRESTCallerTaskInfo
 from pyams_scheduler.task.rest import RESTCallerTask
 from pyams_scheduler.task.zmi import BaseTaskAddForm, BaseTaskEditForm
+from pyams_scheduler.task.zmi.interfaces import ITaskInnerEditForm
 from pyams_scheduler.zmi import TaskContainerTable
 from pyams_skin.interfaces.viewlet import IHelpViewletManager
 from pyams_skin.viewlet.help import AlertMessage
@@ -55,8 +57,8 @@ class RESTTaskFormInfo(GroupManager):
     """REST API caller task add form info"""
 
     title = _("HTTP/REST API settings")
-    fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'headers', 'params',
-                                                'content_type', 'verify_ssl', 'ssl_certs',
+    fields = Fields(IRESTCallerTaskInfo).select('base_url', 'service', 'headers',
+                                                'params', 'content_type', 'verify_ssl', 'ssl_certs',
                                                 'connection_timeout', 'ok_status',
                                                 'allow_redirects')
 
@@ -259,5 +261,6 @@ class RESTTaskEditForm(BaseTaskEditForm):
 @adapter_config(name='rest-task-info.form',
                 required=(IRESTCallerTask, IAdminLayer, RESTTaskEditForm),
                 provides=IInnerTabForm)
+@implementer(ITaskInnerEditForm)
 class RESTTaskEditFormInfo(RESTTaskFormInfo, InnerEditForm):
     """REST task edit form info"""
