@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.7.0
+-----
+ - added pipeline task to chain tasks together
+ - updated execution reports format to Markdown text
+ - small interfaces refactoring to avoid recursive imports
+
 2.6.2
 -----
  - added sort order data attribute to jobs table
