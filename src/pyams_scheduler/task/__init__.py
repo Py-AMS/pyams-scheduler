@@ -460,6 +460,7 @@ class BaseTaskMixin:
         if (ChatMessage is None) or not scheduler.notified_host:
             return None
         translate = request.localizer.translate
+        path = tuple(filter(bool, self.get_path_elements()))
         return ChatMessage(request=request,
                            host=scheduler.notified_host,
                            action='notify',
@@ -468,9 +469,8 @@ class BaseTaskMixin:
                            source=INTERNAL_USER_ID,
                            title=translate(_("Task execution")),
                            message=message,
-                           url='/'.join(('', '++etc++site') +
-                                        tuple(self.get_path_elements()) +
-                                        ('++history++', history_item.__name__, 'history.html')),
+                           url='/'.join(('', '++etc++site') + path +
+                                        ('++history++', history_item.__name__, 'history.html')) if path else None,
                            modal=True,
                            task=self)
 
