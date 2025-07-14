@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.7.1
+-----
+ - added check when creating chat message to avoid creating a link to an automatically deleted task
+
 2.7.0
 -----
  - added pipeline task to chain tasks together
