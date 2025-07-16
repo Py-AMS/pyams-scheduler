@@ -112,8 +112,8 @@ class SSHCallerTask(Task):
         return map(int, self.ok_status.split(','))
 
     def run(self, report, **kwargs):  # pylint: disable=unused-argument
-        report.writeln(f'Shell command output', prefix='### ')
-        report.writeln(f'Shell command: ```{self.connection!r}:{self.cmdline}```')
+        report.writeln(f'Shell command output', prefix='### ', suffix='\n')
+        report.writeln(f'Shell command: ```{self.connection!r}:{self.cmdline}```', suffix='\n')
         if self.connection:
             return self._run_remote(report, **kwargs)
         return self._run_local(report, **kwargs)
@@ -124,10 +124,13 @@ class SSHCallerTask(Task):
             with self.connection.get_connection() as ssh_client:
                 stdin, stdout, stderr = ssh_client.exec_command(self.cmdline)
                 stdin.close()
-                report.write_code(stdout.read().decode())
-                errors = stderr.read()
+                output = stdout.read().decode().strip()
+                if output:
+                    report.writeln('**Task execution log**')
+                    report.write_code(output)
+                errors = stderr.read().strip()
                 if errors:
-                    report.writeln('**Some errors occurred**')
+                    report.writeln('**Task error log**')
                     report.write_code(errors.decode())
                 return (
                     TASK_STATUS_OK if stdout.channel.exit_status in self.ok_status_list
@@ -150,10 +153,12 @@ class SSHCallerTask(Task):
             report.write_exception(*sys.exc_info())
             return TASK_STATUS_FAIL, None
         else:
-            report.write_shell(stdout.decode())
+            if stdout:
+                report.writeln('**Task execution log**')
+                report.write_shell(stdout.decode().strip())
             if stderr:
-                report.writeln('**Some errors occurred**', suffix='\n')
-                report.write_code(stderr.decode())
+                report.writeln('**Task error log**')
+                report.write_code(stderr.decode().strip())
             return (
                 TASK_STATUS_OK if shell.returncode in self.ok_status_list else shell.returncode,
                 stdout
