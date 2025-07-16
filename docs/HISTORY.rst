@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.7.3
+-----
+ - added pipeline task property to be able to continue execution on an empty result
+
 2.7.2
 -----
  - updated report code writer helper to remove trailing newlines
