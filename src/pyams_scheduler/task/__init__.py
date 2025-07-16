@@ -356,7 +356,7 @@ class BaseTaskMixin:
                     report.writeln('\n')
                     if notify:
                         history_item = self.store_report(result, report, status, start_date, duration)
-                        if (ChatMessage is not None) and scheduler.notified_host:
+                        if scheduler.notified_host:
                             if status == TASK_STATUS_ERROR:
                                 message_text = translate(_("Task '{}' was executed "
                                                            "with error")).format(self.name)
@@ -372,7 +372,7 @@ class BaseTaskMixin:
                                         f"task '{self.name}'")
                     if notify:
                         history_item = self.store_report(result, report, status, start_date, duration)
-                        if (ChatMessage is not None) and scheduler.notified_host:
+                        if scheduler.notified_host:
                             message_text = translate(_("An error occurred during execution of task "
                                                        "'{}'")).format(self.name)
                             message = self.get_chat_message(request, scheduler, TASK_STATUS_FAIL,

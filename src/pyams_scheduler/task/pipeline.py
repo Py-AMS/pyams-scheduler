@@ -23,7 +23,7 @@ from zope.schema.fieldproperty import FieldProperty
 
 from pyams_scheduler.folder import BaseTaskContainerMixin
 from pyams_scheduler.interfaces import AfterRunJobEvent, BeforeRunJobEvent, ITask, SCHEDULER_NAME
-from pyams_scheduler.interfaces.task import TASK_STATUS_ERROR, TASK_STATUS_NONE, TASK_STATUS_OK
+from pyams_scheduler.interfaces.task import TASK_STATUS_EMPTY, TASK_STATUS_ERROR, TASK_STATUS_NONE, TASK_STATUS_OK
 from pyams_scheduler.interfaces.task.pipeline import IPipelineInput, IPipelineOutput, IPipelineTask, \
     TASK_PIPELINE_INPUT_KEY
 from pyams_scheduler.interfaces.task.report import ITaskResultReportInfo
@@ -52,6 +52,7 @@ class PipelineInputInfo(Persistent, Contained):
     execution_delay = FieldProperty(IPipelineInput['execution_delay'])
     ignore_input_params = FieldProperty(IPipelineInput['ignore_input_params'])
     stop_on_empty_params = FieldProperty(IPipelineInput['stop_on_empty_params'])
+    continue_on_empty_result = FieldProperty(IPipelineInput['continue_on_empty_result'])
     
     
 @adapter_config(required=ITask,
@@ -159,8 +160,12 @@ class PipelineTask(OrderedContainer, BaseTaskContainerMixin, BaseTaskMixin):
                                                                                         scheduler_util, report,
                                                                                         notify=False, **params)
                                     if status != TASK_STATUS_OK:
-                                        report.writeln('**Pipeline execution break!**', suffix='\n')
-                                        break
+                                        if (status != TASK_STATUS_EMPTY) or \
+                                                ((status == TASK_STATUS_EMPTY) and
+                                                 (task_input is not None) and
+                                                 (not task_input.continue_on_empty_result)):
+                                            report.writeln('**Pipeline execution break!**', suffix='\n')
+                                            break
                                     # get next task params from execution result
                                     task_output = IPipelineOutput(inner_task, None)
                                     if task_output is not None:

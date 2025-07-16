@@ -42,6 +42,12 @@ class IPipelineInput(Interface):
                                               "provided by previous task are empty"),
                                 required=True,
                                 default=False)
+    
+    continue_on_empty_result = Bool(title=_("Continue pipeline on empty result"),
+                                    description=_("If 'yes', the pipeline execution will continue if the "
+                                                  "task execution result is empty"),
+                                    required=True,
+                                    default=False)
 
 
 class IPipelineOutput(Interface):
