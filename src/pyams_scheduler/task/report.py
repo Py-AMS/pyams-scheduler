@@ -60,6 +60,7 @@ class Report:
         return self.write(f"{value}\n", prefix, suffix)
 
     def write_code(self, value):
+        value = re.sub('\n*$', '', value, flags=re.MULTILINE)
         return self.writeln(value, prefix='\n```\n', suffix='```\n\n')
     
     def write_shell(self, value):
