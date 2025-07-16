@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.7.2
+-----
+ - updated report code writer helper to remove trailing newlines
+ - updated SSH task execution report
+
 2.7.1
 -----
  - added check when creating chat message to avoid creating a link to an automatically deleted task
