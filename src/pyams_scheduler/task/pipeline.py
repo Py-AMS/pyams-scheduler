@@ -126,6 +126,7 @@ class PipelineTask(OrderedContainer, BaseTaskContainerMixin, BaseTaskMixin):
                         request.root = application
                         translate = request.localizer.translate
                         task._v_zip_output = zip_output = io.BytesIO()
+                        notify = kwargs.pop('notify', False)
                         with zipfile.ZipFile(zip_output, 'w', zipfile.ZIP_DEFLATED) as zip_file:
                             with RequestContext(request):
                                 if not (kwargs.get('run_immediate') or task.is_runnable()):
@@ -179,8 +180,9 @@ class PipelineTask(OrderedContainer, BaseTaskContainerMixin, BaseTaskMixin):
                                         report_info = ITaskResultReportInfo(result, None)
                                     if report_info is not None:
                                         filename = report_info.filename
-                                        if filename:
-                                            zip_file.writestr(filename, report_info.content)
+                                        content = report_info.content
+                                        if filename and content:
+                                            zip_file.writestr(filename, content)
                                 else:
                                     report.writeln('---')
                                     report.writeln('Pipeline execution terminated without error!',
@@ -191,20 +193,23 @@ class PipelineTask(OrderedContainer, BaseTaskContainerMixin, BaseTaskMixin):
                                        f'**{get_duration(start_date, end_date, request=request)}**', suffix='\n')
                         for attempt in tm.attempts():
                             with attempt as t:
-                                history_item = task.store_report(result, report, status, start_date, duration)
-                                if status == TASK_STATUS_ERROR:
-                                    message_text = translate(_("Task '{}' was executed "
-                                                               "with error")).format(task.name)
-                                else:
-                                    message_text = translate(_("Task '{}' was executed "
-                                                               "without error")).format(task.name)
-                                message = task.get_chat_message(request, scheduler_util, status,
-                                                                message_text, history_item)
-                                message.send()
+                                if notify:
+                                    history_item = task.store_report(result, report, status, start_date, duration)
+                                    if status == TASK_STATUS_ERROR:
+                                        message_text = translate(_("Task '{}' was executed "
+                                                                   "with error")).format(task.name)
+                                    else:
+                                        message_text = translate(_("Task '{}' was executed "
+                                                                   "without error")).format(task.name)
+                                    message = task.get_chat_message(request, scheduler_util, status,
+                                                                    message_text, history_item)
+                                    if message is not None:
+                                        message.send()
                                 registry.notify(AfterRunJobEvent(task, status, result))
-                                task.send_report(report, status, history_item, registry)
-                            if t.status == COMMITTED_STATUS:
-                                break
+                                if notify:
+                                    task.send_report(report, status, history_item, registry)
+                                if t.status == COMMITTED_STATUS:
+                                    break
                 finally:
                     set_local_registry(old_registry)
             except:  # pylint: disable=bare-except
