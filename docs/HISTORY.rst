@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.7.4
+-----
+ - added parameter to disable notifications when running task in debug mode
+ - added checks for notifications checks to pipeline task runner
+
 2.7.3
 -----
  - added pipeline task property to be able to continue execution on an empty result
