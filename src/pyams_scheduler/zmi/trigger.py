@@ -103,7 +103,7 @@ class TaskRunEditForm(TaskBaseFormMixin, AdminModalEditForm):
     def handle_debug(self, action):
         """Debug button handler"""
         report = create_object(IReport)
-        self.context.run(report)
+        self.context.run(report, run_immediate=True, notify=False)
         self.finished_state.update({
             'action': action,
             'changes': report.getvalue()
