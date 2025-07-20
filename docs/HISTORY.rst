@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.7.5
+-----
+ - packaging issue
+
 2.7.4
 -----
  - added parameter to disable notifications when running task in debug mode
