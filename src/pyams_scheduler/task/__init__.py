@@ -498,10 +498,10 @@ class BaseTaskMixin:
 
     @staticmethod
     def get_report_mimetype(result=None):
-        if not result:
+        if result is None:
             return None
         if isinstance(result, (list, tuple)):
-            result = result[-1]
+            result = result[-1] if len(result) > 0 else None
         report_info = ITaskResultReportInfo(result, None)
         return report_info.mimetype if report_info is not None else None
 

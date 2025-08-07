@@ -21,6 +21,7 @@ import mimetypes
 import pprint
 import sys
 from datetime import datetime, timezone
+from http import HTTPStatus
 from urllib import parse
 
 import chardet
@@ -200,7 +201,8 @@ class RESTCallerTask(Task):
             if self.use_api_key:  # API key authentication
                 headers[self.api_key_header] = self.api_key_value
             if headers:
-                report.write(f'Request headers: {format_dict(headers)}\n')
+                report.write('Request headers:')
+                report.write_code(format_dict(headers))
             # check params
             params = self.params or {}
             if params:
@@ -210,51 +212,59 @@ class RESTCallerTask(Task):
                 params = input_params
             params.update(kwargs)
             if params:
-                report.write(f'Request params:')
+                report.write('Request params:')
                 report.write_code(format_dict(params))
             # build HTTP request
             try:
-                rest_request = requests.request(method, rest_service,
-                                                auth=auth,
-                                                headers=headers,
-                                                verify=self.ssl_certs or self.verify_ssl,
-                                                proxies=proxies,
-                                                timeout=self.connection_timeout,
-                                                allow_redirects=self.allow_redirects,
-                                                **self.get_request_params(method, params))
+                rest_response = requests.request(method, rest_service,
+                                                 auth=auth,
+                                                 headers=headers,
+                                                 verify=self.ssl_certs or self.verify_ssl,
+                                                 proxies=proxies,
+                                                 timeout=self.connection_timeout,
+                                                 allow_redirects=self.allow_redirects,
+                                                 **self.get_request_params(method, params))
             except RequestException:
                 report.writeln('**An HTTP error occurred**', suffix='\n')
                 report.write_exception(*sys.exc_info())
                 return TASK_STATUS_FAIL, None
             else:
                 # check request status
-                status_code = rest_request.status_code
-                report.writeln(f'Response status code: `{status_code}`', suffix='\n')
-                report.write(f'Headers:')
-                report.write_code(format_dict(rest_request.headers))
+                status_code = rest_response.status_code
+                try:
+                    status_label = HTTPStatus(status_code).phrase
+                except ValueError:
+                    status_label = 'Unknown status'
+                report.writeln(f'Response status code: `{status_code} - {status_label}`', suffix='\n')
+                report.write('Response headers:')
+                report.write_code(format_dict(rest_response.headers))
                 # check request content
-                content_type = self.get_report_mimetype(rest_request)
+                report.writeln('Response content:')
+                content_type = self.get_report_mimetype(rest_response)
                 if content_type.startswith('application/json'):
-                    response = rest_request.json()
+                    response = rest_response.json()
                     message = pprint.pformat(response)
+                    report.write_code(message)
                 elif content_type.startswith('text/html'):
-                    message = html_to_text(rest_request.text)
+                    message = html_to_text(rest_response.text)
+                    report.writeln(message, suffix='\n')
                 elif content_type.startswith('text/'):
-                    message = rest_request.text
+                    message = rest_response.text
+                    report.writeln(message, suffix='\n')
                 else:
-                    content = rest_request.content
+                    content = rest_response.content
                     if 'charset=' in content_type.lower():
                         charset = content_type.split('=', 1)[1]
                     else:
                         charset = chardet.detect(content).get('encoding') or 'utf-8'
                     message = codecs.decode(content, charset)
-                report.writeln(message, suffix='\n')
-                results.append(rest_request)
+                    report.write_code(message)
+                results.append(rest_response)
         return (
             TASK_STATUS_OK if status_code in self.ok_status_list else status_code,
             results
         )
-
+        
 
 @adapter_config(required=IRESTCallerTask,
                 provides=IPipelineOutput)
