@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.7.6
+-----
+ - updated HTTP caller task errors handling
+
 2.7.5
 -----
  - packaging issue
