@@ -126,10 +126,10 @@ class PipelineTask(OrderedContainer, BaseTaskContainerMixin, BaseTaskMixin):
                         request.root = application
                         translate = request.localizer.translate
                         task._v_zip_output = zip_output = io.BytesIO()
-                        notify = kwargs.pop('notify', False)
+                        notify = kwargs.pop('notify', True)
                         with zipfile.ZipFile(zip_output, 'w', zipfile.ZIP_DEFLATED) as zip_file:
                             with RequestContext(request):
-                                if not (kwargs.get('run_immediate') or task.is_runnable()):
+                                if not (kwargs.pop('run_immediate', False) or task.is_runnable()):
                                     LOGGER.debug(f"Skipping inactive task {task.name}")
                                     return status, result
                                 params = kwargs

@@ -69,7 +69,6 @@ from pyams_zmi.interfaces import IObjectLabel
 from pyams_zmi.utils import get_object_label
 from pyams_zmq.socket import zmq_response, zmq_socket
 
-
 __docformat__ = 'restructuredtext'
 
 from pyams_scheduler import _
@@ -306,7 +305,7 @@ class BaseTaskMixin:
                                                 registry=registry, principal_id=self.principal_id)
                         request.root = application
                         with RequestContext(request):
-                            if not (kwargs.get('run_immediate') or task.is_runnable()):
+                            if not (kwargs.pop('run_immediate', False) or task.is_runnable()):
                                 LOGGER.debug(f"Skipping inactive task {task.name}")
                                 return status, result
                             if task.is_zodb_task:
