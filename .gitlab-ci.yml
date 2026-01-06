@@ -146,7 +146,7 @@ dist-3.9:
     stage: dist
     image: python:3.9
     script:
-        - pip install pip==24.2 setuptools==68.0.0 zc.buildout==3.2.0 zc.recipe.egg==2.0.7
+        - pip install pip==24.2 setuptools==75.1.0 zc.buildout==4.1.12 zc.recipe.egg==3.0.0
         - buildout
         - ./bin/test
         - buildout setup setup.py bdist_wheel
@@ -166,7 +166,7 @@ dist-3.10:
     stage: dist
     image: python:3.10
     script:
-        - pip install pip==24.2 setuptools==68.0.0 zc.buildout==3.2.0 zc.recipe.egg==2.0.7
+        - pip install pip==24.2 setuptools==75.1.0 zc.buildout==4.1.12 zc.recipe.egg==3.0.0
         - buildout
         - ./bin/test
         - buildout setup setup.py bdist_wheel
