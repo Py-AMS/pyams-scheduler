@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.8.0
+-----
+ - added PyAMS monitoring extension
+ - updated pipeline task execution
+
 2.7.6
 -----
  - updated HTTP caller task errors handling
