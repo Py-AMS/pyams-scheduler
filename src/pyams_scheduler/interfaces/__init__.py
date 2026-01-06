@@ -151,6 +151,9 @@ class IScheduler(IAttributeAnnotatable):
     def get_jobs(self):
         """Get text output of running jobs"""
 
+    def test_process(self):
+        """Send test request to scheduler process"""
+
     history = List(title=_("History"),
                    description=_("Task history"),
                    value_type=Object(schema=ITaskHistory),
