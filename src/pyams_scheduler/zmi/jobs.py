@@ -129,7 +129,10 @@ class SchedulerJobsNextRunColumn(JobsColumn):
     
     @staticmethod
     def get_sort_value(value):
-        return datetime.fromtimestamp(value['next_run'], timezone.utc).isoformat()
+        value = value.get('next_run')
+        if not value:
+            return datetime.now(timezone.utc).isoformat()
+        return datetime.fromtimestamp(value, timezone.utc).isoformat()
 
 
 @pagelet_config(name='jobs-list.html', context=IScheduler, layer=IPyAMSLayer,
