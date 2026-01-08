@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.8.1
+-----
+ - handle scheduled jobs without next run datetime in jobs list
+
 2.8.0
 -----
  - added PyAMS monitoring extension
