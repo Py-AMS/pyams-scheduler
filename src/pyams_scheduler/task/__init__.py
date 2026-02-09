@@ -456,7 +456,7 @@ class BaseTaskMixin:
 
     def get_chat_message(self, request, scheduler, status, message, history_item):
         """Chat message getter"""
-        if (ChatMessage is None) or not scheduler.notified_host:
+        if (not message) or (ChatMessage is None) or not scheduler.notified_host:
             return None
         translate = request.localizer.translate
         path = tuple(filter(bool, self.get_path_elements()))
