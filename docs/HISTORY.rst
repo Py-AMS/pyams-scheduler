@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.8.2
+-----
+ - don't create task notification with an empty message
+
 2.8.1
 -----
  - handle scheduled jobs without next run datetime in jobs list
