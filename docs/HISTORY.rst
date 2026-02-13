@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.8.3
+-----
+ - updated task chat message getter to handle messages provided as tuples or lists
+
 2.8.2
 -----
  - don't create task notification with an empty message
