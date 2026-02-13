@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.8.4
+-----
+ - packaging issue...
+
 2.8.3
 -----
  - updated task chat message getter to handle messages provided as tuples or lists
